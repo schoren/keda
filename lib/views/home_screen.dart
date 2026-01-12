@@ -99,12 +99,10 @@ class HomeScreen extends ConsumerWidget {
                                     const SizedBox(height: 6),
                                     LinearProgressIndicator(
                                       value: progress,
-                                      backgroundColor: Colors.grey[200],
+                                      backgroundColor: Colors.red,
                                       minHeight: 6,
                                       borderRadius: BorderRadius.circular(3),
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        remaining < 0 ? Colors.red : Colors.green,
-                                      ),
+                                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
                                     ),
                                   ],
                                 ),
