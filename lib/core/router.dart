@@ -6,6 +6,7 @@ import '../views/home_screen.dart';
 import '../views/login_screen.dart';
 import '../views/new_expense_screen.dart';
 import '../views/category_detail_screen.dart';
+import '../views/manage_category_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -43,6 +44,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final categoryId = state.pathParameters['categoryId']!;
           return NewExpenseScreen(categoryId: categoryId);
+        },
+      ),
+      GoRoute(
+        path: '/manage-category',
+        builder: (context, state) {
+          final id = state.uri.queryParameters['id'];
+          return ManageCategoryScreen(categoryId: id);
         },
       ),
     ],

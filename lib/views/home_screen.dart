@@ -108,6 +108,27 @@ class HomeScreen extends ConsumerWidget {
                       onSelected: (value) {
                         if (value == 'details') {
                           context.push('/category/${category.id}');
+                        } else if (value == 'edit') {
+                          context.push('/manage-category?id=${category.id}');
+                        } else if (value == 'delete') {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('Eliminar Categoría'),
+                              content: Text('¿Estás seguro de que deseas eliminar "${category.name}"?'),
+                              actions: [
+                                TextButton(onPressed: () => ctx.pop(), child: const Text('Cancelar')),
+                                TextButton(
+                                  onPressed: () async {
+                                    ctx.pop();
+                                    await ref.read(repositoryProvider).deleteCategory(category.id);
+                                    ref.invalidate(categoriesProvider);
+                                  },
+                                  child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+                                ),
+                              ],
+                            ),
+                          );
                         }
                       },
                       itemBuilder: (context) => [
@@ -115,6 +136,16 @@ class HomeScreen extends ConsumerWidget {
                           value: 'details',
                           height: 32,
                           child: Text('Ver Detalle', style: TextStyle(fontSize: 14)),
+                        ),
+                        const PopupMenuItem(
+                          value: 'edit',
+                          height: 32,
+                          child: Text('Editar', style: TextStyle(fontSize: 14)),
+                        ),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          height: 32,
+                          child: Text('Eliminar', style: TextStyle(fontSize: 14, color: Colors.red)),
                         ),
                       ],
                     ),

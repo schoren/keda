@@ -32,6 +32,10 @@ class LocalRepository {
     );
   }
 
+  Future<void> deleteCategory(String id) async {
+    await (db.delete(db.categories)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
   // Accounts
   Future<List<FinanceAccount>> getAccounts() async {
     final entities = await db.select(db.financeAccounts).get();
