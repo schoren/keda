@@ -5,9 +5,11 @@ import 'providers/data_providers.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  usePathUrlStrategy();
   await initializeDateFormatting(null, null);
   runApp(
     const ProviderScope(

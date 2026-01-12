@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/data_providers.dart';
 import '../models/expense.dart';
+import '../models/category.dart';
+import '../models/finance_account.dart';
 import 'package:uuid/uuid.dart';
 
 class NewExpenseScreen extends ConsumerStatefulWidget {
@@ -66,19 +68,41 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final categories = ref.watch(categoriesProvider).value ?? [];
-    final accounts = ref.watch(accountsProvider).value ?? [];
-    
-    final category = categories.firstWhere(
-      (c) => c.id == widget.categoryId, 
-      orElse: () => categories.first, // Fallback safety
+    final categoriesAsync = ref.watch(categoriesProvider);
+    final accountsAsync = ref.watch(accountsProvider);
+
+    return categoriesAsync.when(
+      data: (categories) {
+        final category = categories.firstWhere(
+          (c) => c.id == widget.categoryId,
+          orElse: () => Category(id: '', name: 'Cargando...', monthlyBudget: 0),
+        );
+        
+        if (category.id.isEmpty) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Error')),
+            body: const Center(child: Text('Categoría no encontrada')),
+          );
+        }
+
+        return accountsAsync.when(
+          data: (accounts) {
+             // Initialize selected account if needed and accounts are available
+            if (_selectedAccountId == null && accounts.isNotEmpty) {
+              _selectedAccountId = accounts.first.id;
+            }
+            return _buildForm(context, category, accounts);
+          },
+          loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+          error: (err, _) => Scaffold(body: Center(child: Text('Error: $err'))),
+        );
+      },
+      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (err, _) => Scaffold(body: Center(child: Text('Error: $err'))),
     );
+  }
 
-    // Initialize selected account if needed and accounts are available
-    if (_selectedAccountId == null && accounts.isNotEmpty) {
-      _selectedAccountId = accounts.first.id;
-    }
-
+  Widget _buildForm(BuildContext context, Category category, List<FinanceAccount> accounts) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Gasto en ${category.name}'),
@@ -136,7 +160,7 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                       const Text('No tienes cuentas creadas.'),
                       const SizedBox(height: 8),
                       ElevatedButton.icon(
-                        onPressed: () => context.push('/manage-accounts'),
+                        onPressed: () => context.push('/manage-accounts/new'),
                         icon: const Icon(Icons.add),
                         label: const Text('Crear mi primera cuenta'),
                       ),

@@ -16,7 +16,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Presupuestos'),
+        title: const Text('Family Finance (DEBUG: LATEST CODE)'),
         actions: [
           ref.watch(expensesProvider).when(
             data: (expenses) => Center(child: Padding(
@@ -160,7 +160,7 @@ class HomeScreen extends ConsumerWidget {
                                   if (value == 'details') {
                                     context.push('/category/${category.id}');
                                   } else if (value == 'edit') {
-                                    context.push('/manage-category?id=${category.id}');
+                                    context.push('/manage-category/edit/${category.id}');
                                   } else if (value == 'delete') {
                                     showDialog(
                                       context: context,
@@ -215,7 +215,7 @@ class HomeScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.push('/manage-category');
+          context.push('/manage-category/new');
         },
         child: const Icon(Icons.add),
       ),

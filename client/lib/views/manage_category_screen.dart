@@ -19,38 +19,20 @@ class _ManageCategoryScreenState extends ConsumerState<ManageCategoryScreen> {
   final _nameController = TextEditingController();
   final _budgetController = TextEditingController();
   bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.categoryId != null) {
-      // Defer state update to next frame to allow reading provider
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _loadCategory();
-      });
-    }
-  }
-
-  void _loadCategory() {
-    final categories = ref.read(categoriesProvider).asData?.value;
-    if (categories != null) {
-      final category = categories.firstWhere(
-        (c) => c.id == widget.categoryId,
-        orElse: () => Category(id: '', name: '', monthlyBudget: 0),
-      );
-      
-      if (category.id.isNotEmpty) {
-        _nameController.text = category.name;
-        _budgetController.text = category.monthlyBudget.toStringAsFixed(0);
-      }
-    }
-  }
+  bool _isInitialized = false;
 
   @override
   void dispose() {
     _nameController.dispose();
     _budgetController.dispose();
     super.dispose();
+  }
+
+  void _initializeFromCategory(Category category) {
+    if (_isInitialized) return;
+    _nameController.text = category.name;
+    _budgetController.text = category.monthlyBudget.toStringAsFixed(0);
+    _isInitialized = true;
   }
 
   Future<void> _save() async {
@@ -105,7 +87,33 @@ class _ManageCategoryScreenState extends ConsumerState<ManageCategoryScreen> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.categoryId != null;
+    final categoriesAsync = ref.watch(categoriesProvider);
 
+    if (isEditing) {
+      return categoriesAsync.when(
+        data: (categories) {
+          final category = categories.firstWhere(
+            (c) => c.id == widget.categoryId,
+            orElse: () => Category(id: '', name: '', monthlyBudget: 0),
+          );
+          if (category.id.isEmpty) {
+            return Scaffold(
+              appBar: AppBar(title: const Text('Error')),
+              body: const Center(child: Text('Categoría no encontrada')),
+            );
+          }
+          _initializeFromCategory(category);
+          return _buildForm(context, isEditing);
+        },
+        loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+        error: (err, _) => Scaffold(body: Center(child: Text('Error: $err'))),
+      );
+    }
+
+    return _buildForm(context, isEditing);
+  }
+
+  Widget _buildForm(BuildContext context, bool isEditing) {
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Editar Categoría' : 'Nueva Categoría'),

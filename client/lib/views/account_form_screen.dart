@@ -23,43 +23,24 @@ class _AccountFormScreenState extends ConsumerState<AccountFormScreen> {
   AccountType _selectedType = AccountType.cash;
   String? _selectedBrand;
   bool _isLoading = false;
+  bool _isInitialized = false;
 
   final cardBrands = ['Visa', 'Mastercard', 'AMEX', 'Maestro', 'Cabal'];
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.accountId != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _loadAccount();
-      });
-    }
-  }
-
-  void _loadAccount() {
-    final accounts = ref.read(accountsProvider).asData?.value;
-    if (accounts != null) {
-      final account = accounts.firstWhere(
-        (a) => a.id == widget.accountId,
-        orElse: () => FinanceAccount(id: '', type: AccountType.cash, name: '', displayName: ''),
-      );
-      
-      if (account.id.isNotEmpty) {
-        setState(() {
-          _selectedType = account.type;
-          _selectedBrand = account.brand;
-          _nameController.text = account.name;
-          _bankController.text = account.bank ?? '';
-        });
-      }
-    }
-  }
 
   @override
   void dispose() {
     _nameController.dispose();
     _bankController.dispose();
     super.dispose();
+  }
+
+  void _initializeFromAccount(FinanceAccount account) {
+    if (_isInitialized) return;
+    _selectedType = account.type;
+    _selectedBrand = account.brand;
+    _nameController.text = account.name;
+    _bankController.text = account.bank ?? '';
+    _isInitialized = true;
   }
 
   Future<void> _save() async {
@@ -102,7 +83,33 @@ class _AccountFormScreenState extends ConsumerState<AccountFormScreen> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.accountId != null;
+    final accountsAsync = ref.watch(accountsProvider);
 
+    if (isEditing) {
+      return accountsAsync.when(
+        data: (accounts) {
+          final account = accounts.firstWhere(
+            (a) => a.id == widget.accountId,
+            orElse: () => FinanceAccount(id: '', type: AccountType.cash, name: '', displayName: ''),
+          );
+          if (account.id.isEmpty) {
+            return Scaffold(
+              appBar: AppBar(title: const Text('Error')),
+              body: const Center(child: Text('Cuenta no encontrada')),
+            );
+          }
+          _initializeFromAccount(account);
+          return _buildForm(context, isEditing);
+        },
+        loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+        error: (err, _) => Scaffold(body: Center(child: Text('Error: $err'))),
+      );
+    }
+
+    return _buildForm(context, isEditing);
+  }
+
+  Widget _buildForm(BuildContext context, bool isEditing) {
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Editar Cuenta' : 'Nueva Cuenta'),

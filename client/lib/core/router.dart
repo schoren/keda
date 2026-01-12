@@ -11,12 +11,20 @@ import '../views/manage_accounts_screen.dart';
 import '../views/account_form_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  print('DEBUG: GoRouter instance created');
+  // Use a stable router by not watching authState here directly for the whole object recreation
+  // Instead, we can use a listenable to trigger refreshes.
+  
+  final listenable = _AuthListenable(ref);
 
   return GoRouter(
     initialLocation: '/',
+    refreshListenable: listenable,
+    debugLogDiagnostics: true,
     redirect: (context, state) {
+      final authState = ref.read(authProvider);
       final loggingIn = state.matchedLocation == '/login';
+      
       if (!authState.isAuthenticated) {
         return loggingIn ? null : '/login';
       }
@@ -49,9 +57,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
-        path: '/manage-category',
+        path: '/manage-category/new',
+        builder: (context, state) => const ManageCategoryScreen(),
+      ),
+      GoRoute(
+        path: '/manage-category/edit/:categoryId',
         builder: (context, state) {
-          final id = state.uri.queryParameters['id'];
+          final id = state.pathParameters['categoryId'];
           return ManageCategoryScreen(categoryId: id);
         },
       ),
@@ -75,3 +87,17 @@ final routerProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
+
+class _AuthListenable extends ChangeNotifier {
+  _AuthListenable(Ref ref) {
+    _subscription = ref.listen(authProvider, (_, __) => notifyListeners());
+  }
+
+  late final ProviderSubscription<AuthState> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.close();
+    super.dispose();
+  }
+}
