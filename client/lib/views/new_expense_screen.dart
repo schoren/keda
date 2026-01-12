@@ -14,6 +14,7 @@ class NewExpenseScreen extends ConsumerStatefulWidget {
 }
 
 class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _noteController = TextEditingController();
   final _focusNode = FocusNode();
@@ -37,13 +38,7 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
   }
 
   Future<void> _save() async {
-    final amount = double.tryParse(_amountController.text);
-    if (amount == null || amount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor ingresa un monto válido')),
-      );
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
     if (_selectedAccountId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -52,6 +47,7 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
       return;
     }
 
+    final amount = double.parse(_amountController.text);
     final newExpense = Expense(
       id: const Uuid().v4(),
       date: DateTime.now(),
@@ -87,76 +83,89 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
       appBar: AppBar(
         title: Text('Gasto en ${category.name}'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _amountController,
-              focusNode: _focusNode,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Monto',
-                prefixText: '\$ ',
-                border: OutlineInputBorder(),
-              ),
-              style: const TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 16),
-            if (accounts.isNotEmpty)
-              DropdownButtonFormField<String>(
-                value: _selectedAccountId,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _amountController,
+                focusNode: _focusNode,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
-                  labelText: 'Cuenta',
+                  labelText: 'Monto',
+                  prefixText: '\$ ',
                   border: OutlineInputBorder(),
                 ),
-                items: accounts.map((account) {
-                  return DropdownMenuItem(
-                    value: account.id,
-                    child: Text(account.displayName),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedAccountId = value;
-                  });
+                style: const TextStyle(fontSize: 24),
+                validator: (value) {
+                  if (value == null || value.isEmpty) return 'Ingresa un monto';
+                  final amount = double.tryParse(value);
+                  if (amount == null || amount <= 0) return 'Monto inválido';
+                  return null;
                 },
-              )
-            else
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Column(
-                  children: [
-                    const Text('No tienes cuentas creadas.'),
-                    const SizedBox(height: 8),
-                    ElevatedButton.icon(
-                      onPressed: () => context.push('/manage-accounts'),
-                      icon: const Icon(Icons.add),
-                      label: const Text('Crear mi primera cuenta'),
-                    ),
-                  ],
+              ),
+              const SizedBox(height: 16),
+              if (accounts.isNotEmpty)
+                DropdownButtonFormField<String>(
+                  value: _selectedAccountId,
+                  decoration: const InputDecoration(
+                    labelText: 'Cuenta',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: accounts.map((account) {
+                    return DropdownMenuItem(
+                      value: account.id,
+                      child: Text(account.displayName),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedAccountId = value;
+                    });
+                  },
+                  validator: (value) => value == null ? 'Selecciona una cuenta' : null,
+                )
+              else
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Column(
+                    children: [
+                      const Text('No tienes cuentas creadas.'),
+                      const SizedBox(height: 8),
+                      ElevatedButton.icon(
+                        onPressed: () => context.push('/manage-accounts'),
+                        icon: const Icon(Icons.add),
+                        label: const Text('Crear mi primera cuenta'),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _noteController,
+                textInputAction: TextInputAction.done,
+                decoration: const InputDecoration(
+                  labelText: 'Nota (opcional)',
+                  border: OutlineInputBorder(),
+                ),
+                onFieldSubmitted: (_) => _save(),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: accounts.isEmpty ? null : _save,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: const Text('GUARDAR', style: TextStyle(fontSize: 18)),
                 ),
               ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _noteController,
-              decoration: const InputDecoration(
-                labelText: 'Nota (opcional)',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: accounts.isEmpty ? null : _save,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text('GUARDAR', style: TextStyle(fontSize: 18)),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

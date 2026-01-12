@@ -8,6 +8,7 @@ import '../views/new_expense_screen.dart';
 import '../views/category_detail_screen.dart';
 import '../views/manage_category_screen.dart';
 import '../views/manage_accounts_screen.dart';
+import '../views/account_form_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -57,6 +58,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/manage-accounts',
         builder: (context, state) => const ManageAccountsScreen(),
+        routes: [
+          GoRoute(
+            path: 'new',
+            builder: (context, state) => const AccountFormScreen(),
+          ),
+          GoRoute(
+            path: 'edit/:accountId',
+            builder: (context, state) {
+              final accountId = state.pathParameters['accountId']!;
+              return AccountFormScreen(accountId: accountId);
+            },
+          ),
+        ],
       ),
     ],
   );

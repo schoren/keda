@@ -118,6 +118,7 @@ class _ManageCategoryScreenState extends ConsumerState<ManageCategoryScreen> {
             children: [
               TextFormField(
                 controller: _nameController,
+                textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
                   labelText: 'Nombre',
                   border: OutlineInputBorder(),
@@ -132,12 +133,14 @@ class _ManageCategoryScreenState extends ConsumerState<ManageCategoryScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _budgetController,
+                textInputAction: TextInputAction.done,
                 decoration: const InputDecoration(
                   labelText: 'Presupuesto Mensual',
                   prefixText: '\$ ',
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
+                onFieldSubmitted: (_) => _save(),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingresa un presupuesto';
