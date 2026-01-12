@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'monthly_summary.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class CategorySummary {
   final String id;
   final String name;
@@ -22,7 +22,7 @@ class CategorySummary {
   Map<String, dynamic> toJson() => _$CategorySummaryToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class MonthlySummary {
   final String month;
   final double totalBudget;

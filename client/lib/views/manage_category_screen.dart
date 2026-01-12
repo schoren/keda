@@ -59,8 +59,6 @@ class _ManageCategoryScreenState extends ConsumerState<ManageCategoryScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final repository = ref.read(repositoryProvider);
-      
       final id = widget.categoryId ?? const Uuid().v4();
       final name = _nameController.text.trim();
       final budget = double.parse(_budgetController.text);
@@ -72,14 +70,18 @@ class _ManageCategoryScreenState extends ConsumerState<ManageCategoryScreen> {
         isActive: true,
       );
 
-      await repository.upsertCategory(category);
+      if (widget.categoryId != null) {
+        await ref.read(categoriesProvider.notifier).updateCategory(category);
+      } else {
+        await ref.read(categoriesProvider.notifier).createCategory(category);
+      }
       
-      // Refresh the list of categories
-      ref.invalidate(categoriesProvider);
-      // Also refresh remaining provider if editing
+      // Refresh remaining provider if editing
       if (widget.categoryId != null) {
         ref.invalidate(categoryRemainingProvider(widget.categoryId!));
       }
+      // Refresh summary as well
+      ref.invalidate(currentMonthSummaryProvider);
 
       if (mounted) {
         context.pop();

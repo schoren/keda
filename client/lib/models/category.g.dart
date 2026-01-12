@@ -9,13 +9,13 @@ part of 'category.dart';
 Category _$CategoryFromJson(Map<String, dynamic> json) => Category(
   id: json['id'] as String,
   name: json['name'] as String,
-  monthlyBudget: (json['monthlyBudget'] as num).toDouble(),
-  isActive: json['isActive'] as bool? ?? true,
+  monthlyBudget: (json['monthly_budget'] as num).toDouble(),
+  isActive: json['is_active'] as bool? ?? true,
 );
 
 Map<String, dynamic> _$CategoryToJson(Category instance) => <String, dynamic>{
   'id': instance.id,
   'name': instance.name,
-  'monthlyBudget': instance.monthlyBudget,
-  'isActive': instance.isActive,
+  'monthly_budget': instance.monthlyBudget,
+  'is_active': instance.isActive,
 };

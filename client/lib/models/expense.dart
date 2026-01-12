@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'expense.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Expense {
   final String id;
   final DateTime date;

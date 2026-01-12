@@ -3,7 +3,7 @@ import 'account_type.dart';
 
 part 'finance_account.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class FinanceAccount {
   final String id;
   final AccountType type;

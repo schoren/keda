@@ -132,8 +132,7 @@ class HomeScreen extends ConsumerWidget {
                                           TextButton(
                                             onPressed: () async {
                                               ctx.pop();
-                                              await ref.read(repositoryProvider).deleteCategory(category.id);
-                                              ref.invalidate(categoriesProvider);
+                                              await ref.read(categoriesProvider.notifier).deleteCategory(category.id);
                                             },
                                             child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
                                           ),
