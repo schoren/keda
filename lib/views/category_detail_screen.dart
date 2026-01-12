@@ -104,10 +104,8 @@ class CategoryDetailScreen extends ConsumerWidget {
                                itemCount: currentMonthExpenses.length,
                                itemBuilder: (context, index) {
                                  final expense = currentMonthExpenses[index];
-                                 final account = accounts.firstWhere(
-                                   (a) => a.id == expense.accountId, 
-                                   orElse: () => accounts.isNotEmpty ? accounts.first : null
-                                 ); // Handle null gracefully-ish? 
+                                 final accountList = accounts.where((a) => a.id == expense.accountId);
+                                 final account = accountList.isNotEmpty ? accountList.first : null; 
                                  // Actually accounts should exist if expenses exist with that ID ideally.
 
                                  return ListTile(

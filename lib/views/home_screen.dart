@@ -31,45 +31,98 @@ class HomeScreen extends ConsumerWidget {
         ],
       ),
       body: categoriesAsync.when(
-        data: (categories) => ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: categories.length,
-          itemBuilder: (context, index) {
+        data: (categories) => LayoutBuilder(
+          builder: (context, constraints) {
+            int crossAxisCount = 2;
+            if (constraints.maxWidth > 600) {
+              crossAxisCount = 3;
+            }
+            if (constraints.maxWidth > 1200) {
+              crossAxisCount = 6;
+            }
+
+            return GridView.builder(
+              padding: const EdgeInsets.all(12),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: 1.2,
+              ),
+              itemCount: categories.length,
+              itemBuilder: (context, index) {
             final category = categories[index];
             final remaining = ref.watch(categoryRemainingProvider(category.id));
+            final progress = remaining > 0 ? (remaining / category.monthlyBudget) : 0.0;
             
             return Card(
-              margin: const EdgeInsets.only(bottom: 16),
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(16),
-                title: Text(
-                  category.name,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
-                    Text(
-                      'Restante: \$${remaining.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: remaining < 0 ? Colors.red : Colors.green,
-                        fontWeight: FontWeight.bold,
+              elevation: 2,
+              margin: EdgeInsets.zero,
+              child: Stack(
+                children: [
+                  InkWell(
+                    onTap: () => context.push('/new-expense/${category.id}'),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 24.0), // Space for the menu icon
+                            child: Text(
+                              category.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            '\$${remaining.toStringAsFixed(0)}',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: remaining < 0 ? Colors.red : Colors.green,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          LinearProgressIndicator(
+                            value: progress,
+                            backgroundColor: Colors.grey[200],
+                            minHeight: 6,
+                            borderRadius: BorderRadius.circular(3),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              remaining < 0 ? Colors.red : Colors.green,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    LinearProgressIndicator(
-                      value: remaining > 0 ? (remaining / category.monthlyBudget) : 0,
-                      backgroundColor: Colors.grey[200],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        remaining < 0 ? Colors.red : Colors.green,
-                      ),
+                  ),
+                  Positioned(
+                    top: -4,
+                    right: -4,
+                    child: PopupMenuButton<String>(
+                      icon: const Icon(Icons.more_vert, size: 18, color: Colors.grey),
+                      padding: EdgeInsets.zero,
+                      onSelected: (value) {
+                        if (value == 'details') {
+                          context.push('/category/${category.id}');
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'details',
+                          height: 32,
+                          child: Text('Ver Detalle', style: TextStyle(fontSize: 14)),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                onTap: () => context.push('/category/${category.id}'),
+                  ),
+                ],
               ),
+            );
+          },
             );
           },
         ),
