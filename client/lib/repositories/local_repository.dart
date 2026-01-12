@@ -87,4 +87,57 @@ class LocalRepository {
     );
     print('DB: Expense inserted successfully');
   }
+
+  // Sync from server
+  Future<void> syncFromServer({
+    required List<Category> categories,
+    required List<FinanceAccount> accounts,
+    required List<Expense> expenses,
+  }) async {
+    await db.transaction(() async {
+      // Clear all tables
+      await db.delete(db.expenses).go();
+      await db.delete(db.categories).go();
+      await db.delete(db.financeAccounts).go();
+
+      // Insert categories
+      for (var category in categories) {
+        await db.into(db.categories).insert(
+          CategoriesCompanion.insert(
+            id: category.id,
+            name: category.name,
+            monthlyBudget: category.monthlyBudget,
+            isActive: Value(category.isActive),
+          ),
+        );
+      }
+
+      // Insert accounts
+      for (var account in accounts) {
+        await db.into(db.financeAccounts).insert(
+          FinanceAccountsCompanion.insert(
+            id: account.id,
+            type: account.type.name,
+            name: account.name,
+            brand: Value(account.brand),
+            bank: Value(account.bank),
+          ),
+        );
+      }
+
+      // Insert expenses
+      for (var expense in expenses) {
+        await db.into(db.expenses).insert(
+          ExpensesCompanion.insert(
+            id: expense.id,
+            date: expense.date,
+            categoryId: expense.categoryId,
+            accountId: expense.accountId,
+            amount: expense.amount,
+            note: Value(expense.note),
+          ),
+        );
+      }
+    });
+  }
 }

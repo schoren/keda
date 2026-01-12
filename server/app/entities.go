@@ -13,25 +13,34 @@ var Entities = []any{
 }
 
 type Account struct {
-	gorm.Model
-	Type  string `gorm:"type:varchar(255)" json:"type"`
-	Name  string `gorm:"type:varchar(255)" json:"name"`
-	Brand string `gorm:"type:varchar(255)" json:"brand"`
-	Card  string `gorm:"type:varchar(255)" json:"card"`
+	ID        string         `gorm:"type:varchar(255);primaryKey" json:"id"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
+	Type      string         `gorm:"type:varchar(255)" json:"type"`
+	Name      string         `gorm:"type:varchar(255)" json:"name"`
+	Brand     *string        `gorm:"type:varchar(255)" json:"brand,omitempty"`
+	Bank      *string        `gorm:"type:varchar(255)" json:"bank,omitempty"`
 }
 
 type Category struct {
-	gorm.Model
-	Name          string  `gorm:"type:varchar(255)" json:"name"`
-	MonthlyBudget float64 `gorm:"type:decimal(10,2)" json:"monthly_budget"`
-	IsActive      bool    `gorm:"type:boolean" json:"is_active"`
+	ID            string         `gorm:"type:varchar(255);primaryKey" json:"id"`
+	CreatedAt     time.Time      `json:"created_at"`
+	UpdatedAt     time.Time      `json:"updated_at"`
+	DeletedAt     gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
+	Name          string         `gorm:"type:varchar(255)" json:"name"`
+	MonthlyBudget float64        `gorm:"type:decimal(10,2)" json:"monthly_budget"`
+	IsActive      bool           `gorm:"type:boolean;default:true" json:"is_active"`
 }
 
 type Transaction struct {
-	gorm.Model
-	AccountID   uint      `gorm:"type:integer" json:"account_id"`
-	CategoryID  uint      `gorm:"type:integer" json:"category_id"`
-	Amount      float64   `gorm:"type:decimal(10,2)" json:"amount"`
-	Date        time.Time `gorm:"type:timestamp" json:"date"`
-	Description string    `gorm:"type:varchar(255)" json:"description"`
+	ID          string         `gorm:"type:varchar(255);primaryKey" json:"id"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+	DeletedAt   gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
+	AccountID   string         `gorm:"type:varchar(255)" json:"account_id"`
+	CategoryID  string         `gorm:"type:varchar(255)" json:"category_id"`
+	Amount      float64        `gorm:"type:decimal(10,2)" json:"amount"`
+	Date        time.Time      `gorm:"type:timestamp" json:"date"`
+	Description string         `gorm:"type:varchar(255)" json:"description"`
 }
