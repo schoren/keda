@@ -108,3 +108,31 @@ final categoryRemainingProvider = Provider.family<double, String>((ref, category
     error: (_, __) => 0.0,
   );
 });
+
+// Provider for monthly totals (budget and spent)
+final monthlyTotalsProvider = Provider.autoDispose<(double budget, double spent)>((ref) {
+  final categoriesAsync = ref.watch(categoriesProvider);
+  final expensesAsync = ref.watch(expensesProvider);
+
+  return categoriesAsync.when(
+    data: (categories) {
+      return expensesAsync.when(
+        data: (expenses) {
+          final now = DateTime.now();
+          
+          final totalBudget = categories.fold(0.0, (sum, c) => sum + c.monthlyBudget);
+          
+          final totalSpent = expenses
+              .where((e) => e.date.month == now.month && e.date.year == now.year)
+              .fold(0.0, (sum, e) => sum + e.amount);
+
+          return (totalBudget, totalSpent);
+        },
+        loading: () => (0.0, 0.0),
+        error: (_, __) => (0.0, 0.0),
+      );
+    },
+    loading: () => (0.0, 0.0),
+    error: (_, __) => (0.0, 0.0),
+  );
+});
