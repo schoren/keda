@@ -1,10 +1,17 @@
 package app
 
 import (
+	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
+	"google.golang.org/api/idtoken"
 	"gorm.io/gorm"
 )
 
@@ -390,4 +397,197 @@ func (h *Handlers) HandleSync(c *gin.Context) {
 		"categories":   categories,
 		"transactions": transactions,
 	})
+}
+
+func (h *Handlers) JWTMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
+			c.Abort()
+			return
+		}
+
+		// Expected format: "Bearer <token>"
+		tokenString := ""
+		if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+			tokenString = authHeader[7:]
+		} else {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid authorization format"})
+			c.Abort()
+			return
+		}
+
+		secret := os.Getenv("JWT_SECRET")
+		if secret == "" {
+			secret = "default_secret_change_me"
+		}
+
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			return []byte(secret), nil
+		})
+
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
+			c.Abort()
+			return
+		}
+
+		claims := token.Claims.(jwt.MapClaims)
+		tokenHouseholdID := claims["household_id"].(string)
+
+		// Check if the household_id in the URL matches the one in the token
+		urlHouseholdID := c.Param("household_id")
+		if urlHouseholdID != "" && urlHouseholdID != tokenHouseholdID {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Access denied to this household"})
+			c.Abort()
+			return
+		}
+
+		c.Set("user_id", claims["user_id"])
+		c.Set("household_id", tokenHouseholdID)
+
+		c.Next()
+	}
+}
+
+// ============================================================================
+// AUTHENTICATION
+// ============================================================================
+
+type GoogleLoginRequest struct {
+	IDToken     string `json:"id_token"`
+	AccessToken string `json:"access_token"`
+}
+
+type AuthResponse struct {
+	Token       string `json:"token"`
+	User        User   `json:"user"`
+	HouseholdID string `json:"household_id"`
+}
+
+func (h *Handlers) AuthGoogle(c *gin.Context) {
+	var req GoogleLoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	googleClientID := os.Getenv("GOOGLE_CLIENT_ID")
+	if googleClientID == "" {
+		log.Println("WARNING: GOOGLE_CLIENT_ID is not set")
+	}
+
+	var email, name, googleID string
+
+	if req.IDToken != "" {
+		payload, err := idtoken.Validate(c.Request.Context(), req.IDToken, googleClientID)
+		if err == nil {
+			email = payload.Claims["email"].(string)
+			name = payload.Claims["name"].(string)
+			googleID = payload.Subject
+		}
+	}
+
+	// Fallback to AccessToken (common in Web)
+	if email == "" && req.AccessToken != "" {
+		userInfo, err := fetchGoogleUserInfo(req.AccessToken)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Google access token"})
+			return
+		}
+		email = userInfo.Email
+		name = userInfo.Name
+		googleID = userInfo.ID
+	}
+
+	if email == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "No valid token provided"})
+		return
+	}
+
+	var user User
+	result := h.db.Where("email = ?", email).First(&user)
+
+	if result.Error == gorm.ErrRecordNotFound {
+		// New User
+		household := Household{
+			ID:   uuid.New().String(),
+			Name: name + "'s Household",
+		}
+
+		if err := h.db.Create(&household).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create household"})
+			return
+		}
+
+		user = User{
+			ID:          uuid.New().String(),
+			Email:       email,
+			Name:        name,
+			GoogleID:    googleID,
+			HouseholdID: household.ID,
+		}
+
+		if err := h.db.Create(&user).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+			return
+		}
+	} else if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
+	}
+
+	// Generate JWT
+	token, err := h.generateJWT(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, AuthResponse{
+		Token:       token,
+		User:        user,
+		HouseholdID: user.HouseholdID,
+	})
+}
+
+func (h *Handlers) generateJWT(user User) (string, error) {
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		secret = "default_secret_change_me"
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id":      user.ID,
+		"household_id": user.HouseholdID,
+		"exp":          time.Now().Add(time.Hour * 24 * 30).Unix(), // 30 days
+	})
+
+	return token.SignedString([]byte(secret))
+}
+
+type GoogleUserInfo struct {
+	ID    string `json:"id"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
+}
+
+func fetchGoogleUserInfo(accessToken string) (*GoogleUserInfo, error) {
+	resp, err := http.Get("https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + accessToken)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to fetch user info: %v", resp.Status)
+	}
+
+	var userInfo GoogleUserInfo
+	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
+		return nil, err
+	}
+
+	return &userInfo, nil
 }

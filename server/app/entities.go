@@ -28,6 +28,7 @@ type User struct {
 	UpdatedAt   time.Time      `json:"updated_at"`
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
 	Email       string         `gorm:"type:varchar(255);unique" json:"email"`
+	GoogleID    string         `gorm:"type:varchar(255);index" json:"google_id"`
 	Name        string         `gorm:"type:varchar(255)" json:"name"`
 	HouseholdID string         `gorm:"type:varchar(255)" json:"household_id"`
 }

@@ -26,6 +26,7 @@ final apiClientProvider = Provider((ref) {
   return ApiClient(
     baseUrl: 'http://localhost:8090',
     householdId: authState.householdId,
+    authToken: authState.token,
   );
 });
 

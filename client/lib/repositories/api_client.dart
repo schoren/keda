@@ -34,15 +34,25 @@ class SyncResponse {
 class ApiClient {
   final String baseUrl;
   final String? householdId;
+  final String? authToken;
   final http.Client _client;
 
   ApiClient({
     required this.baseUrl,
     this.householdId,
+    this.authToken,
     http.Client? client,
   }) : _client = client ?? http.Client();
 
   String get _scopedUrl => '$baseUrl/households/$householdId';
+
+  Map<String, String> get _headers {
+    final headers = {'Content-Type': 'application/json'};
+    if (authToken != null) {
+      headers['Authorization'] = 'Bearer $authToken';
+    }
+    return headers;
+  }
 
   // ============================================================================
   // CATEGORIES
@@ -50,7 +60,7 @@ class ApiClient {
 
   Future<List<Category>> getCategories() async {
     final uri = Uri.parse('$_scopedUrl/categories');
-    final response = await _client.get(uri);
+    final response = await _client.get(uri, headers: _headers);
 
     if (response.statusCode == 200) {
       final List<dynamic> json = jsonDecode(response.body);
@@ -64,7 +74,7 @@ class ApiClient {
     final uri = Uri.parse('$_scopedUrl/categories');
     final response = await _client.post(
       uri,
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers,
       body: jsonEncode(category.toJson()),
     );
 
@@ -79,7 +89,7 @@ class ApiClient {
     final uri = Uri.parse('$_scopedUrl/categories/$id');
     final response = await _client.put(
       uri,
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers,
       body: jsonEncode(category.toJson()),
     );
 
@@ -92,7 +102,7 @@ class ApiClient {
 
   Future<void> deleteCategory(String id) async {
     final uri = Uri.parse('$_scopedUrl/categories/$id');
-    final response = await _client.delete(uri);
+    final response = await _client.delete(uri, headers: _headers);
 
     if (response.statusCode != 200) {
       throw Exception('Failed to delete category: ${response.statusCode}');
@@ -105,7 +115,7 @@ class ApiClient {
 
   Future<List<FinanceAccount>> getAccounts() async {
     final uri = Uri.parse('$_scopedUrl/accounts');
-    final response = await _client.get(uri);
+    final response = await _client.get(uri, headers: _headers);
 
     if (response.statusCode == 200) {
       final List<dynamic> json = jsonDecode(response.body);
@@ -119,7 +129,7 @@ class ApiClient {
     final uri = Uri.parse('$_scopedUrl/accounts');
     final response = await _client.post(
       uri,
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers,
       body: jsonEncode(account.toJson()),
     );
 
@@ -134,7 +144,7 @@ class ApiClient {
     final uri = Uri.parse('$_scopedUrl/accounts/$id');
     final response = await _client.put(
       uri,
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers,
       body: jsonEncode(account.toJson()),
     );
 
@@ -147,7 +157,7 @@ class ApiClient {
 
   Future<void> deleteAccount(String id) async {
     final uri = Uri.parse('$_scopedUrl/accounts/$id');
-    final response = await _client.delete(uri);
+    final response = await _client.delete(uri, headers: _headers);
 
     if (response.statusCode != 200) {
       throw Exception('Failed to delete account: ${response.statusCode}');
@@ -162,7 +172,7 @@ class ApiClient {
     final uri = Uri.parse('$_scopedUrl/transactions').replace(
       queryParameters: month != null ? {'month': month} : null,
     );
-    final response = await _client.get(uri);
+    final response = await _client.get(uri, headers: _headers);
 
     if (response.statusCode == 200) {
       final List<dynamic> json = jsonDecode(response.body);
@@ -176,7 +186,7 @@ class ApiClient {
     final uri = Uri.parse('$_scopedUrl/transactions');
     final response = await _client.post(
       uri,
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers,
       body: jsonEncode(expense.toJson()),
     );
 
@@ -191,7 +201,7 @@ class ApiClient {
     final uri = Uri.parse('$_scopedUrl/transactions/$id');
     final response = await _client.put(
       uri,
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers,
       body: jsonEncode(expense.toJson()),
     );
 
@@ -204,7 +214,7 @@ class ApiClient {
 
   Future<void> deleteTransaction(String id) async {
     final uri = Uri.parse('$_scopedUrl/transactions/$id');
-    final response = await _client.delete(uri);
+    final response = await _client.delete(uri, headers: _headers);
 
     if (response.statusCode != 200) {
       throw Exception('Failed to delete transaction: ${response.statusCode}');
@@ -217,7 +227,7 @@ class ApiClient {
 
   Future<MonthlySummary> getMonthlySummary(String month) async {
     final uri = Uri.parse('$_scopedUrl/summary/$month');
-    final response = await _client.get(uri);
+    final response = await _client.get(uri, headers: _headers);
 
     if (response.statusCode == 200) {
       return MonthlySummary.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
@@ -235,7 +245,7 @@ class ApiClient {
       queryParameters: month != null ? {'month': month} : null,
     );
 
-    final response = await _client.get(uri);
+    final response = await _client.get(uri, headers: _headers);
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body) as Map<String, dynamic>;

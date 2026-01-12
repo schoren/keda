@@ -39,11 +39,15 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 
+	// Authentication
+	r.POST("/auth/google", handlers.AuthGoogle)
+
 	// Households
 	r.POST("/households", handlers.CreateHousehold)
 
 	// Scoped routes
 	h := r.Group("/households/:household_id")
+	h.Use(handlers.JWTMiddleware())
 	{
 		// Legacy sync endpoint (for backwards compatibility)
 		h.GET("/sync", handlers.HandleSync)

@@ -10,6 +10,8 @@ services:
       - DB_PASSWORD=postgres
       - DB_NAME=family_finance
       - DB_PORT=5432
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       - db
 
