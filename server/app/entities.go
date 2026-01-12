@@ -7,20 +7,41 @@ import (
 )
 
 var Entities = []any{
+	&Household{},
+	&User{},
 	&Account{},
 	&Category{},
 	&Transaction{},
 }
 
-type Account struct {
+type Household struct {
 	ID        string         `gorm:"type:varchar(255);primaryKey" json:"id"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
-	Type      string         `gorm:"type:varchar(255)" json:"type"`
 	Name      string         `gorm:"type:varchar(255)" json:"name"`
-	Brand     *string        `gorm:"type:varchar(255)" json:"brand,omitempty"`
-	Bank      *string        `gorm:"type:varchar(255)" json:"bank,omitempty"`
+}
+
+type User struct {
+	ID          string         `gorm:"type:varchar(255);primaryKey" json:"id"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+	DeletedAt   gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
+	Email       string         `gorm:"type:varchar(255);unique" json:"email"`
+	Name        string         `gorm:"type:varchar(255)" json:"name"`
+	HouseholdID string         `gorm:"type:varchar(255)" json:"household_id"`
+}
+
+type Account struct {
+	ID          string         `gorm:"type:varchar(255);primaryKey" json:"id"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+	DeletedAt   gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
+	Type        string         `gorm:"type:varchar(255)" json:"type"`
+	Name        string         `gorm:"type:varchar(255)" json:"name"`
+	Brand       *string        `gorm:"type:varchar(255)" json:"brand,omitempty"`
+	Bank        *string        `gorm:"type:varchar(255)" json:"bank,omitempty"`
+	HouseholdID string         `gorm:"type:varchar(255)" json:"household_id"`
 }
 
 type Category struct {
@@ -31,6 +52,7 @@ type Category struct {
 	Name          string         `gorm:"type:varchar(255)" json:"name"`
 	MonthlyBudget float64        `gorm:"type:decimal(10,2)" json:"monthly_budget"`
 	IsActive      bool           `gorm:"type:boolean;default:true" json:"is_active"`
+	HouseholdID   string         `gorm:"type:varchar(255)" json:"household_id"`
 }
 
 type Transaction struct {
@@ -43,4 +65,5 @@ type Transaction struct {
 	Amount      float64        `gorm:"type:decimal(10,2)" json:"amount"`
 	Date        time.Time      `gorm:"type:timestamp" json:"date"`
 	Description string         `gorm:"type:varchar(255)" json:"description"`
+	HouseholdID string         `gorm:"type:varchar(255)" json:"household_id"`
 }

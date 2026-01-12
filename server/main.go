@@ -39,29 +39,36 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 
-	// Legacy sync endpoint (for backwards compatibility)
-	r.GET("/sync", handlers.HandleSync)
+	// Households
+	r.POST("/households", handlers.CreateHousehold)
 
-	// Categories
-	r.GET("/categories", handlers.GetCategories)
-	r.POST("/categories", handlers.CreateCategory)
-	r.PUT("/categories/:id", handlers.UpdateCategory)
-	r.DELETE("/categories/:id", handlers.DeleteCategory)
+	// Scoped routes
+	h := r.Group("/households/:household_id")
+	{
+		// Legacy sync endpoint (for backwards compatibility)
+		h.GET("/sync", handlers.HandleSync)
 
-	// Accounts
-	r.GET("/accounts", handlers.GetAccounts)
-	r.POST("/accounts", handlers.CreateAccount)
-	r.PUT("/accounts/:id", handlers.UpdateAccount)
-	r.DELETE("/accounts/:id", handlers.DeleteAccount)
+		// Categories
+		h.GET("/categories", handlers.GetCategories)
+		h.POST("/categories", handlers.CreateCategory)
+		h.PUT("/categories/:id", handlers.UpdateCategory)
+		h.DELETE("/categories/:id", handlers.DeleteCategory)
 
-	// Transactions
-	r.GET("/transactions", handlers.GetTransactions)
-	r.POST("/transactions", handlers.CreateTransaction)
-	r.PUT("/transactions/:id", handlers.UpdateTransaction)
-	r.DELETE("/transactions/:id", handlers.DeleteTransaction)
+		// Accounts
+		h.GET("/accounts", handlers.GetAccounts)
+		h.POST("/accounts", handlers.CreateAccount)
+		h.PUT("/accounts/:id", handlers.UpdateAccount)
+		h.DELETE("/accounts/:id", handlers.DeleteAccount)
 
-	// Monthly summary
-	r.GET("/summary/:month", handlers.GetMonthlySummary)
+		// Transactions
+		h.GET("/transactions", handlers.GetTransactions)
+		h.POST("/transactions", handlers.CreateTransaction)
+		h.PUT("/transactions/:id", handlers.UpdateTransaction)
+		h.DELETE("/transactions/:id", handlers.DeleteTransaction)
+
+		// Monthly summary
+		h.GET("/summary/:month", handlers.GetMonthlySummary)
+	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -93,4 +100,3 @@ func initDB() {
 		log.Fatalf("Could not run migrations: %v", err)
 	}
 }
-

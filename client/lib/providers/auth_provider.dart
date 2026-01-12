@@ -5,12 +5,14 @@ class AuthState {
   final String? userId;
   final String? userName;
   final String? userEmail;
+  final String? householdId;
 
   AuthState({
     this.isAuthenticated = false,
     this.userId,
     this.userName,
     this.userEmail,
+    this.householdId,
   });
 }
 
@@ -27,6 +29,7 @@ class AuthNotifier extends Notifier<AuthState> {
       userId: 'user123',
       userName: 'User Test',
       userEmail: 'user@test.com',
+      householdId: 'default-household',
     );
   }
 

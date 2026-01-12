@@ -17,12 +17,32 @@ func NewHandlers(db *gorm.DB) *Handlers {
 }
 
 // ============================================================================
+// HOUSEHOLDS
+// ============================================================================
+
+func (h *Handlers) CreateHousehold(c *gin.Context) {
+	var household Household
+	if err := c.ShouldBindJSON(&household); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := h.db.Create(&household).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create household"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, household)
+}
+
+// ============================================================================
 // CATEGORIES
 // ============================================================================
 
 func (h *Handlers) GetCategories(c *gin.Context) {
+	householdID := c.Param("household_id")
 	var categories []Category
-	if err := h.db.Find(&categories).Error; err != nil {
+	if err := h.db.Where("household_id = ?", householdID).Find(&categories).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch categories"})
 		return
 	}
@@ -30,12 +50,14 @@ func (h *Handlers) GetCategories(c *gin.Context) {
 }
 
 func (h *Handlers) CreateCategory(c *gin.Context) {
+	householdID := c.Param("household_id")
 	var category Category
 	if err := c.ShouldBindJSON(&category); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	category.HouseholdID = householdID
 	if err := h.db.Create(&category).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create category"})
 		return
@@ -45,10 +67,11 @@ func (h *Handlers) CreateCategory(c *gin.Context) {
 }
 
 func (h *Handlers) UpdateCategory(c *gin.Context) {
+	householdID := c.Param("household_id")
 	id := c.Param("id")
 
 	var category Category
-	if err := h.db.First(&category, "id = ?", id).Error; err != nil {
+	if err := h.db.Where("household_id = ?", householdID).First(&category, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Category not found"})
 		return
 	}
@@ -73,9 +96,10 @@ func (h *Handlers) UpdateCategory(c *gin.Context) {
 }
 
 func (h *Handlers) DeleteCategory(c *gin.Context) {
+	householdID := c.Param("household_id")
 	id := c.Param("id")
 
-	if err := h.db.Delete(&Category{}, "id = ?", id).Error; err != nil {
+	if err := h.db.Where("household_id = ?", householdID).Delete(&Category{}, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete category"})
 		return
 	}
@@ -88,8 +112,9 @@ func (h *Handlers) DeleteCategory(c *gin.Context) {
 // ============================================================================
 
 func (h *Handlers) GetAccounts(c *gin.Context) {
+	householdID := c.Param("household_id")
 	var accounts []Account
-	if err := h.db.Find(&accounts).Error; err != nil {
+	if err := h.db.Where("household_id = ?", householdID).Find(&accounts).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch accounts"})
 		return
 	}
@@ -97,12 +122,14 @@ func (h *Handlers) GetAccounts(c *gin.Context) {
 }
 
 func (h *Handlers) CreateAccount(c *gin.Context) {
+	householdID := c.Param("household_id")
 	var account Account
 	if err := c.ShouldBindJSON(&account); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	account.HouseholdID = householdID
 	if err := h.db.Create(&account).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create account"})
 		return
@@ -112,10 +139,11 @@ func (h *Handlers) CreateAccount(c *gin.Context) {
 }
 
 func (h *Handlers) UpdateAccount(c *gin.Context) {
+	householdID := c.Param("household_id")
 	id := c.Param("id")
 
 	var account Account
-	if err := h.db.First(&account, "id = ?", id).Error; err != nil {
+	if err := h.db.Where("household_id = ?", householdID).First(&account, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Account not found"})
 		return
 	}
@@ -141,9 +169,10 @@ func (h *Handlers) UpdateAccount(c *gin.Context) {
 }
 
 func (h *Handlers) DeleteAccount(c *gin.Context) {
+	householdID := c.Param("household_id")
 	id := c.Param("id")
 
-	if err := h.db.Delete(&Account{}, "id = ?", id).Error; err != nil {
+	if err := h.db.Where("household_id = ?", householdID).Delete(&Account{}, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete account"})
 		return
 	}
@@ -156,10 +185,11 @@ func (h *Handlers) DeleteAccount(c *gin.Context) {
 // ============================================================================
 
 func (h *Handlers) GetTransactions(c *gin.Context) {
+	householdID := c.Param("household_id")
 	monthStr := c.Query("month")
 	var transactions []Transaction
 
-	query := h.db
+	query := h.db.Where("household_id = ?", householdID)
 	if monthStr != "" {
 		parsed, err := time.Parse("2006-01", monthStr)
 		if err != nil {
@@ -180,12 +210,14 @@ func (h *Handlers) GetTransactions(c *gin.Context) {
 }
 
 func (h *Handlers) CreateTransaction(c *gin.Context) {
+	householdID := c.Param("household_id")
 	var transaction Transaction
 	if err := c.ShouldBindJSON(&transaction); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	transaction.HouseholdID = householdID
 	if err := h.db.Create(&transaction).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create transaction"})
 		return
@@ -195,10 +227,11 @@ func (h *Handlers) CreateTransaction(c *gin.Context) {
 }
 
 func (h *Handlers) UpdateTransaction(c *gin.Context) {
+	householdID := c.Param("household_id")
 	id := c.Param("id")
 
 	var transaction Transaction
-	if err := h.db.First(&transaction, "id = ?", id).Error; err != nil {
+	if err := h.db.Where("household_id = ?", householdID).First(&transaction, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Transaction not found"})
 		return
 	}
@@ -225,9 +258,10 @@ func (h *Handlers) UpdateTransaction(c *gin.Context) {
 }
 
 func (h *Handlers) DeleteTransaction(c *gin.Context) {
+	householdID := c.Param("household_id")
 	id := c.Param("id")
 
-	if err := h.db.Delete(&Transaction{}, "id = ?", id).Error; err != nil {
+	if err := h.db.Where("household_id = ?", householdID).Delete(&Transaction{}, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete transaction"})
 		return
 	}
@@ -248,13 +282,14 @@ type CategorySummary struct {
 }
 
 type MonthlySummary struct {
-	Month      string            `json:"month"`
-	TotalBudget float64          `json:"total_budget"`
-	TotalSpent  float64          `json:"total_spent"`
+	Month       string            `json:"month"`
+	TotalBudget float64           `json:"total_budget"`
+	TotalSpent  float64           `json:"total_spent"`
 	Categories  []CategorySummary `json:"categories"`
 }
 
 func (h *Handlers) GetMonthlySummary(c *gin.Context) {
+	householdID := c.Param("household_id")
 	monthStr := c.Param("month")
 	if monthStr == "" {
 		now := time.Now()
@@ -270,9 +305,9 @@ func (h *Handlers) GetMonthlySummary(c *gin.Context) {
 	startOfMonth := parsed
 	endOfMonth := startOfMonth.AddDate(0, 1, 0)
 
-	// Get all categories
+	// Get all categories for this household
 	var categories []Category
-	if err := h.db.Find(&categories).Error; err != nil {
+	if err := h.db.Where("household_id = ?", householdID).Find(&categories).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch categories"})
 		return
 	}
@@ -315,6 +350,7 @@ func (h *Handlers) GetMonthlySummary(c *gin.Context) {
 // ============================================================================
 
 func (h *Handlers) HandleSync(c *gin.Context) {
+	householdID := c.Param("household_id")
 	monthStr := c.Query("month")
 	var startOfMonth, endOfMonth time.Time
 	now := time.Now()
@@ -332,19 +368,19 @@ func (h *Handlers) HandleSync(c *gin.Context) {
 	endOfMonth = startOfMonth.AddDate(0, 1, 0)
 
 	var accounts []Account
-	if err := h.db.Find(&accounts).Error; err != nil {
+	if err := h.db.Where("household_id = ?", householdID).Find(&accounts).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch accounts"})
 		return
 	}
 
 	var categories []Category
-	if err := h.db.Find(&categories).Error; err != nil {
+	if err := h.db.Where("household_id = ?", householdID).Find(&categories).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch categories"})
 		return
 	}
 
 	var transactions []Transaction
-	if err := h.db.Where("date >= ? AND date < ?", startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
+	if err := h.db.Where("household_id = ? AND date >= ? AND date < ?", householdID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch transactions"})
 		return
 	}

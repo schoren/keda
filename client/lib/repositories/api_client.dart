@@ -33,19 +33,23 @@ class SyncResponse {
 
 class ApiClient {
   final String baseUrl;
+  final String? householdId;
   final http.Client _client;
 
   ApiClient({
     required this.baseUrl,
+    this.householdId,
     http.Client? client,
   }) : _client = client ?? http.Client();
+
+  String get _scopedUrl => '$baseUrl/households/$householdId';
 
   // ============================================================================
   // CATEGORIES
   // ============================================================================
 
   Future<List<Category>> getCategories() async {
-    final uri = Uri.parse('$baseUrl/categories');
+    final uri = Uri.parse('$_scopedUrl/categories');
     final response = await _client.get(uri);
 
     if (response.statusCode == 200) {
@@ -57,7 +61,7 @@ class ApiClient {
   }
 
   Future<Category> createCategory(Category category) async {
-    final uri = Uri.parse('$baseUrl/categories');
+    final uri = Uri.parse('$_scopedUrl/categories');
     final response = await _client.post(
       uri,
       headers: {'Content-Type': 'application/json'},
@@ -72,7 +76,7 @@ class ApiClient {
   }
 
   Future<Category> updateCategory(String id, Category category) async {
-    final uri = Uri.parse('$baseUrl/categories/$id');
+    final uri = Uri.parse('$_scopedUrl/categories/$id');
     final response = await _client.put(
       uri,
       headers: {'Content-Type': 'application/json'},
@@ -87,7 +91,7 @@ class ApiClient {
   }
 
   Future<void> deleteCategory(String id) async {
-    final uri = Uri.parse('$baseUrl/categories/$id');
+    final uri = Uri.parse('$_scopedUrl/categories/$id');
     final response = await _client.delete(uri);
 
     if (response.statusCode != 200) {
@@ -100,7 +104,7 @@ class ApiClient {
   // ============================================================================
 
   Future<List<FinanceAccount>> getAccounts() async {
-    final uri = Uri.parse('$baseUrl/accounts');
+    final uri = Uri.parse('$_scopedUrl/accounts');
     final response = await _client.get(uri);
 
     if (response.statusCode == 200) {
@@ -112,7 +116,7 @@ class ApiClient {
   }
 
   Future<FinanceAccount> createAccount(FinanceAccount account) async {
-    final uri = Uri.parse('$baseUrl/accounts');
+    final uri = Uri.parse('$_scopedUrl/accounts');
     final response = await _client.post(
       uri,
       headers: {'Content-Type': 'application/json'},
@@ -127,7 +131,7 @@ class ApiClient {
   }
 
   Future<FinanceAccount> updateAccount(String id, FinanceAccount account) async {
-    final uri = Uri.parse('$baseUrl/accounts/$id');
+    final uri = Uri.parse('$_scopedUrl/accounts/$id');
     final response = await _client.put(
       uri,
       headers: {'Content-Type': 'application/json'},
@@ -142,7 +146,7 @@ class ApiClient {
   }
 
   Future<void> deleteAccount(String id) async {
-    final uri = Uri.parse('$baseUrl/accounts/$id');
+    final uri = Uri.parse('$_scopedUrl/accounts/$id');
     final response = await _client.delete(uri);
 
     if (response.statusCode != 200) {
@@ -155,7 +159,7 @@ class ApiClient {
   // ============================================================================
 
   Future<List<Expense>> getTransactions({String? month}) async {
-    final uri = Uri.parse('$baseUrl/transactions').replace(
+    final uri = Uri.parse('$_scopedUrl/transactions').replace(
       queryParameters: month != null ? {'month': month} : null,
     );
     final response = await _client.get(uri);
@@ -169,7 +173,7 @@ class ApiClient {
   }
 
   Future<Expense> createTransaction(Expense expense) async {
-    final uri = Uri.parse('$baseUrl/transactions');
+    final uri = Uri.parse('$_scopedUrl/transactions');
     final response = await _client.post(
       uri,
       headers: {'Content-Type': 'application/json'},
@@ -184,7 +188,7 @@ class ApiClient {
   }
 
   Future<Expense> updateTransaction(String id, Expense expense) async {
-    final uri = Uri.parse('$baseUrl/transactions/$id');
+    final uri = Uri.parse('$_scopedUrl/transactions/$id');
     final response = await _client.put(
       uri,
       headers: {'Content-Type': 'application/json'},
@@ -199,7 +203,7 @@ class ApiClient {
   }
 
   Future<void> deleteTransaction(String id) async {
-    final uri = Uri.parse('$baseUrl/transactions/$id');
+    final uri = Uri.parse('$_scopedUrl/transactions/$id');
     final response = await _client.delete(uri);
 
     if (response.statusCode != 200) {
@@ -212,7 +216,7 @@ class ApiClient {
   // ============================================================================
 
   Future<MonthlySummary> getMonthlySummary(String month) async {
-    final uri = Uri.parse('$baseUrl/summary/$month');
+    final uri = Uri.parse('$_scopedUrl/summary/$month');
     final response = await _client.get(uri);
 
     if (response.statusCode == 200) {
@@ -227,7 +231,7 @@ class ApiClient {
   // ============================================================================
 
   Future<SyncResponse> sync({String? month}) async {
-    final uri = Uri.parse('$baseUrl/sync').replace(
+    final uri = Uri.parse('$_scopedUrl/sync').replace(
       queryParameters: month != null ? {'month': month} : null,
     );
 

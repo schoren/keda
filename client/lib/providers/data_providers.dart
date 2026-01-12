@@ -7,6 +7,7 @@ import '../models/monthly_summary.dart';
 import '../repositories/database.dart';
 import '../repositories/local_repository.dart';
 import '../repositories/api_client.dart';
+import '../providers/auth_provider.dart';
 
 // ============================================================================
 // DATABASE & REPOSITORY
@@ -20,8 +21,12 @@ final repositoryProvider = Provider((ref) {
 });
 
 final apiClientProvider = Provider((ref) {
+  final authState = ref.watch(authProvider);
   // TODO: Replace with actual server URL from environment or config
-  return ApiClient(baseUrl: 'http://localhost:8090');
+  return ApiClient(
+    baseUrl: 'http://localhost:8090',
+    householdId: authState.householdId,
+  );
 });
 
 // ============================================================================
