@@ -1,0 +1,14 @@
+[
+  {
+    "id": "acc1",
+    "type": "cash",
+    "name": "Efectivo"
+  },
+  {
+    "id": "acc2",
+    "type": "card",
+    "name": "Visa Débito",
+    "brand": "Visa",
+    "bank": "Galicia"
+  }
+]
