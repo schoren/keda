@@ -116,6 +116,7 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
               TextFormField(
                 controller: _amountController,
                 focusNode: _focusNode,
+                autofocus: true,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
@@ -171,6 +172,7 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
               TextFormField(
                 controller: _noteController,
                 textInputAction: TextInputAction.done,
+                textCapitalization: TextCapitalization.sentences,
                 decoration: const InputDecoration(
                   labelText: 'Nota (opcional)',
                   border: OutlineInputBorder(),
