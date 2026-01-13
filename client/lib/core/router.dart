@@ -9,6 +9,7 @@ import '../views/category_detail_screen.dart';
 import '../views/manage_category_screen.dart';
 import '../views/manage_accounts_screen.dart';
 import '../views/account_form_screen.dart';
+import '../views/members_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   print('DEBUG: GoRouter instance created');
@@ -94,6 +95,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             },
           ),
         ],
+      ),
+      GoRoute(
+        path: '/members',
+        builder: (context, state) => const MembersScreen(),
       ),
     ],
   );

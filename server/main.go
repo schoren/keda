@@ -55,6 +55,10 @@ func main() {
 		// Invitations
 		h.POST("/invites", handlers.CreateInvitation)
 
+		// Members
+		h.GET("/members", handlers.GetMembers)
+		h.DELETE("/members/:user_id", handlers.RemoveMember)
+
 		// Categories
 		h.GET("/categories", handlers.GetCategories)
 		h.POST("/categories", handlers.CreateCategory)

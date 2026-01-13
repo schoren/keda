@@ -88,6 +88,44 @@ func (h *Handlers) CreateInvitation(c *gin.Context) {
 }
 
 // ============================================================================
+// MEMBERS
+// ============================================================================
+
+func (h *Handlers) GetMembers(c *gin.Context) {
+	householdID := c.Param("household_id")
+	var users []User
+	if err := h.db.Where("household_id = ?", householdID).Find(&users).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch members"})
+		return
+	}
+	c.JSON(http.StatusOK, users)
+}
+
+func (h *Handlers) RemoveMember(c *gin.Context) {
+	householdID := c.Param("household_id")
+	userID := c.Param("user_id")
+
+	// Verify user belongs to household
+	var user User
+	if err := h.db.Where("id = ? AND household_id = ?", userID, householdID).First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Member not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		}
+		return
+	}
+
+	// Soft delete the user
+	if err := h.db.Delete(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove member"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Member removed"})
+}
+
+// ============================================================================
 // CATEGORIES
 // ============================================================================
 

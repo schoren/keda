@@ -257,6 +257,33 @@ class ApiClient {
   }
 
   // ============================================================================
+  // MEMBERS
+  // ============================================================================
+
+  Future<List<Map<String, dynamic>>> getMembers() async {
+    final uri = Uri.parse('$_scopedUrl/members');
+    final response = await _client.get(uri, headers: _headers);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> json = jsonDecode(response.body);
+      // We don't have a Member model yet, returning raw maps for now or we can create a simple local one.
+      // For simplicity in this step, let's return List<Map<String, dynamic>>
+      return json.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception('Failed to fetch members: ${response.statusCode}');
+    }
+  }
+
+  Future<void> removeMember(String userId) async {
+    final uri = Uri.parse('$_scopedUrl/members/$userId');
+    final response = await _client.delete(uri, headers: _headers);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to remove member: ${response.statusCode}');
+    }
+  }
+
+  // ============================================================================
   // LEGACY SYNC
   // ============================================================================
 
