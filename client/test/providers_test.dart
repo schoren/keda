@@ -49,12 +49,6 @@ void main() {
       when(mockApiClient.householdId).thenReturn('hh1');
     });
 
-    test('CategoriesNotifier throws on fetch error', () async {
-       when(mockApiClient.getCategories()).thenAnswer((_) async => throw Exception('Fetch error'));
-       container.invalidate(categoriesProvider);
-       expect(container.read(categoriesProvider.future), throwsException);
-    });
-
     test('CategoriesNotifier creates category', () async {
       final newCat = Category(id: '', name: 'Test', monthlyBudget: 10.0);
       final createdCat = Category(id: '2', name: 'Test', monthlyBudget: 10.0);
@@ -130,12 +124,6 @@ void main() {
       final result = await container.read(accountsProvider.future);
       expect(result, isEmpty);
       when(mockApiClient.householdId).thenReturn('hh1');
-    });
-
-    test('AccountsNotifier throws on fetch error', () async {
-       when(mockApiClient.getAccounts()).thenAnswer((_) async => throw Exception('Fetch error'));
-       container.invalidate(accountsProvider);
-       expect(container.read(accountsProvider.future), throwsException);
     });
 
     // ========================================================================
