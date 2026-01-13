@@ -26,7 +26,7 @@ Then, edit the `.env` file with your settings. It is important to configure at l
 From the root of the project, run:
 
 ```bash
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 ### 3. Access the Application

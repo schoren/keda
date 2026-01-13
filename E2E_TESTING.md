@@ -26,7 +26,7 @@ When `TEST_MODE=true`, the server exposes a `/auth/test-login` endpoint that cre
 
 1. **Start the test environment**:
    ```bash
-   docker-compose -f docker-compose.test.yml up -d
+   docker compose -f docker-compose.test.yml up -d
    ```
 
 2. **Wait for services to be ready**:
@@ -45,7 +45,7 @@ When `TEST_MODE=true`, the server exposes a `/auth/test-login` endpoint that cre
 
 4. **Cleanup**:
    ```bash
-   docker-compose -f docker-compose.test.yml down -v
+   docker compose -f docker-compose.test.yml down -v
    ```
 
 ## Test Structure
@@ -106,8 +106,8 @@ The E2E job runs in parallel with unit tests for faster feedback.
 
 Check Docker logs:
 ```bash
-docker-compose -f docker-compose.test.yml logs server
-docker-compose -f docker-compose.test.yml logs db
+docker compose -f docker-compose.test.yml logs server
+docker compose -f docker-compose.test.yml logs db
 ```
 
 ### Authentication fails
