@@ -1,4 +1,12 @@
 services:
+  client:
+    build:
+      context: ./client
+      args:
+        GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+    ports:
+      - "8080:80"
+
   server:
     build:
       context: ./server
