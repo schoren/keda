@@ -18,11 +18,15 @@ import (
 )
 
 type Handlers struct {
-	db *gorm.DB
+	db           *gorm.DB
+	googleAPIURL string
 }
 
 func NewHandlers(db *gorm.DB) *Handlers {
-	return &Handlers{db: db}
+	return &Handlers{
+		db:           db,
+		googleAPIURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+	}
 }
 
 // ============================================================================
@@ -147,6 +151,7 @@ func (h *Handlers) CreateCategory(c *gin.Context) {
 		return
 	}
 
+	category.ID = uuid.New().String()
 	category.HouseholdID = householdID
 	if err := h.db.Create(&category).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create category"})
@@ -222,6 +227,7 @@ func (h *Handlers) CreateAccount(c *gin.Context) {
 		return
 	}
 
+	account.ID = uuid.New().String()
 	account.HouseholdID = householdID
 	if err := h.db.Create(&account).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create account"})
@@ -341,6 +347,7 @@ func (h *Handlers) CreateTransaction(c *gin.Context) {
 		return
 	}
 
+	transaction.ID = uuid.New().String()
 	transaction.HouseholdID = householdID
 	if err := h.db.Create(&transaction).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create transaction"})
@@ -613,7 +620,7 @@ func (h *Handlers) AuthGoogle(c *gin.Context) {
 
 	// Fallback to AccessToken (common in Web)
 	if email == "" && req.AccessToken != "" {
-		userInfo, err := fetchGoogleUserInfo(req.AccessToken)
+		userInfo, err := h.fetchGoogleUserInfo(req.AccessToken)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Google access token"})
 			return
@@ -719,8 +726,8 @@ type GoogleUserInfo struct {
 	Name  string `json:"name"`
 }
 
-func fetchGoogleUserInfo(accessToken string) (*GoogleUserInfo, error) {
-	resp, err := http.Get("https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + accessToken)
+func (h *Handlers) fetchGoogleUserInfo(accessToken string) (*GoogleUserInfo, error) {
+	resp, err := http.Get(h.googleAPIURL + "?access_token=" + accessToken)
 	if err != nil {
 		return nil, err
 	}

@@ -48,6 +48,12 @@ func main() {
 	// Authentication
 	r.POST("/auth/google", handlers.AuthGoogle)
 
+	// Test-only authentication (only enabled when TEST_MODE=true)
+	if os.Getenv("TEST_MODE") == "true" {
+		log.Println("⚠️  TEST MODE ENABLED - Test authentication endpoint available at /auth/test-login")
+		r.POST("/auth/test-login", handlers.TestLogin)
+	}
+
 	// Households
 	r.POST("/households", handlers.CreateHousehold)
 
