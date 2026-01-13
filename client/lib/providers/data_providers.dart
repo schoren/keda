@@ -48,6 +48,9 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
       final current = await future;
       state = AsyncData([...current, created]);
       ref.invalidate(currentMonthSummaryProvider);
+    final now = DateTime.now();
+    final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+    ref.invalidate(monthlySummaryProvider(month));
     } catch (e) {
       if (kDebugMode) print('Failed to create category: $e');
       rethrow;
@@ -63,6 +66,9 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
         current.map((c) => c.id == updated.id ? updated : c).toList(),
       );
       ref.invalidate(currentMonthSummaryProvider);
+    final now = DateTime.now();
+    final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+    ref.invalidate(monthlySummaryProvider(month));
     } catch (e) {
       if (kDebugMode) print('Failed to update category: $e');
       rethrow;
@@ -76,6 +82,9 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
       final current = await future;
       state = AsyncData(current.where((c) => c.id != id).toList());
       ref.invalidate(currentMonthSummaryProvider);
+    final now = DateTime.now();
+    final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+    ref.invalidate(monthlySummaryProvider(month));
     } catch (e) {
       if (kDebugMode) print('Failed to delete category: $e');
       rethrow;
