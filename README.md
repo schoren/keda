@@ -37,6 +37,30 @@ Once the containers are running:
 - **Backend (API):** [http://localhost:8090](http://localhost:8090)
 - **Mailpit (Mail Interface):** [http://localhost:8025](http://localhost:8025)
 
+## Testing
+
+The project includes comprehensive test coverage with automated test runners via Makefile:
+
+```bash
+# Run all tests (unit + integration + E2E)
+make test
+
+# Run specific test suites
+make test-backend    # Go unit tests (87% coverage)
+make test-client     # Flutter unit tests (57% coverage)
+make test-e2e        # End-to-end integration tests
+
+# Quick tests (skip E2E)
+make test-quick
+
+# View all available commands
+make help
+```
+
+**Documentation**:
+- [E2E Testing Guide](E2E_TESTING.md) - How E2E tests work and test authentication
+- [Docker Compose Guide](DOCKER_COMPOSE_GUIDE.md) - Differences between dev and test environments
+
 ## Local Development
 
 If you prefer to run the services independently for development:

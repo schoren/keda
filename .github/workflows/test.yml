@@ -71,3 +71,54 @@ jobs:
           files: ./client/coverage/lcov.info
           flags: client
           fail_ci_if_error: false
+
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Start test environment
+        run: docker-compose -f docker-compose.test.yml up -d
+      
+      - name: Wait for services to be healthy
+        run: |
+          echo "Waiting for server to be ready..."
+          timeout 60 bash -c 'until curl -f http://localhost:8090/health; do sleep 2; done'
+          echo "✅ Server is ready"
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.1'
+          channel: 'stable'
+          cache: true
+      
+      - name: Install Flutter dependencies
+        working-directory: ./client
+        run: flutter pub get
+      
+      - name: Run build_runner
+        working-directory: ./client
+        run: dart run build_runner build --delete-conflicting-outputs
+      
+      - name: Run E2E tests
+        working-directory: ./client
+        run: flutter test integration_test/ --dart-define=API_URL=http://localhost:8090
+      
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          echo "=== Server logs ==="
+          docker-compose -f docker-compose.test.yml logs server
+          echo "=== Database logs ==="
+          docker-compose -f docker-compose.test.yml logs db
+      
+      - name: Cleanup
+        if: always()
+        run: docker-compose -f docker-compose.test.yml down -v
