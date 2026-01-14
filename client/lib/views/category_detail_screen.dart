@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../providers/data_providers.dart';
+import '../models/expense.dart';
+import '../models/category.dart';
+import '../models/user.dart';
 
 class CategoryDetailScreen extends ConsumerWidget {
   final String categoryId;
@@ -39,15 +42,13 @@ class CategoryDetailScreen extends ConsumerWidget {
                    // The user didn't specify, but "Budget" usually implies current month.
                    // Let's filter by current month/year to match the budget view.
                    final now = DateTime.now();
-                   final currentMonthExpenses = expenses.where((e) => 
-                     e.categoryId == categoryId && 
-                     e.date.month == now.month && 
-                     e.date.year == now.year
-                   ).toList();
+                   final currentMonthExpenses = expenses.where((e) {
+                     final localDate = e.date.toLocal();
+                     return e.categoryId == categoryId && 
+                            localDate.month == now.month && 
+                            localDate.year == now.year;
+                   }).toList();
                    
-                   // Sort by date descending
-                   currentMonthExpenses.sort((a, b) => b.date.compareTo(a.date));
-
                    return Column(
                      children: [
                        // Summary Card
@@ -99,34 +100,79 @@ class CategoryDetailScreen extends ConsumerWidget {
                        ),
                        
                        // Expense List
-                       Expanded(
-                         child: currentMonthExpenses.isEmpty 
-                           ? const Center(child: Text('No hay gastos este mes'))
-                           : ListView.builder(
-                               itemCount: currentMonthExpenses.length,
-                               itemBuilder: (context, index) {
-                                 final expense = currentMonthExpenses[index];
-                                 final accountList = accounts.where((a) => a.id == expense.accountId);
-                                 final account = accountList.isNotEmpty ? accountList.first : null; 
-                                 // Actually accounts should exist if expenses exist with that ID ideally.
+                        Expanded(
+                          child: currentMonthExpenses.isEmpty 
+                            ? const Center(child: Text('No hay gastos este mes'))
+                            : (() {
+                                // Group by day for visual separation
+                                final groupedExpenses = <String, List<Expense>>{};
+                                for (final expense in currentMonthExpenses) {
+                                  final dateKey = DateFormat('yyyy-MM-dd').format(expense.date.toLocal());
+                                  groupedExpenses.putIfAbsent(dateKey, () => []).add(expense);
+                                }
 
-                                 return ListTile(
-                                    leading: const CircleAvatar(
-                                      child: Icon(Icons.attach_money),
-                                    ),
-                                    title: Text(expense.note ?? 'Sin nota'),
-                                    subtitle: Text(
-                                      '${DateFormat('dd/MM/yyyy').format(expense.date)} • ${account?.name ?? "Cuenta desconocida"}',
-                                      style: Theme.of(context).textTheme.bodySmall,
-                                    ),
-                                    trailing: Text(
-                                      currencyFormat.format(expense.amount),
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                 );
-                               },
-                             ),
-                       ),
+                                final dateKeys = groupedExpenses.keys.toList();
+
+                                return ListView.builder(
+                                  itemCount: dateKeys.length,
+                                  itemBuilder: (context, index) {
+                                    final dateKey = dateKeys[index];
+                                    final dayExpenses = groupedExpenses[dateKey]!;
+                                    final displayDate = DateFormat.yMMMMEEEEd(Localizations.localeOf(context).toString()).format(dayExpenses.first.date.toLocal());
+
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                                          child: Text(
+                                            displayDate,
+                                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                              color: Theme.of(context).colorScheme.primary,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        ...dayExpenses.map((expense) {
+                                          final accountList = accounts.where((a) => a.id == expense.accountId);
+                                          final account = accountList.isNotEmpty ? accountList.first : null;
+                                          final timeStr = DateFormat.Hm(Localizations.localeOf(context).toString()).format(expense.date.toLocal());
+
+                                          return ListTile(
+                                            leading: const CircleAvatar(
+                                              child: Icon(Icons.attach_money),
+                                            ),
+                                            title: Text(expense.note ?? 'Sin nota'),
+                                            subtitle: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '$timeStr • ${account?.name ?? "Cuenta desconocida"}',
+                                                  style: Theme.of(context).textTheme.bodySmall,
+                                                ),
+                                                if (expense.user != null)
+                                                  Text(
+                                                    'Creado por: ${expense.user!.name}',
+                                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                      fontSize: 10,
+                                                      color: Colors.grey,
+                                                      fontStyle: FontStyle.italic,
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                            trailing: Text(
+                                              currencyFormat.format(expense.amount),
+                                              style: const TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ],
+                                    );
+                                  },
+                                );
+                              })(),
+                        ),
                      ],
                    );
                  },

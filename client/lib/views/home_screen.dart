@@ -17,20 +17,6 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Presupuestos'),
-        actions: [
-          ref.watch(expensesProvider).when(
-            data: (expenses) => Center(child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('Gastos: ${expenses.length}', style: const TextStyle(fontSize: 12)),
-            )),
-            loading: () => const SizedBox(),
-            error: (_, __) => const SizedBox(),
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => ref.read(authProvider.notifier).logout(),
-          ),
-        ],
       ),
       drawer: Drawer(
         child: Column(

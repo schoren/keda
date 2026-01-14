@@ -188,53 +188,28 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
 
   Future<void> addExpense(Expense expense) async {
     final apiClient = ref.read(apiClientProvider);
-    try {
-      final created = await apiClient.createTransaction(expense);
-      final current = await future;
-      state = AsyncData([...current, created]);
-      final now = DateTime.now();
-      final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
-      ref.invalidate(monthlySummaryProvider(month));
-      ref.invalidate(currentMonthSummaryProvider);
-      ref.invalidate(suggestedNotesProvider(expense.categoryId));
-    } catch (e) {
-      if (kDebugMode) print('Failed to add expense: $e');
-      rethrow;
-    }
+    await apiClient.createTransaction(expense);
+    _refreshAll();
   }
 
   Future<void> updateExpense(Expense expense) async {
     final apiClient = ref.read(apiClientProvider);
-    try {
-      final updated = await apiClient.updateTransaction(expense.id, expense);
-      final current = await future;
-      state = AsyncData(
-        current.map((e) => e.id == updated.id ? updated : e).toList(),
-      );
-      final now = DateTime.now();
-      final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
-      ref.invalidate(monthlySummaryProvider(month));
-      ref.invalidate(currentMonthSummaryProvider);
-    } catch (e) {
-      if (kDebugMode) print('Failed to update expense: $e');
-      rethrow;
-    }
+    await apiClient.updateTransaction(expense.id, expense);
+    _refreshAll();
   }
 
   Future<void> deleteExpense(String id) async {
     final apiClient = ref.read(apiClientProvider);
-    try {
-      await apiClient.deleteTransaction(id);
-      final current = await future;
-      state = AsyncData(current.where((e) => e.id != id).toList());
-      final now = DateTime.now();
-      final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
-      ref.invalidate(monthlySummaryProvider(month));
-      ref.invalidate(currentMonthSummaryProvider);
-    } catch (e) {
-      if (kDebugMode) print('Failed to delete expense: $e');
-      rethrow;
-    }
+    await apiClient.deleteTransaction(id);
+    _refreshAll();
+  }
+
+  void _refreshAll() {
+    ref.invalidateSelf();
+    ref.invalidate(currentMonthSummaryProvider);
+    final now = DateTime.now();
+    final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+    ref.invalidate(monthlySummaryProvider(month));
   }
 }
 

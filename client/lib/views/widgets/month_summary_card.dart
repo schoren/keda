@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 
 class MonthSummaryCard extends StatelessWidget {
   final double totalBudget;
@@ -27,8 +28,11 @@ class MonthSummaryCard extends StatelessWidget {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => context.push('/expenses'),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Text(
@@ -78,6 +82,7 @@ class MonthSummaryCard extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 
