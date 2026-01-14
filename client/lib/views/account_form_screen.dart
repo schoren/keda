@@ -58,14 +58,16 @@ class _AccountFormScreenState extends ConsumerState<AccountFormScreen> {
         displayName: '', // Computed by backend
       );
 
+      String resultId = newAccount.id;
       if (widget.accountId != null) {
         await ref.read(accountsProvider.notifier).updateAccount(newAccount);
       } else {
-        await ref.read(accountsProvider.notifier).createAccount(newAccount);
+        final created = await ref.read(accountsProvider.notifier).createAccount(newAccount);
+        resultId = created.id;
       }
 
       if (mounted) {
-        context.pop();
+        context.pop(resultId);
       }
     } catch (e) {
       if (mounted) {

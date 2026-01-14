@@ -22,6 +22,7 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
   final _focusNode = FocusNode();
 
   String? _selectedAccountId;
+  static const String _createNewAccountKey = 'CREATE_NEW_ACCOUNT';
 
   @override
   void initState() {
@@ -135,23 +136,45 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
               const SizedBox(height: 16),
               if (accounts.isNotEmpty)
                 DropdownButtonFormField<String>(
-                  value: _selectedAccountId,
+                  value: accounts.any((a) => a.id == _selectedAccountId) ? _selectedAccountId : null,
                   decoration: const InputDecoration(
                     labelText: 'Cuenta',
                     border: OutlineInputBorder(),
                   ),
-                  items: accounts.map((account) {
-                    return DropdownMenuItem(
-                      value: account.id,
-                      child: Text(account.displayName),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedAccountId = value;
-                    });
+                  items: [
+                    ...accounts.map((account) {
+                      return DropdownMenuItem(
+                        value: account.id,
+                        child: Text(account.displayName),
+                      );
+                    }),
+                    const DropdownMenuItem(
+                      value: _createNewAccountKey,
+                      child: Row(
+                        children: [
+                          Icon(Icons.add, size: 20, color: Colors.indigo),
+                          SizedBox(width: 8),
+                          Text('Añadir nueva cuenta...', 
+                            style: TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) async {
+                    if (value == _createNewAccountKey) {
+                      final newAccountId = await context.push<String>('/manage-accounts/new');
+                      if (newAccountId != null) {
+                        setState(() {
+                          _selectedAccountId = newAccountId;
+                        });
+                      }
+                    } else {
+                      setState(() {
+                        _selectedAccountId = value;
+                      });
+                    }
                   },
-                  validator: (value) => value == null ? 'Selecciona una cuenta' : null,
+                  validator: (value) => (value == null || value == _createNewAccountKey) ? 'Selecciona una cuenta' : null,
                 )
               else
                 Padding(
@@ -161,7 +184,14 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                       const Text('No tienes cuentas creadas.'),
                       const SizedBox(height: 8),
                       ElevatedButton.icon(
-                        onPressed: () => context.push('/manage-accounts/new'),
+                        onPressed: () async {
+                          final newAccountId = await context.push<String>('/manage-accounts/new');
+                          if (newAccountId != null) {
+                            setState(() {
+                              _selectedAccountId = newAccountId;
+                            });
+                          }
+                        },
                         icon: const Icon(Icons.add),
                         label: const Text('Crear mi primera cuenta'),
                       ),

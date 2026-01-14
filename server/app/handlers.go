@@ -211,7 +211,9 @@ func (h *Handlers) CreateCategory(c *gin.Context) {
 		return
 	}
 
-	category.ID = uuid.New().String()
+	if category.ID == "" {
+		category.ID = uuid.New().String()
+	}
 	category.HouseholdID = householdID
 	if err := h.db.Create(&category).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create category"})
@@ -287,7 +289,9 @@ func (h *Handlers) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	account.ID = uuid.New().String()
+	if account.ID == "" {
+		account.ID = uuid.New().String()
+	}
 	account.HouseholdID = householdID
 	if err := h.db.Create(&account).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create account"})
@@ -429,7 +433,9 @@ func (h *Handlers) CreateTransaction(c *gin.Context) {
 		return
 	}
 
-	transaction.ID = uuid.New().String()
+	if transaction.ID == "" {
+		transaction.ID = uuid.New().String()
+	}
 	transaction.HouseholdID = householdID
 	transaction.Date = transaction.Date.UTC()
 

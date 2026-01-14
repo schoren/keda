@@ -1,0 +1,69 @@
+import 'package:family_finance/models/category.dart';
+import 'package:family_finance/models/finance_account.dart';
+import 'package:family_finance/models/account_type.dart';
+import 'package:family_finance/providers/auth_provider.dart';
+import 'package:family_finance/providers/data_providers.dart';
+import 'package:family_finance/views/new_expense_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+
+import '../providers_test.mocks.dart';
+
+void main() {
+  late MockApiClient mockApiClient;
+  const categoryId = 'cat1';
+
+  setUp(() {
+    mockApiClient = MockApiClient();
+    when(mockApiClient.householdId).thenReturn('hh1');
+  });
+
+  testWidgets('NewExpenseScreen shows "Añadir nueva cuenta..." in accounts dropdown', (tester) async {
+    final categories = [Category(id: categoryId, name: 'Food', monthlyBudget: 100)];
+    final accounts = [FinanceAccount(id: 'acc1', name: 'Cash', type: AccountType.cash, displayName: 'Cash')];
+
+    when(mockApiClient.getCategories()).thenAnswer((_) async => categories);
+    when(mockApiClient.getAccounts()).thenAnswer((_) async => accounts);
+    when(mockApiClient.getSuggestedNotes(categoryId)).thenAnswer((_) async => []);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          apiClientProvider.overrideWithValue(mockApiClient),
+          authProvider.overrideWith(() => MockAuthNotifier()),
+        ],
+        child: const MaterialApp(
+          home: NewExpenseScreen(categoryId: categoryId),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Find the dropdown by label
+    final dropdown = find.byType(DropdownButtonFormField<String>);
+    expect(dropdown, findsOneWidget);
+
+    // Open dropdown
+    await tester.tap(dropdown);
+    await tester.pumpAndSettle();
+
+    // Verify option exists
+    expect(find.text('Añadir nueva cuenta...'), findsOneWidget);
+  });
+}
+
+class MockAuthNotifier extends AuthNotifier {
+  @override
+  AuthState build() {
+    return AuthState(
+      isAuthenticated: true,
+      userId: 'user1',
+      userName: 'Test User',
+      userEmail: 'test@example.com',
+      householdId: 'hh1',
+    );
+  }
+}

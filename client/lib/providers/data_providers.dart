@@ -42,7 +42,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
     }
   }
 
-  Future<void> createCategory(Category category) async {
+  Future<Category> createCategory(Category category) async {
     final apiClient = ref.read(apiClientProvider);
     try {
       final created = await apiClient.createCategory(category);
@@ -52,6 +52,7 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
     final now = DateTime.now();
     final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
     ref.invalidate(monthlySummaryProvider(month));
+    return created;
     } catch (e) {
       if (kDebugMode) print('Failed to create category: $e');
       rethrow;
@@ -118,12 +119,13 @@ class AccountsNotifier extends AsyncNotifier<List<FinanceAccount>> {
     }
   }
 
-  Future<void> createAccount(FinanceAccount account) async {
+  Future<FinanceAccount> createAccount(FinanceAccount account) async {
     final apiClient = ref.read(apiClientProvider);
     try {
       final created = await apiClient.createAccount(account);
       final current = await future;
       state = AsyncData([...current, created]);
+      return created;
     } catch (e) {
       if (kDebugMode) print('Failed to create account: $e');
       rethrow;
