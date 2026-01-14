@@ -20,7 +20,7 @@ class _AccountFormScreenState extends ConsumerState<AccountFormScreen> {
   final _nameController = TextEditingController();
   final _bankController = TextEditingController();
   
-  AccountType _selectedType = AccountType.cash;
+  AccountType _selectedType = AccountType.card; // Default to card instead of cash
   String? _selectedBrand;
   bool _isLoading = false;
   bool _isInitialized = false;
@@ -58,14 +58,16 @@ class _AccountFormScreenState extends ConsumerState<AccountFormScreen> {
         displayName: '', // Computed by backend
       );
 
+      String resultId = newAccount.id;
       if (widget.accountId != null) {
         await ref.read(accountsProvider.notifier).updateAccount(newAccount);
       } else {
-        await ref.read(accountsProvider.notifier).createAccount(newAccount);
+        final created = await ref.read(accountsProvider.notifier).createAccount(newAccount);
+        resultId = created.id;
       }
 
       if (mounted) {
-        context.pop();
+        context.pop(resultId);
       }
     } catch (e) {
       if (mounted) {
@@ -99,17 +101,17 @@ class _AccountFormScreenState extends ConsumerState<AccountFormScreen> {
             );
           }
           _initializeFromAccount(account);
-          return _buildForm(context, isEditing);
+          return _buildForm(context, isEditing, accountsAsync);
         },
         loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
         error: (err, _) => Scaffold(body: Center(child: Text('Error: $err'))),
       );
     }
 
-    return _buildForm(context, isEditing);
+    return _buildForm(context, isEditing, accountsAsync);
   }
 
-  Widget _buildForm(BuildContext context, bool isEditing) {
+  Widget _buildForm(BuildContext context, bool isEditing, AsyncValue<List<FinanceAccount>> accountsAsync) {
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Editar Cuenta' : 'Nueva Cuenta'),
@@ -127,10 +129,11 @@ class _AccountFormScreenState extends ConsumerState<AccountFormScreen> {
                   labelText: 'Tipo',
                   border: OutlineInputBorder(),
                 ),
-                items: const [
-                  DropdownMenuItem(value: AccountType.cash, child: Text('Efectivo')),
-                  DropdownMenuItem(value: AccountType.card, child: Text('Tarjeta')),
-                  DropdownMenuItem(value: AccountType.bank, child: Text('Cuenta Bancaria')),
+                items: [
+                  if (!isEditing && accountsAsync.maybeWhen(data: (accounts) => !accounts.any((a) => a.type == AccountType.cash), orElse: () => true))
+                    const DropdownMenuItem(value: AccountType.cash, child: Text('Efectivo')),
+                  const DropdownMenuItem(value: AccountType.card, child: Text('Tarjeta')),
+                  const DropdownMenuItem(value: AccountType.bank, child: Text('Cuenta Bancaria')),
                 ],
                 onChanged: (value) {
                   if (value != null) setState(() => _selectedType = value);

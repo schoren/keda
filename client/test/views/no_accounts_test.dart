@@ -1,0 +1,59 @@
+import 'package:family_finance/models/category.dart';
+import 'package:family_finance/models/finance_account.dart';
+import 'package:family_finance/providers/auth_provider.dart';
+import 'package:family_finance/providers/data_providers.dart';
+import 'package:family_finance/views/new_expense_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+
+import '../providers_test.mocks.dart';
+
+void main() {
+  late MockApiClient mockApiClient;
+  const categoryId = 'cat1';
+
+  setUp(() {
+    mockApiClient = MockApiClient();
+    when(mockApiClient.householdId).thenReturn('hh1');
+  });
+
+  testWidgets('NewExpenseScreen shows "Crear mi primera cuenta" when no accounts exist', (tester) async {
+    final categories = [Category(id: categoryId, name: 'Food', monthlyBudget: 100)];
+
+    when(mockApiClient.getCategories()).thenAnswer((_) async => categories);
+    when(mockApiClient.getAccounts()).thenAnswer((_) async => []);
+    when(mockApiClient.getSuggestedNotes(categoryId)).thenAnswer((_) async => []);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          apiClientProvider.overrideWithValue(mockApiClient),
+          authProvider.overrideWith(() => MockAuthNotifier()),
+        ],
+        child: const MaterialApp(
+          home: NewExpenseScreen(categoryId: categoryId),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Verify button exists
+    expect(find.text('Crear mi primera cuenta'), findsOneWidget);
+  });
+}
+
+class MockAuthNotifier extends AuthNotifier {
+  @override
+  AuthState build() {
+    return AuthState(
+      isAuthenticated: true,
+      userId: 'user1',
+      userName: 'Test User',
+      userEmail: 'test@example.com',
+      householdId: 'hh1',
+    );
+  }
+}
