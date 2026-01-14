@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../providers/data_providers.dart';
+import '../models/expense.dart';
+import '../models/category.dart';
+import '../models/user.dart';
 
 class ExpensesScreen extends ConsumerWidget {
   const ExpensesScreen({super.key});
@@ -36,40 +39,70 @@ class ExpensesScreen extends ConsumerWidget {
                     return const Center(child: Text('No hay gastos este mes'));
                   }
 
-                  return ListView.builder(
-                    itemCount: currentMonthExpenses.length,
-                    itemBuilder: (context, index) {
-                      final expense = currentMonthExpenses[index];
-                      final account = accounts.firstWhere((a) => a.id == expense.accountId, orElse: () => accounts.first);
-                      final category = categories.firstWhere((c) => c.id == expense.categoryId, orElse: () => categories.first);
+                  // Group by day for visual separation
+                  final groupedExpenses = <String, List<Expense>>{};
+                  for (final expense in currentMonthExpenses) {
+                    final dateKey = DateFormat('yyyy-MM-dd').format(expense.date.toLocal());
+                    groupedExpenses.putIfAbsent(dateKey, () => []).add(expense);
+                  }
 
-                      return ListTile(
-                        leading: const CircleAvatar(
-                          child: Icon(Icons.receipt_long),
-                        ),
-                        title: Text(expense.note ?? 'Sin nota'),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${DateFormat('dd/MM/yyyy').format(expense.date.toLocal())} • ${category.name} • ${account.name}',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            if (expense.user != null)
-                              Text(
-                                'Creado por: ${expense.user!.name}',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  fontSize: 10,
-                                  color: Colors.grey,
-                                  fontStyle: FontStyle.italic,
-                                ),
+                  final dateKeys = groupedExpenses.keys.toList();
+
+                  return ListView.builder(
+                    itemCount: dateKeys.length,
+                    itemBuilder: (context, index) {
+                      final dateKey = dateKeys[index];
+                      final dayExpenses = groupedExpenses[dateKey]!;
+                      final displayDate = DateFormat.yMMMMEEEEd(Localizations.localeOf(context).toString()).format(dayExpenses.first.date.toLocal());
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                            child: Text(
+                              displayDate,
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontWeight: FontWeight.bold,
                               ),
-                          ],
-                        ),
-                        trailing: Text(
-                          currencyFormat.format(expense.amount),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                            ),
+                          ),
+                          ...dayExpenses.map((expense) {
+                            final account = accounts.firstWhere((a) => a.id == expense.accountId, orElse: () => accounts.first);
+                            final category = categories.firstWhere((c) => c.id == expense.categoryId, orElse: () => categories.first);
+                            final timeStr = DateFormat.Hm(Localizations.localeOf(context).toString()).format(expense.date.toLocal());
+
+                            return ListTile(
+                              leading: const CircleAvatar(
+                                child: Icon(Icons.receipt_long),
+                              ),
+                              title: Text(expense.note ?? 'Sin nota'),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '$timeStr • ${category.name} • ${account.name}',
+                                    style: Theme.of(context).textTheme.bodySmall,
+                                  ),
+                                  if (expense.user != null)
+                                    Text(
+                                      'Creado por: ${expense.user!.name}',
+                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        fontSize: 10,
+                                        color: Colors.grey,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              trailing: Text(
+                                currencyFormat.format(expense.amount),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            );
+                          }).toList(),
+                        ],
                       );
                     },
                   );
