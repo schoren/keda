@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import '../providers/data_providers.dart';
 import '../models/expense.dart';
 import '../models/category.dart';
@@ -104,28 +106,101 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
   }
 
   Widget _buildForm(BuildContext context, Category category, List<FinanceAccount> accounts) {
+    final remaining = ref.watch(categoryRemainingProvider(category.id));
+    final currencyFormat = NumberFormat.currency(locale: Localizations.localeOf(context).toString(), symbol: '\$');
+
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        title: Text('Gasto en ${category.name}'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          category.name.toUpperCase(),
+          style: GoogleFonts.inter(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+            color: const Color(0xFF64748B),
+            letterSpacing: 1.0,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Impact Preview
+              Center(
+                child: ListenableBuilder(
+                  listenable: _amountController,
+                  builder: (context, _) {
+                    final inputAmount = double.tryParse(_amountController.text) ?? 0.0;
+                    final result = remaining - inputAmount;
+                    final isNegative = result < 0;
+
+                    return Column(
+                      children: [
+                        Text(
+                          currencyFormat.format(remaining),
+                          style: GoogleFonts.jetbrainsMono(
+                            fontSize: 18,
+                            color: const Color(0xFF64748B),
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          currencyFormat.format(result),
+                          style: GoogleFonts.jetbrainsMono(
+                            fontSize: 48,
+                            fontWeight: FontWeight.bold,
+                            color: isNegative ? const Color(0xFFEF4444) : const Color(0xFF22C55E),
+                          ),
+                        ),
+                        Text(
+                          'RESTANTE',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF64748B),
+                            letterSpacing: 2.0,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 48),
+              Text(
+                'MONTO',
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF64748B),
+                  letterSpacing: 1.0,
+                ),
+              ),
+              const SizedBox(height: 8),
               TextFormField(
                 controller: _amountController,
                 focusNode: _focusNode,
                 autofocus: true,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  labelText: 'Monto',
+                style: GoogleFonts.jetbrainsMono(fontSize: 32, fontWeight: FontWeight.bold),
+                decoration: InputDecoration(
                   prefixText: '\$ ',
-                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.all(20),
                 ),
-                style: const TextStyle(fontSize: 24),
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'Ingresa un monto';
                   final amount = double.tryParse(value);
@@ -133,13 +208,29 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+              Text(
+                'CUENTA',
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF64748B),
+                  letterSpacing: 1.0,
+                ),
+              ),
+              const SizedBox(height: 8),
               if (accounts.isNotEmpty)
                 DropdownButtonFormField<String>(
                   value: accounts.any((a) => a.id == _selectedAccountId) ? _selectedAccountId : null,
-                  decoration: const InputDecoration(
-                    labelText: 'Cuenta',
-                    border: OutlineInputBorder(),
+                  style: GoogleFonts.inter(color: const Color(0xFF0F172A), fontSize: 16),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   ),
                   items: [
                     ...accounts.map((account) {
@@ -152,10 +243,10 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                       value: _createNewAccountKey,
                       child: Row(
                         children: [
-                          Icon(Icons.add, size: 20, color: Colors.indigo),
+                          Icon(Icons.add, size: 20, color: Color(0xFF22C55E)),
                           SizedBox(width: 8),
                           Text('Añadir nueva cuenta...', 
-                            style: TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold)),
+                            style: TextStyle(color: Color(0xFF22C55E), fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -177,12 +268,16 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                   validator: (value) => (value == null || value == _createNewAccountKey) ? 'Selecciona una cuenta' : null,
                 )
               else
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   child: Column(
                     children: [
                       const Text('No tienes cuentas creadas.'),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
                       ElevatedButton.icon(
                         onPressed: () async {
                           final newAccountId = await context.push<String>('/manage-accounts/new');
@@ -198,7 +293,17 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                     ],
                   ),
                 ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+              Text(
+                'NOTA (OPCIONAL)',
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF64748B),
+                  letterSpacing: 1.0,
+                ),
+              ),
+              const SizedBox(height: 8),
               Autocomplete<String>(
                 optionsBuilder: (TextEditingValue textEditingValue) {
                   final suggestions = ref.read(suggestedNotesProvider(widget.categoryId)).value ?? [];
@@ -218,9 +323,15 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                     focusNode: focusNode,
                     textInputAction: TextInputAction.done,
                     textCapitalization: TextCapitalization.sentences,
-                    decoration: const InputDecoration(
-                      labelText: 'Nota (opcional)',
-                      border: OutlineInputBorder(),
+                    style: GoogleFonts.inter(fontSize: 16),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.all(20),
                     ),
                     onChanged: (value) {
                       _noteController.text = value;
@@ -229,15 +340,28 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                   );
                 },
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 48),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: accounts.isEmpty ? null : _save,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: const Color(0xFF22C55E),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    elevation: 0,
                   ),
-                  child: const Text('GUARDAR', style: TextStyle(fontSize: 18)),
+                  child: Text(
+                    'GUARDAR GASTO', 
+                    style: GoogleFonts.inter(
+                      fontSize: 16, 
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
                 ),
               ),
             ],
