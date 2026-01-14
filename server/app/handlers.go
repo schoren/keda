@@ -45,6 +45,17 @@ func (h *Handlers) CreateHousehold(c *gin.Context) {
 		return
 	}
 
+	// Auto-create mandatory cash account
+	cashAccount := Account{
+		ID:          uuid.New().String(),
+		HouseholdID: household.ID,
+		Type:        "cash",
+		Name:        "Efectivo",
+	}
+	if err := h.db.Create(&cashAccount).Error; err != nil {
+		log.Printf("Warning: Failed to create default cash account for household %s: %v", household.ID, err)
+	}
+
 	c.JSON(http.StatusCreated, household)
 }
 
@@ -289,6 +300,11 @@ func (h *Handlers) CreateAccount(c *gin.Context) {
 		return
 	}
 
+	if account.Type == "cash" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot create additional cash accounts"})
+		return
+	}
+
 	if account.ID == "" {
 		account.ID = uuid.New().String()
 	}
@@ -306,31 +322,36 @@ func (h *Handlers) UpdateAccount(c *gin.Context) {
 	householdID := c.Param("household_id")
 	id := c.Param("id")
 
-	var account Account
-	if err := h.db.Where("household_id = ?", householdID).First(&account, "id = ?", id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Account not found"})
-		return
-	}
-
 	var updates Account
 	if err := c.ShouldBindJSON(&updates); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Update fields
-	account.Type = updates.Type
-	account.Name = updates.Name
-	account.Brand = updates.Brand
-	account.Bank = updates.Bank
+	var existing Account
+	if err := h.db.First(&existing, "id = ? AND household_id = ?", id, householdID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Account not found"})
+		return
+	}
 
-	if err := h.db.Save(&account).Error; err != nil {
+	if existing.Type == "cash" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Cannot edit mandatory cash account"})
+		return
+	}
+
+	// Update fields
+	existing.Type = updates.Type
+	existing.Name = updates.Name
+	existing.Brand = updates.Brand
+	existing.Bank = updates.Bank
+
+	if err := h.db.Save(&existing).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update account"})
 		return
 	}
 
-	h.populateAccountDisplayName(&account)
-	c.JSON(http.StatusOK, account)
+	h.populateAccountDisplayName(&existing)
+	c.JSON(http.StatusOK, existing)
 }
 
 func (h *Handlers) populateAccountDisplayName(a *Account) {
@@ -366,7 +387,18 @@ func (h *Handlers) DeleteAccount(c *gin.Context) {
 	householdID := c.Param("household_id")
 	id := c.Param("id")
 
-	if err := h.db.Where("household_id = ?", householdID).Delete(&Account{}, "id = ?", id).Error; err != nil {
+	var account Account
+	if err := h.db.First(&account, "id = ? AND household_id = ?", id, householdID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Account not found"})
+		return
+	}
+
+	if account.Type == "cash" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Cannot delete mandatory cash account"})
+		return
+	}
+
+	if err := h.db.Delete(&account).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete account"})
 		return
 	}

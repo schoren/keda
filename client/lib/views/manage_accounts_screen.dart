@@ -36,12 +36,16 @@ class ManageAccountsScreen extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () => context.push('/manage-accounts/edit/${account.id}'),
+                    icon: Icon(Icons.edit, color: account.type == AccountType.cash ? Colors.grey : Colors.blue),
+                    onPressed: account.type == AccountType.cash 
+                      ? null 
+                      : () => context.push('/manage-accounts/edit/${account.id}'),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _showDeleteConfirmation(context, ref, account),
+                    icon: Icon(Icons.delete, color: account.type == AccountType.cash ? Colors.grey : Colors.red),
+                    onPressed: account.type == AccountType.cash 
+                      ? null 
+                      : () => _showDeleteConfirmation(context, ref, account),
                   ),
                 ],
               ),
