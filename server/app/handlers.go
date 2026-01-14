@@ -379,7 +379,7 @@ func (h *Handlers) GetTransactions(c *gin.Context) {
 	monthStr := c.Query("month")
 	transactions := []Transaction{}
 
-	query := h.db.Where("household_id = ?", householdID)
+	query := h.db.Preload("User").Where("household_id = ?", householdID).Order("date DESC, created_at DESC")
 	if monthStr != "" {
 		parsed, err := time.Parse("2006-01", monthStr)
 		if err != nil {
@@ -431,10 +431,19 @@ func (h *Handlers) CreateTransaction(c *gin.Context) {
 
 	transaction.ID = uuid.New().String()
 	transaction.HouseholdID = householdID
+
+	userID, _ := c.Get("user_id")
+	if id, ok := userID.(string); ok {
+		transaction.UserID = id
+	}
+
 	if err := h.db.Create(&transaction).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create transaction"})
 		return
 	}
+
+	// Preload user for consistent frontend experience
+	h.db.Preload("User").First(&transaction, "id = ?", transaction.ID)
 
 	c.JSON(http.StatusCreated, transaction)
 }
@@ -466,6 +475,9 @@ func (h *Handlers) UpdateTransaction(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update transaction"})
 		return
 	}
+
+	// Preload user for consistent frontend experience
+	h.db.Preload("User").First(&transaction, "id = ?", transaction.ID)
 
 	c.JSON(http.StatusOK, transaction)
 }
@@ -593,7 +605,7 @@ func (h *Handlers) HandleSync(c *gin.Context) {
 	}
 
 	transactions := []Transaction{}
-	if err := h.db.Where("household_id = ? AND date >= ? AND date < ?", householdID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
+	if err := h.db.Preload("User").Where("household_id = ? AND date >= ? AND date < ?", householdID, startOfMonth, endOfMonth).Order("date DESC, created_at DESC").Find(&transactions).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch transactions"})
 		return
 	}

@@ -10,6 +10,7 @@ import '../views/manage_category_screen.dart';
 import '../views/manage_accounts_screen.dart';
 import '../views/account_form_screen.dart';
 import '../views/members_screen.dart';
+import '../views/expenses_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   print('DEBUG: GoRouter instance created');
@@ -49,6 +50,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/expenses',
+        builder: (context, state) => const ExpensesScreen(),
       ),
       GoRoute(
         path: '/invite',

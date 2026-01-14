@@ -756,3 +756,45 @@ func TestGetSuggestedNotes(t *testing.T) {
 	assert.Contains(t, notes, "Bread")
 	assert.NotContains(t, notes, "Fuel")
 }
+
+func TestTransactionCreatorInfo(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	db := setupTestDB()
+	h := NewHandlers(db)
+	householdID := "test-hh"
+	userID := "user-1"
+
+	// Create user
+	db.Create(&User{ID: userID, Name: "Test User", HouseholdID: householdID})
+
+	r := gin.Default()
+	r.Use(func(c *gin.Context) {
+		c.Set("user_id", userID)
+		c.Next()
+	})
+	r.POST("/households/:household_id/transactions", h.CreateTransaction)
+	r.GET("/households/:household_id/transactions", h.GetTransactions)
+
+	// 1. Create Transaction
+	newTx := Transaction{Amount: 50.0, Date: time.Now(), CategoryID: "cat1", AccountID: "acc1"}
+	body, _ := json.Marshal(newTx)
+	req, _ := http.NewRequest("POST", "/households/"+householdID+"/transactions", bytes.NewBuffer(body))
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusCreated, w.Code)
+
+	var created Transaction
+	json.Unmarshal(w.Body.Bytes(), &created)
+	assert.Equal(t, userID, created.UserID)
+
+	// 2. Get Transactions (verify Preload)
+	req, _ = http.NewRequest("GET", "/households/"+householdID+"/transactions", nil)
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var transactions []Transaction
+	json.Unmarshal(w.Body.Bytes(), &transactions)
+	assert.Len(t, transactions, 1)
+	assert.Equal(t, "Test User", transactions[0].User.Name)
+}

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'user.dart';
 
 part 'expense.g.dart';
 
@@ -8,6 +9,8 @@ class Expense {
   final DateTime date;
   final String categoryId;
   final String accountId;
+  final String? userId;
+  final User? user;
   final double amount;
   final String? note;
 
@@ -16,6 +19,8 @@ class Expense {
     required this.date,
     required this.categoryId,
     required this.accountId,
+    this.userId,
+    this.user,
     required this.amount,
     this.note,
   });

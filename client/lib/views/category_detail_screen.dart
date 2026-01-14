@@ -45,9 +45,6 @@ class CategoryDetailScreen extends ConsumerWidget {
                      e.date.year == now.year
                    ).toList();
                    
-                   // Sort by date descending
-                   currentMonthExpenses.sort((a, b) => b.date.compareTo(a.date));
-
                    return Column(
                      children: [
                        // Summary Card
@@ -110,20 +107,34 @@ class CategoryDetailScreen extends ConsumerWidget {
                                  final account = accountList.isNotEmpty ? accountList.first : null; 
                                  // Actually accounts should exist if expenses exist with that ID ideally.
 
-                                 return ListTile(
+                                  return ListTile(
                                     leading: const CircleAvatar(
                                       child: Icon(Icons.attach_money),
                                     ),
                                     title: Text(expense.note ?? 'Sin nota'),
-                                    subtitle: Text(
-                                      '${DateFormat('dd/MM/yyyy').format(expense.date)} • ${account?.name ?? "Cuenta desconocida"}',
-                                      style: Theme.of(context).textTheme.bodySmall,
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${DateFormat('dd/MM/yyyy').format(expense.date)} • ${account?.name ?? "Cuenta desconocida"}',
+                                          style: Theme.of(context).textTheme.bodySmall,
+                                        ),
+                                        if (expense.user != null)
+                                          Text(
+                                            'Creado por: ${expense.user!.name}',
+                                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                              fontSize: 10,
+                                              color: Colors.grey,
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                      ],
                                     ),
                                     trailing: Text(
                                       currencyFormat.format(expense.amount),
                                       style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
-                                 );
+                                  );
                                },
                              ),
                        ),
