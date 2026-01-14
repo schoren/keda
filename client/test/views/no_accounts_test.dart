@@ -46,6 +46,9 @@ void main() {
     );
 
     await tester.pumpAndSettle();
+    
+    // Wait for focus delay timer
+    await tester.pump(const Duration(milliseconds: 250));
 
     // Verify button exists
     expect(find.text('Crear mi primera cuenta'), findsOneWidget);

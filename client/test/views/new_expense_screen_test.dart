@@ -50,6 +50,9 @@ void main() {
 
     // Initial load
     await tester.pumpAndSettle();
+    
+    // Wait for focus delay timer
+    await tester.pump(const Duration(milliseconds: 250));
 
     // Find the note field by label
     final noteField = find.widgetWithText(TextFormField, 'NOTA (OPCIONAL)');
@@ -96,6 +99,9 @@ void main() {
     );
 
     await tester.pumpAndSettle();
+    
+    // Wait for focus delay timer
+    await tester.pump(const Duration(milliseconds: 250));
 
     final dropdown = find.byType(DropdownButtonFormField<String>);
     expect(dropdown, findsOneWidget);
@@ -126,6 +132,9 @@ void main() {
     );
 
     await tester.pumpAndSettle();
+    
+    // Wait for focus delay timer
+    await tester.pump(const Duration(milliseconds: 250));
 
     expect(find.text('Crear mi primera cuenta'), findsOneWidget);
   });

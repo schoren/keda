@@ -29,8 +29,10 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNode.requestFocus();
+    Future.delayed(const Duration(milliseconds: 250), () {
+      if (mounted) {
+        _focusNode.requestFocus();
+      }
     });
   }
 
@@ -111,94 +113,93 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          category.name.toUpperCase(),
-          style: GoogleFonts.inter(
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-            color: const Color(0xFF64748B),
-            letterSpacing: 1.0,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Impact Preview
-              Center(
-                child: ListenableBuilder(
-                  listenable: _amountController,
-                  builder: (context, _) {
-                    final inputAmount = double.tryParse(_amountController.text) ?? 0.0;
-                    final result = remaining - inputAmount;
-                    final isNegative = result < 0;
-
-                    return Column(
-                      children: [
-                        Text(
-                          currencyFormat.format(remaining),
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 18,
-                            color: const Color(0xFF64748B),
-                            decoration: TextDecoration.lineThrough,
+      body: GestureDetector(
+        onTap: () => _focusNode.requestFocus(),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Impact Preview
+                Center(
+                  child: ListenableBuilder(
+                    listenable: _amountController,
+                    builder: (context, _) {
+                      final inputAmount = double.tryParse(_amountController.text) ?? 0.0;
+                      final result = remaining - inputAmount;
+                      final isNegative = result < 0;
+  
+                      return Column(
+                        children: [
+                          Text(
+                            currencyFormat.format(remaining),
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: const Color(0xFF64748B),
+                              letterSpacing: 1.0,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          currencyFormat.format(result),
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 48,
-                            fontWeight: FontWeight.bold,
-                            color: isNegative ? const Color(0xFFEF4444) : const Color(0xFF22C55E),
+                          const SizedBox(height: 8),
+                          Text(
+                            currencyFormat.format(remaining),
+                            style: GoogleFonts.jetBrainsMono(
+                              fontSize: 18,
+                              color: const Color(0xFF64748B),
+                              decoration: TextDecoration.lineThrough,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'RESTANTE',
-                          style: GoogleFonts.inter(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF64748B),
-                            letterSpacing: 2.0,
+                          const SizedBox(height: 8),
+                          Text(
+                            currencyFormat.format(result),
+                            style: GoogleFonts.jetBrainsMono(
+                              fontSize: 48,
+                              fontWeight: FontWeight.bold,
+                              color: isNegative ? const Color(0xFFEF4444) : const Color(0xFF22C55E),
+                            ),
                           ),
-                        ),
-                      ],
-                    );
+                          Text(
+                            'RESTANTE',
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF64748B),
+                              letterSpacing: 2.0,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 48),
+                TextFormField(
+                  controller: _amountController,
+                  focusNode: _focusNode,
+                  autofocus: false,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  textInputAction: TextInputAction.next,
+                  style: GoogleFonts.jetBrainsMono(fontSize: 32, fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    labelText: 'MONTO',
+                    prefixText: '\$ ',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.all(20),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Ingresa un monto';
+                    final amount = double.tryParse(value);
+                    if (amount == null || amount <= 0) return 'Monto inválido';
+                    return null;
                   },
                 ),
-              ),
-              const SizedBox(height: 48),
-              TextFormField(
-                controller: _amountController,
-                focusNode: _focusNode,
-                autofocus: true,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                textInputAction: TextInputAction.next,
-                style: GoogleFonts.jetBrainsMono(fontSize: 32, fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  labelText: 'MONTO',
-                  prefixText: '\$ ',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.all(20),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) return 'Ingresa un monto';
-                  final amount = double.tryParse(value);
-                  if (amount == null || amount <= 0) return 'Monto inválido';
-                  return null;
-                },
-              ),
               const SizedBox(height: 24),
               if (accounts.isNotEmpty)
                 DropdownButtonFormField<String>(
@@ -336,8 +337,9 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                     ),
                   ),
                 ),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
