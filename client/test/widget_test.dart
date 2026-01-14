@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:family_finance/views/widgets/month_summary_card.dart';
+import 'package:keda/views/widgets/month_summary_card.dart';
 
 void main() {
   testWidgets('MonthSummaryCard shows correct budget and spent values', (WidgetTester tester) async {

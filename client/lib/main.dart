@@ -26,7 +26,7 @@ class MyApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
-      title: 'Family Finance',
+      title: 'Keda',
       theme: ThemeData(
         primarySwatch: Colors.indigo,
         useMaterial3: true,

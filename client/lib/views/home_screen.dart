@@ -27,7 +27,7 @@ class HomeScreen extends ConsumerWidget {
               ),
               child: const Center(
                 child: Text(
-                  'Family Finance',
+                  'Keda',
                   style: TextStyle(color: Colors.white, fontSize: 24),
                 ),
               ),
