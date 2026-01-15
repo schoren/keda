@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../providers/data_providers.dart';
+import '../utils/formatters.dart';
 import '../models/expense.dart';
 import '../models/category.dart';
 import '../models/user.dart';
@@ -15,7 +16,7 @@ class ExpensesScreen extends ConsumerWidget {
     final accountsAsync = ref.watch(accountsProvider);
     final categoriesAsync = ref.watch(categoriesProvider);
 
-    final currencyFormat = NumberFormat.currency(locale: Localizations.localeOf(context).toString(), symbol: '\$');
+    final locale = Localizations.localeOf(context).toString();
 
     return Scaffold(
       appBar: AppBar(
@@ -97,7 +98,7 @@ class ExpensesScreen extends ConsumerWidget {
                                 ],
                               ),
                               trailing: Text(
-                                currencyFormat.format(expense.amount),
+                                Formatters.formatMoney(expense.amount, locale),
                                 style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                             );
