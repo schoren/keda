@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../providers/data_providers.dart';
 import '../utils/formatters.dart';
+import '../utils/ios_keyboard_fix.dart';
 import '../models/expense.dart';
 import '../models/category.dart';
 import '../models/finance_account.dart';
@@ -30,8 +32,9 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 250), () {
+    Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) {
+        IOSKeyboardFix.stop();
         _focusNode.requestFocus();
       }
     });
