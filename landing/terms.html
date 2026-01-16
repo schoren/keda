@@ -1,32 +1,72 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{lang}}">
 
 <head>
   <meta charset="UTF-8">
-  <title>Términos y Condiciones - KEDA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{terms_title}}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
 </head>
 
-<body
-  style="font-family: system-ui, sans-serif; line-height: 1.5; max-width: 800px; margin: 0 auto; padding: 2rem; color: #333;">
-  <h1>Términos y Condiciones</h1>
-  <p>Última actualización: 16 de Enero, 2026</p>
+<body class="legal-page">
+  <header class="site-header" style="position: relative; background: var(--dark-bg); padding: 1.5rem 0;">
+    <div class="container">
+      <a href="./index.html" class="logo">
+        <img src="../assets/logo.png" alt="KEDA Logo">
+        <span>KEDA</span>
+      </a>
+      <nav class="desktop-nav">
+        <a href="./index.html" class="nav-link">{{back_to_keda}}</a>
+      </nav>
+    </div>
+  </header>
 
-  <h2>1. Aceptación</h2>
-  <p>Al acceder y utilizar KEDA (operado por RockingSoft SRL), usted acepta estar sujeto a estos términos.</p>
+  <main style="padding: 4rem 0; background: white; min-height: 60vh;">
+    <div class="container" style="max-width: 800px;">
+      <h1 style="color: var(--dark-bg); margin-bottom: 2rem;">{{terms_h1}}</h1>
+      <p style="color: var(--text-muted); margin-bottom: 2rem; font-style: italic;">{{terms_update}}</p>
 
-  <h2>2. Uso del Servicio</h2>
-  <p>Usted se compromete a usar el servicio solo para fines legales y de acuerdo con estos términos. No debe usar el
-    servicio de ninguna manera que pueda dañar, deshabilitar o sobrecargar el servicio.</p>
+      <section style="margin-bottom: 2rem;">
+        <h2 style="color: var(--dark-bg); margin-top: 2rem;">{{terms_acceptance_title}}</h2>
+        <p>{{terms_acceptance_p}}</p>
 
-  <h2>3. Propiedad Intelectual</h2>
-  <p>El servicio y su contenido original, características y funcionalidad son y seguirán siendo propiedad exclusiva de
-    RockingSoft SRL.</p>
+        <h2 style="color: var(--dark-bg); margin-top: 2rem;">{{terms_usage_title}}</h2>
+        <p>{{terms_usage_p}}</p>
 
-  <h2>4. Limitación de Responsabilidad</h2>
-  <p>En ningún caso RockingSoft SRL será responsable por daños indirectos, incidentales, especiales, consecuentes o
-    punitivos.</p>
+        <h2 style="color: var(--dark-bg); margin-top: 2rem;">{{terms_ip_title}}</h2>
+        <p>{{terms_ip_p}}</p>
 
-  <p><a href="index.html">&larr; Volver a KEDA</a></p>
+        <h2 style="color: var(--dark-bg); margin-top: 2rem;">{{terms_liability_title}}</h2>
+        <p>{{terms_liability_p}}</p>
+      </section>
+
+      <p style="margin-top: 4rem;"><a href="./index.html" class="btn btn-secondary"
+          style="color: var(--dark-bg);">{{back_to_keda}}</a></p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">RockingSoft SRL</div>
+        <div class="footer-contact">
+          <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a>
+        </div>
+        <div class="footer-links">
+          <a href="./index.html#por-que">{{nav_why_keda}}</a>
+          <a href="./index.html#funcionalidades">{{nav_features}}</a>
+          <a href="./index.html#comunidad">{{nav_community}}</a>
+          <a href="{{APP_URL}}">{{nav_go_to_app}}</a>
+          <a href="./privacy.html">{{footer_privacy}}</a>
+          <a href="./terms.html">{{footer_terms}}</a>
+        </div>
+        <p class="copyright">{{footer_copyright}}</p>
+      </div>
+    </div>
+  </footer>
 </body>
 
 </html>

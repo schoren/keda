@@ -25,30 +25,37 @@ async function build() {
   // Ensure dist exists and is empty
   await fs.emptyDir(DIST_DIR);
 
-  const template = await fs.readFile(path.join(SRC_DIR, 'index.html'), 'utf-8');
+  const templates = ['index.html', 'privacy.html', 'terms.html'];
 
   for (const lang of Object.keys(TRANSLATIONS)) {
     console.log(`Generating ${lang} version...`);
-    let content = template;
-
-    // Replace translations
-    for (const [key, value] of Object.entries(TRANSLATIONS[lang])) {
-      const regex = new RegExp(`{{${key}}}`, 'g');
-      content = content.replace(regex, value);
-    }
-
-    // Replace env vars
-    for (const [key, value] of Object.entries(ENV_VARS)) {
-      const regex = new RegExp(`{{${key}}}`, 'g');
-      content = content.replace(regex, value);
-    }
-
-    // Set lang attribute
-    content = content.replace('<html lang="es">', `<html lang="${lang}">`);
-
     const langDir = path.join(DIST_DIR, lang);
     await fs.ensureDir(langDir);
-    await fs.writeFile(path.join(langDir, 'index.html'), content);
+
+    for (const templateName of templates) {
+      const templatePath = path.join(SRC_DIR, templateName);
+      if (!await fs.pathExists(templatePath)) continue;
+
+      let content = await fs.readFile(templatePath, 'utf-8');
+
+      // Replace translations
+      for (const [key, value] of Object.entries(TRANSLATIONS[lang])) {
+        const regex = new RegExp(`{{${key}}}`, 'g');
+        content = content.replace(regex, value);
+      }
+
+      // Replace env vars
+      for (const [key, value] of Object.entries(ENV_VARS)) {
+        const regex = new RegExp(`{{${key}}}`, 'g');
+        content = content.replace(regex, value);
+      }
+
+      // Set lang attribute (handles both <html lang="es"> and <html lang="{{lang}}">)
+      content = content.replace(/<html lang="[^"]*"/, `<html lang="${lang}"`);
+      content = content.replace('{{lang}}', lang);
+
+      await fs.writeFile(path.join(langDir, templateName), content);
+    }
   }
 
   // Copy assets
@@ -56,10 +63,6 @@ async function build() {
   await fs.copy(path.join(SRC_DIR, 'style.css'), path.join(DIST_DIR, 'style.css'));
   await fs.copy(path.join(SRC_DIR, 'script.js'), path.join(DIST_DIR, 'script.js'));
   await fs.copy(path.join(SRC_DIR, 'assets'), path.join(DIST_DIR, 'assets'));
-
-  // Copy other html files (optional, but keep them for now)
-  await fs.copy(path.join(SRC_DIR, 'privacy.html'), path.join(DIST_DIR, 'privacy.html'));
-  await fs.copy(path.join(SRC_DIR, 'terms.html'), path.join(DIST_DIR, 'terms.html'));
 
   // Create root index.html with redirection
   console.log('Creating root redirector...');
