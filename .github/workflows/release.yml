@@ -107,19 +107,60 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  publish-release:
+  generate-video:
     needs: [bump, build-server, build-client]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: video-demo/package-lock.json
+
+      - name: Run video generation
+        working-directory: ./video-demo
+        run: ./run.sh
+        env:
+          SERVER_IMAGE: schoren/keda-server:${{ needs.bump.outputs.version }}
+          CLIENT_IMAGE: schoren/keda-client:${{ needs.bump.outputs.version }}
+
+      - name: Upload video artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-video
+          path: landing/assets/demo.webm
+
+  publish-release:
+    needs: [bump, build-server, build-client, generate-video]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+      - name: Download video artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-video
+          path: .
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.bump.outputs.version }}
           name: Release ${{ needs.bump.outputs.version }}
+          files: demo.webm
           draft: false
           prerelease: false
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-landing:
+    needs: [bump, publish-release]
+    uses: ./.github/workflows/deploy-landing.yml
+    with:
+      demo_video_url: https://github.com/schoren/keda/releases/download/${{ needs.bump.outputs.version }}/demo.webm
+    secrets: inherit

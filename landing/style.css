@@ -278,6 +278,13 @@ a {
     gap: 1rem;
 }
 
+.demo-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
 /* Header */
 .site-header {
     background: transparent;

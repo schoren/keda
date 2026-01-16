@@ -1,6 +1,16 @@
 #!/bin/bash
 set -e
 
+echo "📦 Installing dependencies..."
+if [ "$CI" = "true" ]; then
+  npm ci
+else
+  npm install
+fi
+
+echo "🌐 Installing Playwright browsers..."
+npx playwright install webkit --with-deps
+
 echo "🎥 Starting demo environment..."
 # Ensure cleanup of any previous run
 docker compose -p keda-video-demo -f docker-compose.yml down -v 2>/dev/null || true
@@ -23,7 +33,6 @@ timeout 60 bash -c 'until curl -sf http://localhost:8085 > /dev/null 2>&1; do sl
 echo "✅ Demo environment ready at http://localhost:8085"
 
 echo "🎬 Recording demo video..."
-npm install
 set +e
 npx playwright test --trace on
 TEST_EXIT_CODE=$?
@@ -33,7 +42,17 @@ echo "🛑 Stopping demo environment..."
 docker compose -p keda-video-demo -f docker-compose.yml down -v
 
 if [ $TEST_EXIT_CODE -eq 0 ]; then
-  echo "✅ Demo video generated in test-results/"
+  echo "✅ Demo video generated."
+  # Playwright saves videos in test-results/<test-name>/video.webm
+  # We find the first .webm file in test-results
+  VIDEO_PATH=$(find test-results -name "*.webm" | head -n 1)
+  if [ -n "$VIDEO_PATH" ]; then
+    echo "📦 Moving video from $VIDEO_PATH to ../landing/assets/demo.webm"
+    mkdir -p ../landing/assets
+    cp "$VIDEO_PATH" ../landing/assets/demo.webm
+  else
+    echo "⚠️ Could not find generated video file in test-results/"
+  fi
 else
   echo "❌ Demo recording failed with exit code $TEST_EXIT_CODE"
 fi

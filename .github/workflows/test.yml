@@ -134,3 +134,60 @@ jobs:
       - name: Cleanup
         if: always()
         run: docker compose -f docker-compose.test.yml down -v
+
+  video-demo-test:
+    name: Video Demo Test (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Server Image (Cache)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server
+          push: false
+          load: true
+          tags: keda-server:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Client Image (Cache)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          push: false
+          load: true
+          tags: keda-client:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: video-demo/package-lock.json
+
+      - name: Run video generation test
+        working-directory: ./video-demo
+        run: ./run.sh
+
+      - name: Upload video artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-video
+          path: landing/assets/demo.webm
+          retention-days: 7
+
+  cleanup:
+    if: always()
+    needs: [backend-tests, client-tests, e2e-tests, video-demo-test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup
+        run: echo "Done"
