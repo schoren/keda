@@ -35,6 +35,19 @@ RUN echo 'server { \
   server_name localhost; \
   root /usr/share/nginx/html; \
   index index.html; \
+  \
+  # Cache Control for HTML, JS, CSS and Version files (no cache, always re-validate) \
+  location ~* \.(?:html|json|js|css)$ { \
+  add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"; \
+  expires off; \
+  } \
+  \
+  # Cache Control for Static Assets (long-lived cache for immutable-like assets) \
+  location ~* \.(?:png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|otf|wasm)$ { \
+  add_header Cache-Control "public, max-age=31536000, immutable"; \
+  access_log off; \
+  } \
+  \
   location / { \
   try_files $uri $uri/ /index.html; \
   } \
