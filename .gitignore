@@ -2,3 +2,7 @@
 .env.dev
 server/server
 server/app/coverage.out
+
+landing/.env
+landing/node_modules
+landing/dist
