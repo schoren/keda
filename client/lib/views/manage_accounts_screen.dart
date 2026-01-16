@@ -37,7 +37,7 @@ class ManageAccountsScreen extends ConsumerWidget {
                 account.type == AccountType.card ? Icons.credit_card : (account.type == AccountType.bank ? Icons.account_balance : Icons.money),
                 color: Theme.of(context).colorScheme.primary,
               ),
-              title: Text(account.displayName),
+              title: Text(account.getLocalizedDisplayName(l10n)),
               subtitle: Text(subtitle),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,

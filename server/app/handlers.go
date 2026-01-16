@@ -378,7 +378,7 @@ func (h *Handlers) createDefaultCashAccount(householdID string) {
 		ID:          uuid.New().String(),
 		HouseholdID: householdID,
 		Type:        "cash",
-		Name:        "Efectivo",
+		Name:        "Cash",
 	}
 	if err := h.db.Create(&cashAccount).Error; err != nil {
 		log.Printf("Warning: Failed to create default cash account for household %s: %v", householdID, err)
@@ -388,7 +388,7 @@ func (h *Handlers) createDefaultCashAccount(householdID string) {
 func (h *Handlers) populateAccountDisplayName(a *Account) {
 	switch a.Type {
 	case "cash":
-		a.DisplayName = "Efectivo"
+		a.DisplayName = "Cash"
 	case "card":
 		brand := ""
 		if a.Brand != nil {
@@ -405,7 +405,7 @@ func (h *Handlers) populateAccountDisplayName(a *Account) {
 		} else if bank != "" {
 			a.DisplayName = bank
 		} else {
-			a.DisplayName = "Tarjeta"
+			a.DisplayName = "Card"
 		}
 	case "bank":
 		a.DisplayName = a.Name

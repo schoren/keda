@@ -61,15 +61,13 @@ func SeedData(db *gorm.DB, householdID string) error {
 		{
 			ID:          walletID,
 			Type:        "cash",
-			Name:        "Billetera",
+			Name:        "Cash",
 			HouseholdID: householdID,
 		},
 		{
 			ID:          bankID,
 			Type:        "bank",
-			Name:        "Santander",
-			Brand:       stringPtr("visa"),
-			Bank:        stringPtr("santander"),
+			Name:        "ACME Bank",
 			HouseholdID: householdID,
 		},
 	}
@@ -103,15 +101,15 @@ func SeedData(db *gorm.DB, householdID string) error {
 	// We use FirstOrCreate based on ID to avoid duplicates on restart
 	transactions := []Transaction{
 		// Today
-		{ID: "tx-1", AccountID: walletID, CategoryID: catGroceriesID, UserID: "test-user-id", Amount: 45.50, Date: time.Now(), Description: "Compra semanal", HouseholdID: householdID},
-		{ID: "tx-2", AccountID: bankID, CategoryID: catUtilitiesID, UserID: "test-user-id", Amount: 30.00, Date: time.Now(), Description: "Luz", HouseholdID: householdID},
+		{ID: "tx-1", AccountID: walletID, CategoryID: catGroceriesID, UserID: "test-user-id", Amount: 45.50, Date: time.Now(), Description: "Weekly grocery shopping", HouseholdID: householdID},
+		{ID: "tx-2", AccountID: bankID, CategoryID: catUtilitiesID, UserID: "test-user-id", Amount: 30.00, Date: time.Now(), Description: "Electricity", HouseholdID: householdID},
 
 		// Yesterday
 		{ID: "tx-3", AccountID: walletID, CategoryID: catTransportID, UserID: "user-2", Amount: 5.00, Date: time.Now().AddDate(0, 0, -1), Description: "Uber", HouseholdID: householdID},
-		{ID: "tx-4", AccountID: bankID, CategoryID: catGroceriesID, UserID: "user-2", Amount: 12.30, Date: time.Now().AddDate(0, 0, -1), Description: "Panaderia", HouseholdID: householdID},
+		{ID: "tx-4", AccountID: bankID, CategoryID: catGroceriesID, UserID: "user-2", Amount: 12.30, Date: time.Now().AddDate(0, 0, -1), Description: "Weekly grocery shopping", HouseholdID: householdID},
 
 		// 3 Days ago
-		{ID: "tx-5", AccountID: walletID, CategoryID: catEntertainmentID, UserID: "user-3", Amount: 15.00, Date: time.Now().AddDate(0, 0, -3), Description: "Cine", HouseholdID: householdID},
+		{ID: "tx-5", AccountID: walletID, CategoryID: catEntertainmentID, UserID: "user-3", Amount: 15.00, Date: time.Now().AddDate(0, 0, -3), Description: "Movies", HouseholdID: householdID},
 	}
 
 	for _, t := range transactions {

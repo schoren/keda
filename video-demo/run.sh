@@ -24,8 +24,10 @@ echo "✅ Demo environment ready at http://localhost:8085"
 
 echo "🎬 Recording demo video..."
 npm install
+set +e
 npx playwright test --trace on
 TEST_EXIT_CODE=$?
+set -e
 
 echo "🛑 Stopping demo environment..."
 docker compose -p keda-video-demo -f docker-compose.yml down -v

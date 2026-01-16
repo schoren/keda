@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const TIMEOUT = 30_000;
+const TIMEOUT = 120_000;
 
 export default defineConfig({
   testDir: './tests',
@@ -13,13 +13,13 @@ export default defineConfig({
     video: 'on',
     trace: 'off',
     launchOptions: {
-      slowMo: 500,
+      slowMo: 1000,
     }
   },
 
   projects: [
     {
-      name: 'mobile-chrome',
+      name: 'Mobile Safari',
       use: { ...devices['iPhone 13'] },
     },
   ],

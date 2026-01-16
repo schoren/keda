@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:keda/l10n/app_localizations.dart';
 import 'account_type.dart';
 
 part 'finance_account.g.dart';
@@ -23,4 +24,12 @@ class FinanceAccount {
 
   factory FinanceAccount.fromJson(Map<String, dynamic> json) => _$FinanceAccountFromJson(json);
   Map<String, dynamic> toJson() => _$FinanceAccountToJson(this);
+}
+
+extension FinanceAccountExtension on FinanceAccount {
+  String getLocalizedDisplayName(AppLocalizations l10n) {
+    if (displayName == 'Cash') return l10n.cash;
+    if (displayName == 'Card') return l10n.card;
+    return displayName;
+  }
 }

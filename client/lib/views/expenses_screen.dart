@@ -5,6 +5,7 @@ import 'package:keda/l10n/app_localizations.dart';
 import '../providers/data_providers.dart';
 import '../utils/formatters.dart';
 import '../models/expense.dart';
+import '../models/finance_account.dart';
 import '../widgets/user_avatar.dart';
 
 class ExpensesScreen extends ConsumerWidget {
@@ -90,7 +91,7 @@ class ExpensesScreen extends ConsumerWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '$timeStr • ${category.name} • ${account.name}',
+                                    '$timeStr • ${category.name} • ${account.getLocalizedDisplayName(l10n)}',
                                     style: Theme.of(context).textTheme.bodySmall,
                                   ),
                                   if (expense.user != null)

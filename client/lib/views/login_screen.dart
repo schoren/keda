@@ -63,16 +63,6 @@ class LoginScreen extends ConsumerWidget {
                 );
               }
             ),
-            if (RuntimeConfig.appVersion.contains('demo') || RuntimeConfig.appVersion.contains('dev'))
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                     ref.read(authProvider.notifier).loginTestUser();
-                  },
-                  child: const Text('Demo Login'),
-                ),
-              ),
           ],
         ),
       ),
