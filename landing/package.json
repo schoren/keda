@@ -1,0 +1,13 @@
+{
+  "name": "keda-landing",
+  "version": "1.0.0",
+  "description": "Build scripts for KEDA landing page",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "fs-extra": "^11.3.0"
+  }
+}

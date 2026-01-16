@@ -24,6 +24,9 @@ help:
 	@echo "  make test-up         - Start test environment"
 	@echo "  make test-down       - Stop test environment"
 	@echo "  make clean           - Clean all test artifacts and containers"
+	@echo "  make landing-build   - Build localized landing page"
+	@echo "  make landing-serve   - Serve landing page locally"
+	@echo ""
 
 # Backend tests
 test-backend:
@@ -110,3 +113,13 @@ clean: dev-down test-down
 test-quick: test-backend test-client
 	@echo ""
 	@echo "✅ Quick tests completed!"
+
+# Landing page
+landing-build:
+	@echo "🏗️  Building landing page..."
+	cd landing && npm install && npm run build
+	@echo "✅ Landing page built in landing/dist"
+
+landing-serve: landing-build
+	@echo "🚀 Serving landing page at http://localhost:3000"
+	npx serve landing/dist -l 3000
