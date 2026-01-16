@@ -6,6 +6,7 @@ import '../utils/formatters.dart';
 import '../models/expense.dart';
 import '../models/category.dart';
 import '../models/user.dart';
+import '../widgets/user_avatar.dart';
 
 class ExpensesScreen extends ConsumerWidget {
   const ExpensesScreen({super.key});
@@ -75,9 +76,15 @@ class ExpensesScreen extends ConsumerWidget {
                             final timeStr = DateFormat.Hm(Localizations.localeOf(context).toString()).format(expense.date.toLocal());
 
                             return ListTile(
-                              leading: const CircleAvatar(
-                                child: Icon(Icons.receipt_long),
-                              ),
+                              leading: expense.user == null
+                                ? const CircleAvatar(
+                                    child: Icon(Icons.receipt_long),
+                                  )
+                                : UserAvatar(
+                                    pictureUrl: expense.user!.pictureUrl,
+                                    name: expense.user!.name,
+                                    color: expense.user!.color,
+                                  ),
                               title: Text(expense.note ?? 'Sin nota'),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
