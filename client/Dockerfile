@@ -16,9 +16,8 @@ RUN --mount=type=cache,target=/root/.pub-cache \
 COPY . .
 
 ARG APP_VERSION=local-dev
-# Build web with cache for artifacts
+# Build web with cache for pub-cache
 RUN --mount=type=cache,target=/root/.pub-cache \
-  --mount=type=cache,target=/app/build/web \
   flutter build web --dart-define=APP_VERSION=$APP_VERSION
 
 RUN sed -i "s|APP_VERSION_PLACEHOLD|$APP_VERSION|g" build/web/index.html
