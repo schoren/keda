@@ -34,6 +34,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           target-branch: main
+          tag-prefix:  'v'
           default: ${{ github.event.inputs.bump_type }}
 
       - name: Get New Version
