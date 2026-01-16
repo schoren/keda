@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KEDA - Lo que importa es lo que queda</title>
+  <meta name="description"
+    content="Controla tus gastos familiares y personales. KEDA te ayuda a llegar a fin de mes sabiendo exactamente cuánto te queda.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <div class="logo">
+        <img src="assets/logo.png" alt="KEDA Logo">
+        <span>KEDA</span>
+      </div>
+
+      <!-- Desktop Nav -->
+      <nav class="desktop-nav">
+        <a href="#funcionalidades" class="nav-link">Funcionalidades</a>
+        <a href="#self-host" class="nav-link">Self-Host</a>
+        <a href="https://github.com/schoren/family-finance" target="_blank" class="nav-link">GitHub</a>
+        <a href="/app" class="btn btn-primary btn-glow">Ir a la App</a>
+      </nav>
+
+      <!-- Hamburger Button -->
+      <button class="hamburger" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="menu-overlay"></div>
+  <div class="mobile-menu">
+    <button class="close-menu">&times;</button>
+    <nav>
+      <a href="#funcionalidades" class="nav-link">Funcionalidades</a>
+      <a href="#self-host" class="nav-link">Self-Host</a>
+      <a href="https://github.com/schoren/family-finance" target="_blank" class="nav-link">GitHub</a>
+      <a href="/app" class="btn btn-primary btn-glow">Ir a la App</a>
+    </nav>
+  </div>
+
+  <main>
+    <section class="hero dark-mode">
+      <div class="background-glow"></div>
+      <div class="container">
+        <div class="hero-content">
+          <h1>Lo que importa es <br><span class="text-gradient">lo que te queda</span></h1>
+          <p class="hero-subtitle">KEDA es una Web App diseñada para que entiendas tu presupuesto mensual. Disponible
+            también para iOS y Android.</p>
+          <div class="cta-group">
+            <div class="main-cta-row">
+              <a href="/app" class="btn btn-large btn-primary btn-glow">Empezar en la Web</a>
+            </div>
+            <div class="store-badges">
+              <a href="#" class="store-btn apple" target="_blank">
+                <svg viewBox="0 0 384 512" width="20">
+                  <path fill="currentColor"
+                    d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
+                </svg>
+                <span>App Store</span>
+              </a>
+              <a href="#" class="store-btn google" target="_blank">
+                <svg viewBox="0 0 512 512" width="20">
+                  <path fill="currentColor"
+                    d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z" />
+                </svg>
+                <span>Google Play</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="hero-image">
+          <div class="screenshot-placeholder floating">
+            <span class="placeholder-text">Screenshot: Home de la App</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="funcionalidades" class="problem-solution">
+      <div class="container">
+        <div class="grid-2">
+          <div class="text-content">
+            <h2>¿Por qué nunca alcanza?</h2>
+            <p>No es que ganes poco, es que no ves el impacto de tus gastos en tiempo real. Saber en qué gastaste ayer
+              no te ayuda hoy.</p>
+            <p>KEDA cambia el juego. Tu sueldo es como una batería que se consume. Cada gasto baja tu energía
+              disponible. Si ves la barra roja, frenás. Si está verde, disfrutás.</p>
+            <ul class="feature-list">
+              <li><strong>Claridad Total:</strong> Asigná tu sueldo a categorías.</li>
+              <li><strong>Feedback Visual:</strong> Barras de progreso simples.</li>
+              <li><strong>Cero Fricción:</strong> Carga gastos en segundos.</li>
+            </ul>
+          </div>
+          <div class="image-content">
+            <div class="screenshot-placeholder vertical tilted">
+              <span class="placeholder-text">Screenshot: Carga Rápida</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="container">
+        <div class="feature-card">
+          <h3>Presupuestos Mensuales</h3>
+          <p>Definí cuánto querés gastar en cada área y seguí tu progreso día a día. Sin complicaciones innecesarias.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Multi-plataforma</h3>
+          <p>Accedé desde tu navegador o descargá la app nativa. Tu presupuesto siempre sincronizado en tiempo real.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Cuentas Compartidas</h3>
+          <p>Administra las finanzas de tu hogar en conjunto. Todos ven el mismo "disponible" al instante.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="self-host" class="self-host-section">
+      <div class="container">
+        <div class="self-host-content">
+          <h2>Comunidad y Flexibilidad</h2>
+          <p>KEDA es un proyecto orgullosamente Open Source. Si preferís tener el control absoluto, podés desplegarlo en
+            tu propia infraestructura con Docker.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <div class="container">
+        <h2>Tomá el control de tus finanzas</h2>
+        <div class="cta-buttons">
+          <a href="https://github.com/schoren/family-finance" target="_blank" class="btn btn-secondary btn-icon">
+            <svg height="24" width="24" viewBox="0 0 16 16" version="1.1" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+              </path>
+            </svg>
+            GitHub
+          </a>
+          <a href="/app" class="btn btn-primary btn-large btn-glow">Ir a la App</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">RockingSoft SRL</div>
+        <div class="footer-contact">
+          <a href="mailto:info@getkeda.app">info@getkeda.app</a>
+        </div>
+        <div class="footer-links">
+          <a href="privacy.html">Política de Privacidad</a>
+          <a href="terms.html">Términos y Condiciones</a>
+        </div>
+        <p class="copyright">&copy; 2026 RockingSoft SRL. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
