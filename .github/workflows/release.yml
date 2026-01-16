@@ -72,8 +72,8 @@ jobs:
           tags: |
             schoren/keda-server:latest
             schoren/keda-server:${{ needs.bump.outputs.version }}
-          cache-from: type=registry,ref=schoren/keda-server:buildcache
-          cache-to: type=registry,ref=schoren/keda-server:buildcache,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   build-client:
     needs: bump
@@ -104,8 +104,8 @@ jobs:
           tags: |
             schoren/keda-client:latest
             schoren/keda-client:${{ needs.bump.outputs.version }}
-          cache-from: type=registry,ref=schoren/keda-client:buildcache
-          cache-to: type=registry,ref=schoren/keda-client:buildcache,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   publish-release:
     needs: [bump, build-server, build-client]

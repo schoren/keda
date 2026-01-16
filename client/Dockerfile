@@ -2,11 +2,25 @@
 FROM ghcr.io/cirruslabs/flutter:stable AS builder
 
 WORKDIR /app
+
+# Enable BuildKit cache for pub get
+RUN --mount=type=cache,target=/root/.pub-cache \
+  flutter config --no-analytics
+
+# Copy pubspec files first for dependency caching
+COPY pubspec.yaml pubspec.lock ./
+RUN --mount=type=cache,target=/root/.pub-cache \
+  flutter pub get
+
+# Copy the rest of the source code
 COPY . .
-RUN flutter pub get
 
 ARG APP_VERSION=local-dev
-RUN flutter build web --dart-define=APP_VERSION=$APP_VERSION
+# Build web with cache for artifacts
+RUN --mount=type=cache,target=/root/.pub-cache \
+  --mount=type=cache,target=/app/build/web \
+  flutter build web --dart-define=APP_VERSION=$APP_VERSION
+
 RUN sed -i "s|APP_VERSION_PLACEHOLD|$APP_VERSION|g" build/web/index.html
 
 # Stage 2: Serve with Nginx
