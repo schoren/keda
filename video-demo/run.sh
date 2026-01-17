@@ -9,7 +9,7 @@ else
 fi
 
 echo "🌐 Installing Playwright browsers..."
-npx playwright install webkit --with-deps
+npx playwright install chromium --with-deps
 
 echo "🎥 Starting demo environment..."
 # Ensure cleanup of any previous run

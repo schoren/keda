@@ -96,9 +96,14 @@ test('Record Demo Video', async ({ page }) => {
   page.on('console', msg => console.log(`[Browser Console] ${msg.text()}`));
 
   await page.goto('/');
-  // Wait for Flutter to be ready
+  // Wait for the HTML splash screen to be visible for the video
+  await page.locator('#loading-splash').waitFor({ state: 'visible' });
+  await page.waitForTimeout(2000); // Give splash some time to show
+
+  // Wait for Flutter to be ready and splash to be hidden
   await page.locator('flt-glass-pane').waitFor({ state: 'attached' });
-  await page.waitForTimeout(3000);
+  await page.locator('#loading-splash').waitFor({ state: 'hidden' });
+  await page.waitForTimeout(1000);
 
   // 1. Dashboard Overview
   console.log('Step 1: Dashboard Overview');
@@ -121,8 +126,8 @@ test('Record Demo Video', async ({ page }) => {
   const noteInput = page.getByRole('textbox', { name: 'Note (optional)' });
   await highlight(noteInput, "Add an optional description for the expense");
   await noteInput.click();
-  await noteInput.pressSequentially('Drive-Thru Burger', { delay: 100 });
-  await page.waitForTimeout(500);
+  await noteInput.pressSequentially('Drive-Thru Burger', { delay: 150 });
+  await page.waitForTimeout(1000);
 
   const saveBtn = page.getByRole('button', { name: 'Save Expense' });
   await saveBtn.click();
