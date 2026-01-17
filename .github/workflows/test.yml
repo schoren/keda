@@ -11,6 +11,43 @@ on:
       - 'landing/**'
 
 jobs:
+  setup-playwright:
+    name: Setup Playwright (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - project: e2e-tests
+            path: e2e-tests
+          - project: video-demo
+            path: video-demo
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.path }}/package-lock.json
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: ${{ matrix.path }}/node_modules
+          key: ${{ runner.os }}-node-${{ matrix.project }}-${{ hashFiles(format('{0}/package-lock.json', matrix.path)) }}
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles(format('{0}/package-lock.json', matrix.path)) }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+      - name: Install dependencies
+        working-directory: ./${{ matrix.path }}
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
   backend-tests:
     name: Backend Tests (Go)
     runs-on: ubuntu-latest
@@ -78,7 +115,7 @@ jobs:
 
   e2e-tests:
     name: E2E Tests (Playwright)
-    needs: build-images
+    needs: [build-images, setup-playwright]
     runs-on: ubuntu-latest
     
     steps:
@@ -100,26 +137,24 @@ jobs:
           timeout 60 bash -c 'until curl -f http://localhost:8091/health; do sleep 2; done'
           echo "✅ Server is ready"
       
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Cache node_modules
+        uses: actions/cache@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: e2e-tests/package-lock.json
-      
+          path: e2e-tests/node_modules
+          key: ${{ runner.os }}-node-e2e-tests-${{ hashFiles('e2e-tests/package-lock.json') }}
+
       - name: Cache Playwright browsers
         uses: actions/cache@v4
-        id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('e2e-tests/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
-      
-      - name: Install Playwright dependencies
+
+      - name: Install Playwright dependencies (Cache Check)
         working-directory: ./e2e-tests
         run: |
-          npm ci
+          if [ ! -d "node_modules" ]; then npm ci; fi
           npx playwright install --with-deps chromium
       
       - name: Run E2E tests
@@ -177,7 +212,7 @@ jobs:
 
   video-demo-test:
     name: Video Demo Test (Playwright)
-    needs: build-images
+    needs: [build-images, setup-playwright]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -186,24 +221,31 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Cache node_modules
+        uses: actions/cache@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: video-demo/package-lock.json
+          path: video-demo/node_modules
+          key: ${{ runner.os }}-node-video-demo-${{ hashFiles('video-demo/package-lock.json') }}
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
-        id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('video-demo/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
 
+      - name: Install Playwright dependencies (Cache Check)
+        working-directory: ./video-demo
+        run: |
+          if [ ! -d "node_modules" ]; then npm ci; fi
+          npx playwright install --with-deps chromium
+
       - name: Run video generation
         working-directory: ./video-demo
+        env:
+          SERVER_IMAGE: schoren/keda-server:${{ github.sha }}
+          CLIENT_IMAGE: schoren/keda-client:${{ github.sha }}
         run: ./run.sh
 
       - name: Upload video artifact
