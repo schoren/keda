@@ -181,7 +181,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: demo-video
-          path: landing/assets/demo.webm
+          path: video-demo/test-results/demo.webm
           retention-days: 7
 
   cleanup:

@@ -132,7 +132,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-video
-          path: landing/assets/demo.webm
+          path: video-demo/test-results/demo.webm
 
   publish-release:
     needs: [bump, build-server, build-client, generate-video]
@@ -145,6 +145,7 @@ jobs:
         with:
           name: release-video
           path: .
+          merge-multiple: true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

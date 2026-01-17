@@ -47,9 +47,8 @@ if [ $TEST_EXIT_CODE -eq 0 ]; then
   # We find the first .webm file in test-results
   VIDEO_PATH=$(find test-results -name "*.webm" | head -n 1)
   if [ -n "$VIDEO_PATH" ]; then
-    echo "📦 Moving video from $VIDEO_PATH to ../landing/assets/demo.webm"
-    mkdir -p ../landing/assets
-    cp "$VIDEO_PATH" ../landing/assets/demo.webm
+    echo "📦 Moving video from $VIDEO_PATH to test-results/demo.webm"
+    cp "$VIDEO_PATH" test-results/demo.webm
   else
     echo "⚠️ Could not find generated video file in test-results/"
   fi
