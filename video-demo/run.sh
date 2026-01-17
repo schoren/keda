@@ -1,15 +1,16 @@
 #!/bin/bash
 set -e
 
-echo "📦 Installing dependencies..."
 if [ "$CI" = "true" ]; then
+  echo "📦 Using CI cache..."
   npm ci
 else
+  echo "📦 Installing dependencies..."
   npm install
+  
+  echo "Installing Playwright browsers"
+  npx playwright install chromium --with-deps
 fi
-
-echo "🌐 Installing Playwright browsers..."
-npx playwright install chromium --with-deps
 
 echo "🎥 Starting demo environment..."
 # Ensure cleanup of any previous run
