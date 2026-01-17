@@ -226,7 +226,7 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                     ...accounts.map((account) {
                       return DropdownMenuItem(
                         value: account.id,
-                        child: Text(account.displayName),
+                        child: Text(account.getLocalizedDisplayName(l10n)),
                       );
                     }),
                     DropdownMenuItem(
@@ -316,6 +316,9 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                     ),
                     onChanged: (value) {
                       _noteController.text = value;
+                    },
+                    onEditingComplete: () {
+                      _noteController.text = controller.text;
                     },
                     onFieldSubmitted: (_) => _save(),
                   );

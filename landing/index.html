@@ -78,13 +78,10 @@
         <!-- Video Section (Vertical) -->
         <div class="hero-visual">
           <div class="video-container-vertical floating">
-            <div class="video-placeholder">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-              <span>{{hero_demo_text}}</span>
-            </div>
+            <video autoplay loop muted playsinline class="demo-video">
+              <source src="{{DEMO_VIDEO_URL}}" type="video/webm">
+              Your browser does not support the video tag.
+            </video>
           </div>
         </div>
 

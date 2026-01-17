@@ -16,7 +16,8 @@ const ENV_VARS = {
   GITHUB_REPO_URL: process.env.GITHUB_REPO_URL || 'https://github.com/schoren/family-finance',
   APP_STORE_URL: process.env.APP_STORE_URL || '#',
   PLAY_STORE_URL: process.env.PLAY_STORE_URL || '#',
-  CONTACT_EMAIL: process.env.CONTACT_EMAIL || 'info@getkeda.app'
+  CONTACT_EMAIL: process.env.CONTACT_EMAIL || 'info@getkeda.app',
+  DEMO_VIDEO_URL: process.env.DEMO_VIDEO_URL || '../assets/demo.webm'
 };
 
 async function build() {

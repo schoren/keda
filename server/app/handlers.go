@@ -31,6 +31,12 @@ var userColors = []string{
 	"#84CC16", // Lime
 }
 
+func getRandomColor() string {
+	// Select random color
+	randIdx, _ := rand.Int(rand.Reader, big.NewInt(int64(len(userColors))))
+	return userColors[randIdx.Int64()]
+}
+
 type Handlers struct {
 	db           *gorm.DB
 	googleAPIURL string
@@ -372,7 +378,7 @@ func (h *Handlers) createDefaultCashAccount(householdID string) {
 		ID:          uuid.New().String(),
 		HouseholdID: householdID,
 		Type:        "cash",
-		Name:        "Efectivo",
+		Name:        "Cash",
 	}
 	if err := h.db.Create(&cashAccount).Error; err != nil {
 		log.Printf("Warning: Failed to create default cash account for household %s: %v", householdID, err)
@@ -382,7 +388,7 @@ func (h *Handlers) createDefaultCashAccount(householdID string) {
 func (h *Handlers) populateAccountDisplayName(a *Account) {
 	switch a.Type {
 	case "cash":
-		a.DisplayName = "Efectivo"
+		a.DisplayName = "Cash"
 	case "card":
 		brand := ""
 		if a.Brand != nil {
@@ -399,7 +405,7 @@ func (h *Handlers) populateAccountDisplayName(a *Account) {
 		} else if bank != "" {
 			a.DisplayName = bank
 		} else {
-			a.DisplayName = "Tarjeta"
+			a.DisplayName = "Card"
 		}
 	case "bank":
 		a.DisplayName = a.Name
@@ -709,6 +715,21 @@ func (h *Handlers) JWTMiddleware() gin.HandlerFunc {
 			secret = "default_secret_change_me"
 		}
 
+		// Bypass for TEST_MODE
+		if os.Getenv("TEST_MODE") == "true" && tokenString == "test-mode-dummy-token" {
+			// Use configured test household or default
+			householdID := os.Getenv("TEST_HOUSEHOLD_ID")
+			if householdID == "" {
+				householdID = "test-household-id"
+			}
+
+			// Set context with test user details
+			c.Set("user_id", "test-user-id")
+			c.Set("household_id", householdID)
+			c.Next()
+			return
+		}
+
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			return []byte(secret), nil
 		})
@@ -831,17 +852,13 @@ func (h *Handlers) AuthGoogle(c *gin.Context) {
 			h.createDefaultCashAccount(householdID)
 		}
 
-		// Select random color
-		randIdx, _ := rand.Int(rand.Reader, big.NewInt(int64(len(userColors))))
-		color := userColors[randIdx.Int64()]
-
 		user = User{
 			ID:          uuid.New().String(),
 			Email:       email,
 			Name:        name,
 			GoogleID:    googleID,
 			PictureURL:  pictureURL,
-			Color:       color,
+			Color:       getRandomColor(),
 			HouseholdID: householdID,
 		}
 
@@ -869,8 +886,7 @@ func (h *Handlers) AuthGoogle(c *gin.Context) {
 			needsUpdate = true
 		}
 		if user.Color == "" {
-			randIdx, _ := rand.Int(rand.Reader, big.NewInt(int64(len(userColors))))
-			user.Color = userColors[randIdx.Int64()]
+			user.Color = getRandomColor()
 			needsUpdate = true
 		}
 		if needsUpdate {
