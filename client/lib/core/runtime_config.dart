@@ -11,6 +11,7 @@ class RuntimeConfig {
   }
 
   static String? get googleClientId {
+    if (testMode) return 'test-google-client-id.apps.googleusercontent.com';
     final runtimeValue = getRuntimeGoogleClientId();
     if (runtimeValue != null && runtimeValue.isNotEmpty && !runtimeValue.contains('GOOGLE_CLIENT_ID_PLACEHOLD')) {
       return runtimeValue;

@@ -256,9 +256,58 @@ jobs:
           path: video-demo/test-results/demo.webm
           retention-days: 7
 
+  integration-tests:
+    name: Integration Tests (Flutter Web)
+    needs: [build-images]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.6'
+          channel: 'stable'
+          cache: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Start test environment
+        env:
+          SERVER_IMAGE: schoren/keda-server:${{ github.sha }}
+          CLIENT_IMAGE: schoren/keda-client:${{ github.sha }}
+        run: make test-up
+      
+      - name: Wait for services to be healthy
+        run: |
+          echo "Waiting for server to be ready..."
+          timeout 60 bash -c 'until curl -f http://localhost:8091/health; do sleep 2; done'
+          echo "✅ Server is ready"
+      
+      - name: Run Integration Tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+          xvfb-run --auto-servernum make test-integration
+      
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          echo "=== Server logs ==="
+          docker compose -p keda-test -f docker-compose.test.yml logs server
+          echo "=== Database logs ==="
+          docker compose -p keda-test -f docker-compose.test.yml logs db
+      
+      - name: Cleanup
+        if: always()
+        run: make test-down
+
   cleanup:
     if: always()
-    needs: [backend-tests, client-tests, e2e-tests, video-demo-test]
+    needs: [backend-tests, client-tests, e2e-tests, video-demo-test, integration-tests]
     runs-on: ubuntu-latest
     steps:
       - name: Cleanup

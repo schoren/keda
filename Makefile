@@ -62,8 +62,38 @@ test-e2e: test-up
 	cd e2e-tests && npm install && API_URL=http://localhost:$(TEST_SERVER_PORT) APP_URL=http://localhost:8081 npx playwright test --trace on
 	@make test-down
 
+# Integration tests (Flutter native)
+test-integration: test-up
+	@echo "🧪 Running Flutter integration tests..."
+	@echo "⏳ Waiting for server to be ready..."
+	@timeout 60 bash -c 'until curl -sf http://localhost:$(TEST_SERVER_PORT)/health > /dev/null 2>&1; do sleep 2; done' || \
+		(echo "❌ Server failed to start" && make test-down && exit 1)
+	@echo "✅ Server is ready"
+	@echo ""
+	@echo "🧹 Cleaning up any stale chromedriver..."
+	@pkill -f "chromedriver" > /dev/null 2>&1 || true
+	@echo "🚀 Starting chromedriver locally via npx..."
+	@npx chromedriver --port=4444 > /dev/null 2>&1 & CHROME_PID=$$!; \
+	echo "⏳ Waiting for chromedriver to be ready..."; \
+	timeout 10 bash -c 'until curl -sf http://localhost:4444/status > /dev/null 2>&1; do sleep 1; done' || \
+		(echo "❌ chromedriver failed to start. Make sure you have Node.js installed." && kill $$CHROME_PID > /dev/null 2>&1; exit 1); \
+	echo "✅ chromedriver is ready"; \
+	cd client && flutter drive \
+		--driver=test_driver/integration_test.dart \
+		--target=integration_test/app_test.dart \
+		-d chrome \
+		--headless \
+		--web-port=8082 \
+		--dart-define=API_URL=http://localhost:8091 \
+		--dart-define=TEST_MODE=true; \
+	RET=$$?; \
+	echo "🛑 Stopping chromedriver..."; \
+	kill $$CHROME_PID > /dev/null 2>&1 || true; \
+	make test-down; \
+	exit $$RET
+
 # Run all tests
-test-all: test-backend test-client test-e2e
+test-all: test-backend test-client test-integration test-e2e
 	@echo ""
 	@echo "✅ All tests completed successfully!"
 

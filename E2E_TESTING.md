@@ -15,7 +15,7 @@ When `TEST_MODE=true`, the server exposes a `/auth/test-login` endpoint that cre
 
 **⚠️ WARNING**: Never enable `TEST_MODE` in production!
 
-**ℹ️ NOTE**: E2E tests run locally only. They are disabled in GitHub Actions CI because they require a real device/browser which is complex to set up in headless environments. Unit tests (backend + client) run in CI.
+**ℹ️ NOTE**: E2E tests (Playwright) run locally only. They are disabled in GitHub Actions CI because they require a real device/browser which is complex to set up in headless environments. However, **Flutter Integration Tests** run in CI using Chrome. Unit tests (backend + client) also run in CI.
 
 ## Running E2E Tests Locally
 
@@ -42,7 +42,11 @@ When `TEST_MODE=true`, the server exposes a `/auth/test-login` endpoint that cre
    cd client
    flutter pub get
    dart run build_runner build --delete-conflicting-outputs
-   flutter test integration_test/ --dart-define=API_URL=http://localhost:8090
+   
+   # 4. Run the integration tests:
+   # (chromedriver is already running in docker-compose.test.yml)
+   # For Web Integration tests (runs headlessly by default):
+    flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart -d chrome --headless --dart-define=API_URL=http://localhost:8090
    ```
 
 4. **Cleanup**:
