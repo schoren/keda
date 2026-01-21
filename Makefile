@@ -247,8 +247,11 @@ android-release:
 	cd client && flutter build apk --release
 
 android-run:
+	@echo "📱 Ensuring Android device/emulator is ready..."
+	@./scripts/ensure_emulator.sh
 	@echo "📱 Running on Android device..."
-	cd client && flutter run -d android
+	@DEVICE_ID=$$(flutter devices | grep "•" | grep -E "mobile|android" | grep -vE "desktop|web|offline" | head -n 1 | awk -F'•' '{print $$2}' | xargs); \
+	cd client && flutter run -d $$DEVICE_ID
 
 android-clean:
 	@echo "🧹 Cleaning Android build..."
