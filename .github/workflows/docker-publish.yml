@@ -6,6 +6,9 @@ on:
     paths-ignore:
       - 'landing/**'
 
+permissions:
+  contents: read
+
 jobs:
   build-server:
     runs-on: ubuntu-latest
