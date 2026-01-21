@@ -50,6 +50,17 @@ security-check:
 	fi
 
 
+# Client Security Check
+client-security-check:
+	@echo "🛡️  Running client security check..."
+	@if docker info >/dev/null 2>&1; then \
+		echo "Using Docker for Trivy..."; \
+		docker run --rm -v $(PWD)/client:/app -w /app aquasec/trivy:latest fs . --scanners vuln,secret,misconfig; \
+	else \
+		echo "⚠️  Docker not available. Skipping Trivy scan."; \
+		exit 1; \
+	fi
+
 # Client tests
 test-client:
 	@echo "🧪 Running client tests..."

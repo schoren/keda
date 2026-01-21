@@ -18,7 +18,7 @@ We take the security of this project seriously. If you find any vulnerabilities,
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please send an email to [security@keda.app](mailto:security@keda.app). We will aim to respond within 48 hours.
+Instead, please send an email to [security@getkeda.app](mailto:security@getkeda.app). We will aim to respond within 48 hours.
 
 ## Security Measures
 

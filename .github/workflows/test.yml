@@ -90,6 +90,15 @@ jobs:
         uses: securego/gosec@master
         with:
           args: ./server/...
+      
+      - name: Run Trivy for Client
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './client'
+          scanners: 'vuln,secret,misconfig'
+          exit-code: '1'
+          ignore-unfixed: true
 
   client-tests:
     name: Client Tests (Flutter)
