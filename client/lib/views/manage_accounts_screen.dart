@@ -19,45 +19,51 @@ class ManageAccountsScreen extends ConsumerWidget {
         title: Text(l10n.manageAccounts),
       ),
       body: accountsAsync.when(
-        data: (accounts) => ListView.builder(
-          itemCount: accounts.length,
-          itemBuilder: (context, index) {
-            final account = accounts[index];
-            String subtitle;
-            if (account.type == AccountType.card) {
-              subtitle = l10n.card;
-            } else if (account.type == AccountType.bank) {
-              subtitle = l10n.bankAccount;
-            } else {
-              subtitle = l10n.cash;
-            }
-
-            return ListTile(
-              leading: Icon(
-                account.type == AccountType.card ? Icons.credit_card : (account.type == AccountType.bank ? Icons.account_balance : Icons.money),
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              title: Text(account.getLocalizedDisplayName(l10n)),
-              subtitle: Text(subtitle),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit, color: account.type == AccountType.cash ? Colors.grey : Colors.blue),
-                    onPressed: account.type == AccountType.cash 
-                      ? null 
-                      : () => context.push('/manage-accounts/edit/${account.id}'),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: account.type == AccountType.cash ? Colors.grey : Colors.red),
-                    onPressed: account.type == AccountType.cash 
-                      ? null 
-                      : () => _showDeleteConfirmation(context, ref, account),
-                  ),
-                ],
-              ),
-            );
+        data: (accounts) => RefreshIndicator(
+          onRefresh: () async {
+            await ref.refresh(accountsProvider.future);
           },
+          child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: accounts.length,
+            itemBuilder: (context, index) {
+              final account = accounts[index];
+              String subtitle;
+              if (account.type == AccountType.card) {
+                subtitle = l10n.card;
+              } else if (account.type == AccountType.bank) {
+                subtitle = l10n.bankAccount;
+              } else {
+                subtitle = l10n.cash;
+              }
+
+              return ListTile(
+                leading: Icon(
+                  account.type == AccountType.card ? Icons.credit_card : (account.type == AccountType.bank ? Icons.account_balance : Icons.money),
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(account.getLocalizedDisplayName(l10n)),
+                subtitle: Text(subtitle),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.edit, color: account.type == AccountType.cash ? Colors.grey : Colors.blue),
+                      onPressed: account.type == AccountType.cash 
+                        ? null 
+                        : () => context.push('/manage-accounts/edit/${account.id}'),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: account.type == AccountType.cash ? Colors.grey : Colors.red),
+                      onPressed: account.type == AccountType.cash 
+                        ? null 
+                        : () => _showDeleteConfirmation(context, ref, account),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error: $err')),

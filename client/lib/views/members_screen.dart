@@ -172,53 +172,61 @@ class _MembersScreenState extends ConsumerState<MembersScreen> {
 
           final members = snapshot.data ?? [];
 
-          return ListView.builder(
-            itemCount: members.length,
-            itemBuilder: (context, index) {
-              final member = members[index];
-              final isMe = member['id'] == currentUserId;
-              final status = member['status'] ?? 'active';
-              final isPending = status == 'pending';
-              final inviteCode = member['invite_code'];
-
-              return ListTile(
-                leading: isPending 
-                  ? const CircleAvatar(
-                      backgroundColor: Colors.orange,
-                      child: Icon(Icons.mail, color: Colors.white),
-                    )
-                  : UserAvatar(
-                      pictureUrl: member['picture_url'],
-                      name: member['name'],
-                      color: member['color'],
-                    ),
-                title: Text(
-                  member['name'] + (isMe ? l10n.youSuffix : '') + (isPending ? l10n.pendingSuffix : ''),
-                  style: TextStyle(
-                    fontStyle: isPending ? FontStyle.italic : FontStyle.normal,
-                    color: isPending ? Colors.grey : null,
-                  ),
-                ),
-                subtitle: Text(member['email']),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (isPending && inviteCode != null)
-                      IconButton(
-                        icon: const Icon(Icons.copy),
-                        tooltip: l10n.copyLinkTooltip,
-                        onPressed: () => _copyInviteLink(inviteCode),
-                      ),
-                    
-                    if (!isMe)
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () => _removeMember(member['id'], member['name']),
-                      ),
-                  ],
-                ),
-              );
+          return RefreshIndicator(
+            onRefresh: () async {
+              _loadMembers();
+              // Wait for the future to complete
+              await _membersFuture;
             },
+            child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: members.length,
+              itemBuilder: (context, index) {
+                final member = members[index];
+                final isMe = member['id'] == currentUserId;
+                final status = member['status'] ?? 'active';
+                final isPending = status == 'pending';
+                final inviteCode = member['invite_code'];
+
+                return ListTile(
+                  leading: isPending 
+                    ? const CircleAvatar(
+                        backgroundColor: Colors.orange,
+                        child: Icon(Icons.mail, color: Colors.white),
+                      )
+                    : UserAvatar(
+                        pictureUrl: member['picture_url'],
+                        name: member['name'],
+                        color: member['color'],
+                      ),
+                  title: Text(
+                    member['name'] + (isMe ? l10n.youSuffix : '') + (isPending ? l10n.pendingSuffix : ''),
+                    style: TextStyle(
+                      fontStyle: isPending ? FontStyle.italic : FontStyle.normal,
+                      color: isPending ? Colors.grey : null,
+                    ),
+                  ),
+                  subtitle: Text(member['email']),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isPending && inviteCode != null)
+                        IconButton(
+                          icon: const Icon(Icons.copy),
+                          tooltip: l10n.copyLinkTooltip,
+                          onPressed: () => _copyInviteLink(inviteCode),
+                        ),
+                      
+                      if (!isMe)
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _removeMember(member['id'], member['name']),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
           );
         },
       ),

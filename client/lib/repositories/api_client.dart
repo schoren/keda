@@ -57,13 +57,26 @@ class ApiClient {
     return headers;
   }
 
+  void _logRequest(String method, Uri uri, {String? body}) {
+    print('🌐 HTTP $method: $uri');
+    if (body != null) {
+      print('📤 Request body: $body');
+    }
+  }
+
+  void _logResponse(int statusCode, String body) {
+    print('📥 Response [$statusCode]: $body');
+  }
+
   // ============================================================================
   // CATEGORIES
   // ============================================================================
 
   Future<List<Category>> getCategories() async {
     final uri = Uri.parse('$_scopedUrl/categories');
+    _logRequest('GET', uri);
     final response = await _client.get(uri, headers: _headers);
+    _logResponse(response.statusCode, response.body);
 
     if (response.statusCode == 200) {
       final List<dynamic> json = jsonDecode(response.body);
@@ -118,7 +131,9 @@ class ApiClient {
 
   Future<List<FinanceAccount>> getAccounts() async {
     final uri = Uri.parse('$_scopedUrl/accounts');
+    _logRequest('GET', uri);
     final response = await _client.get(uri, headers: _headers);
+    _logResponse(response.statusCode, response.body);
 
     if (response.statusCode == 200) {
       final List<dynamic> json = jsonDecode(response.body);
@@ -175,7 +190,9 @@ class ApiClient {
     final uri = Uri.parse('$_scopedUrl/transactions').replace(
       queryParameters: month != null ? {'month': month} : null,
     );
+    _logRequest('GET', uri);
     final response = await _client.get(uri, headers: _headers);
+    _logResponse(response.statusCode, response.body);
 
     if (response.statusCode == 200) {
       final List<dynamic> json = jsonDecode(response.body);
@@ -242,7 +259,9 @@ class ApiClient {
 
   Future<MonthlySummary> getMonthlySummary(String month) async {
     final uri = Uri.parse('$_scopedUrl/summary/$month');
+    _logRequest('GET', uri);
     final response = await _client.get(uri, headers: _headers);
+    _logResponse(response.statusCode, response.body);
 
     if (response.statusCode == 200) {
       return MonthlySummary.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
