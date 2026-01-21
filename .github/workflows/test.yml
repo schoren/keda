@@ -10,6 +10,9 @@ on:
     paths-ignore:
       - 'landing/**'
 
+permissions:
+  contents: read
+
 jobs:
   setup-playwright:
     name: Setup Playwright (${{ matrix.project }})
