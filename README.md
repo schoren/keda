@@ -1,75 +1,83 @@
 # Keda
 
-A simple application to manage Keda finances, allowing expense tracking by categories and collaboration between household members.
+A simple application for family finances, allowing expense tracking by categories and collaboration between household members.
 
 ## Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 
-## Getting Started (Docker Compose)
+## Quick Start (Development)
 
-The fastest way to run the project is using Docker Compose. This will spin up both the server and the client, as well as a PostgreSQL database and a mail server for testing (Mailpit).
+The fastest way to get started is using the included `Makefile`:
 
-### 1. Configure Environment Variables
+1.  **Configure Environment**:
+    ```bash
+    cp .env.example .env
+    # Edit .env with your settings (JWT_SECRET, Google Auth, etc.)
+    ```
 
-First, copy the `.env.example` file to `.env`:
+2.  **Start Environment**:
+    ```bash
+    make dev-up
+    ```
 
+3.  **Access Services**:
+    - **Frontend (Web):** [http://localhost:8080](http://localhost:8080)
+    - **Backend (API):** [http://localhost:8090](http://localhost:8090)
+    - **Mailpit:** [http://localhost:8025](http://localhost:8025)
+
+## Automation & Tools
+
+This project uses a `Makefile` to centralize all common tasks.
+
+### Testing
+We maintain a comprehensive test suite covering all layers:
 ```bash
-cp .env.example .env
+make test             # Run ALL tests (backend + client + e2e + security + lint)
+make test-backend     # Go unit tests with coverage
+make test-client      # Flutter unit tests with coverage
+make test-e2e         # End-to-end integration tests (Video Demo)
+make test-quick       # Backend + Client only (skips slow E2E)
 ```
 
-Then, edit the `.env` file with your settings. It is important to configure at least the `JWT_SECRET` and Google credentials if you wish to use Google authentication.
-
-### 2. Run with Docker Compose
-
-From the root of the project, run:
-
+### Code Quality (Linting)
+Ensure code follows project standards:
 ```bash
-docker compose up -d --build
+make lint             # Runs all linters
+make lint-backend     # golangci-lint for Go server
+make lint-client      # flutter analyze for the mobile/web app
 ```
 
-### 3. Access the Application
-
-Once the containers are running:
-
-- **Frontend (Web):** [http://localhost:8080](http://localhost:8080)
-- **Backend (API):** [http://localhost:8090](http://localhost:8090)
-- **Mailpit (Mail Interface):** [http://localhost:8025](http://localhost:8025)
-
-## Testing
-
-The project includes comprehensive test coverage with automated test runners via Makefile:
-
+### Security
+Automated security scans for all components:
 ```bash
-# Run all tests (unit + integration + E2E)
-make test
-
-# Run specific test suites
-make test-backend    # Go unit tests (87% coverage)
-make test-client     # Flutter unit tests (57% coverage)
-make test-e2e        # End-to-end integration tests
-
-# Quick tests (skip E2E)
-make test-quick
-
-# View all available commands
-make help
+make security-check         # Runs ALL security scans
+make security-check-gosec   # Go security analysis
+make security-check-client  # Trivy scan for client vulnerabilities
+make security-check-server  # Trivy scan for server vulnerabilities
+make security-check-mobsf   # MobSF static analysis (Mobile security)
+make security-check-landing # npm audit for landing page
 ```
 
-**Documentation**:
+### Landing Page
+Tooling for the localized landing page:
+```bash
+make landing-build    # Build localized landing page
+make landing-serve    # Serve landing page locally at http://localhost:3000
+```
+
+### Maintenance
+```bash
+make help             # Show all available commands
+make dev-down         # Stop development environment
+make clean            # Remove test artifacts and clean workspace
+```
+
+## Documentation
 - [E2E Testing Guide](E2E_TESTING.md) - How E2E tests work and test authentication
 - [Docker Compose Guide](DOCKER_COMPOSE_GUIDE.md) - Differences between dev and test environments
-
-## Local Development
-
-If you prefer to run the services independently for development:
-
-### Backend
-The server is developed in Go. You can find more details in the `/server` directory.
-
-### Frontend
-The client is a Flutter application. You can find more details in the `/client` directory.
+- [Style Guide](STYLE_GUIDE.md) - Coding standards and best practices
 
 ## License
 
