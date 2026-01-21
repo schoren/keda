@@ -180,7 +180,7 @@ jobs:
       - name: Install golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v1.60
+          version: v2.6.1
           working-directory: server
 
   lint-client:
