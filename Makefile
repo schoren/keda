@@ -44,7 +44,7 @@ lint: lint-backend lint-client
 security-check-gosec:
 	@echo "🛡️  Running security check..."
 	@if command -v gosec >/dev/null 2>&1; then \
-		gosec -fmt=golint ./server/...; \
+		cd server && gosec -fmt=golint ./...; \
 	elif docker info >/dev/null 2>&1; then \
 		echo "Using Docker for gosec..."; \
 		docker run --rm -it -w /app -v $(PWD)/server:/app securego/gosec /app/...; \
