@@ -100,7 +100,8 @@ test('Record Demo Video', async ({ page }) => {
 
   // 1. Dashboard Overview
   console.log('Step 1: Dashboard Overview');
-  const summaryCard = page.getByRole('button', { name: /Budget|Spent/i });
+  const summaryCard = page.locator('flt-semantics:has-text("Budget"), flt-semantics:has-text("Spent"), [aria-label*="Budget"], [aria-label*="Spent"]').first();
+  await expect(summaryCard).toBeVisible({ timeout: 10000 });
   await highlight(summaryCard, "Manage your monthly household budget at a glance");
   await page.waitForTimeout(1000);
 
@@ -127,20 +128,21 @@ test('Record Demo Video', async ({ page }) => {
 
   // 3. Verification & Category Details
   console.log('Step 3: Verification & Details');
-  const updatedSupermarket = page.getByRole('group', { name: /Supermarket \$421\.70/i });
-  await expect(updatedSupermarket).toBeVisible();
+  const updatedSupermarket = page.locator('flt-semantics:has-text("Supermarket"):has-text("$421.70"), [aria-label*="Supermarket"][aria-label*="$421.70"]').first();
+  await expect(updatedSupermarket).toBeVisible({ timeout: 10000 });
   await highlight(updatedSupermarket, "Budget and totals update automatically");
 
   // Navigate to category details via the menu
   const menuBtn = page.getByRole('group', { name: /Supermarket/i }).getByRole('button');
   await menuBtn.click();
 
-  const viewDetail = page.getByRole('menuitem', { name: 'View Detail' });
+  const viewDetail = page.locator('flt-semantics:has-text("View Detail"), [aria-label*="View Detail"]').last();
   await highlight(viewDetail, "Deep dive into your spending habits");
   await viewDetail.click();
 
   // Wait for Detail screen header
-  await expect(page.getByRole('heading', { name: 'Supermarket' })).toBeVisible();
+  const detailHeader = page.locator('h1, [role="heading"], flt-semantics:has-text("Supermarket")').filter({ hasNotText: "Budget" }).first();
+  await expect(detailHeader).toBeVisible({ timeout: 10000 });
   await page.waitForTimeout(2000);
 
   // 4. Home Navigation & Summary Listing

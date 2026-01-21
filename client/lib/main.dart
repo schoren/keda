@@ -16,7 +16,7 @@ import 'core/runtime_config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (!RuntimeConfig.testMode) {
+  if (!RuntimeConfig.testMode || const bool.fromEnvironment('ENABLE_SEMANTICS', defaultValue: false)) {
     SemanticsBinding.instance.ensureSemantics();
   }
   
