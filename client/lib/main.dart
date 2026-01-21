@@ -10,7 +10,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:keda/l10n/app_localizations.dart';
 
 import 'package:flutter/rendering.dart';
-import 'dart:js' as js;
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:js' as js; // ignore: deprecated_member_use
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

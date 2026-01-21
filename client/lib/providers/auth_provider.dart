@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart' as gsi;
 import 'dart:convert';
@@ -99,7 +100,7 @@ class AuthNotifier extends Notifier<AuthState> {
         final data = jsonDecode(jsonString);
         state = AuthState.fromJson(data);
       } catch (e) {
-        print('Error loading auth state: $e');
+        debugPrint('Error loading auth state: $e');
       }
     }
   }
@@ -123,7 +124,7 @@ class AuthNotifier extends Notifier<AuthState> {
          final String? accessToken = null; 
 
          if (idToken == null) {
-           print('Failed to get idToken from Google');
+           debugPrint('Failed to get idToken from Google');
            return;
          }
 
@@ -156,10 +157,10 @@ class AuthNotifier extends Notifier<AuthState> {
            _pendingInviteCode = null;
          } else {
            final error = jsonDecode(response.body)['error'] ?? 'Backend authentication failed: ${response.statusCode}';
-           print('Backend Logic Error: $error');
+           debugPrint('Backend Logic Error: $error');
          }
        } catch (e) {
-         print('Backend Auth Error: $e');
+         debugPrint('Backend Auth Error: $e');
        }
   }
 
@@ -175,7 +176,7 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> loginWithGoogle({String? inviteCode}) async {
     try {
        _pendingInviteCode = inviteCode;
-       print('Initializing Google Sign In');
+       debugPrint('Initializing Google Sign In');
        
        final googleSignIn = gsi.GoogleSignIn.instance;
        
@@ -188,7 +189,7 @@ class AuthNotifier extends Notifier<AuthState> {
        // But if called, we try.
        await googleSignIn.authenticate();
     } catch (e) {
-      print('Login error: $e');
+      debugPrint('Login error: $e');
       rethrow;
     }
   }
@@ -222,7 +223,7 @@ class AuthNotifier extends Notifier<AuthState> {
         throw Exception('Failed to login as test user: ${response.statusCode}');
       }
     } catch (e) {
-      print('Test login error: $e');
+      debugPrint('Test login error: $e');
       rethrow;
     }
   }
@@ -231,7 +232,7 @@ class AuthNotifier extends Notifier<AuthState> {
     try {
       await gsi.GoogleSignIn.instance.signOut();
     } catch (e) {
-      print('Google sign out error (ignoring): $e');
+      debugPrint('Google sign out error (ignoring): $e');
     }
     await _clearState();
     state = AuthState();

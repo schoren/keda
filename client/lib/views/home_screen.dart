@@ -65,11 +65,11 @@ class HomeScreen extends ConsumerWidget {
 
                       return Container(
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
+                              color: Colors.black.withValues(alpha: 0.05),
                               blurRadius: 15,
                               offset: const Offset(0, 10),
                             ),
@@ -127,7 +127,7 @@ class HomeScreen extends ConsumerWidget {
                               child: Container(
                                 height: 4,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFEF4444).withOpacity(0.2),
+                                  color: const Color(0xFFEF4444).withValues(alpha: 0.2),
                                 ),
                                 child: FractionallySizedBox(
                                   alignment: Alignment.centerLeft,

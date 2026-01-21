@@ -22,7 +22,7 @@ final _shellNavigatorMembersKey = GlobalKey<NavigatorState>(debugLabel: 'shellMe
 final _shellNavigatorSettingsKey = GlobalKey<NavigatorState>(debugLabel: 'shellSettings');
 
 final routerProvider = Provider<GoRouter>((ref) {
-  print('DEBUG: GoRouter instance created');
+  debugPrint('DEBUG: GoRouter instance created');
   final listenable = _AuthListenable(ref);
 
   return GoRouter(
@@ -149,7 +149,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
 class _AuthListenable extends ChangeNotifier {
   _AuthListenable(Ref ref) {
-    _subscription = ref.listen(authProvider, (_, __) => notifyListeners());
+    _subscription = ref.listen(authProvider, (_, _) => notifyListeners());
   }
 
   late final ProviderSubscription<AuthState> _subscription;

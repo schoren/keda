@@ -1,18 +1,6 @@
 # Security Policy
 
-## Supported Versions
-
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.12.x  | :white_check_mark: |
-| < 0.12  | :x:                |
-
 ## Reporting a Vulnerability
-
-Use this section to explain how user should report a vulnerability.
 
 We take the security of this project seriously. If you find any vulnerabilities, please report them to us immediately.
 
@@ -22,11 +10,15 @@ Instead, please send an email to [security@getkeda.app](mailto:security@getkeda.
 
 ## Security Measures
 
-### Static Analysis
-We use `gosec` to perform automated security audits of our Go code. This is integrated into our CI/CD pipeline and local development workflow (`make security-check`).
+### Automated Security Audits
+We integrate multiple security scanning tools into our CI/CD pipeline and local development workflows:
+- **Go Security (`gosec`)**: Scans Go source code for security problems.
+- **Trivy**: Performs vulnerability, secret, and misconfiguration scans for both the client (Flutter) and server (Go).
+- **MobSF Scan**: Used for automated security analysis of the mobile codebase.
+- **npm audit**: Regularly checks the landing page dependencies for known vulnerabilities.
 
 ### Authentication & Authorization
-- All API endpoints (except login) are protected by JWT authentication.
+- All API endpoints (except login and health checks) are protected by JWT authentication.
 - Middleware enforces strict checks:
   - User existence in the database.
   - Active status (not soft-deleted).
@@ -34,5 +26,5 @@ We use `gosec` to perform automated security audits of our Go code. This is inte
   - Verification that the token's household claim matches the URL resource.
 
 ### Data Protection
-- Household data is logically isolated.
-- Users can only access data belonging to their assigned household.
+- Household data is logically isolated at the database level.
+- Users can only access data belonging to their assigned household through enforced server-side filters.

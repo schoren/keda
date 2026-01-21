@@ -171,11 +171,11 @@ class CategoryDetailScreen extends ConsumerWidget {
                    );
                  },
                  loading: () => const Center(child: CircularProgressIndicator()),
-                 error: (_, __) => Center(child: Text(l10n.errorLoadingAccounts)),
+                 error: (_, _) => Center(child: Text(l10n.errorLoadingAccounts)),
                );
              },
              loading: () => const Center(child: CircularProgressIndicator()),
-             error: (_, __) => Center(child: Text(l10n.errorLoadingExpenses)),
+             error: (_, _) => Center(child: Text(l10n.errorLoadingExpenses)),
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () => context.push('/new-expense/$categoryId'),

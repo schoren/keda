@@ -1,7 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:drift/drift.dart';
-import 'package:drift/web.dart';
+import 'package:drift/web.dart'; // ignore: deprecated_member_use
 
 QueryExecutor openConnection() {
-  print('Drift: Opening WebDatabase (IndexedDB)...');
+  debugPrint('Drift: Opening WebDatabase (IndexedDB)...');
   return WebDatabase('keda_db', logStatements: true);
 }

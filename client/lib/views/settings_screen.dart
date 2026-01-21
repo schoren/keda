@@ -93,7 +93,7 @@ class SettingsScreen extends ConsumerWidget {
                 ref.watch(serverVersionProvider).when(
                   data: (version) => Text('${l10n.serverVersion}: $version'),
                   loading: () => Text('${l10n.serverVersion}: ${l10n.loading}'),
-                  error: (_, __) => Text('${l10n.serverVersion}: ${l10n.error}'),
+                  error: (_, _) => Text('${l10n.serverVersion}: ${l10n.error}'),
                 ),
               ],
             ),

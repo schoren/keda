@@ -29,11 +29,11 @@ class MonthSummaryCard extends StatelessWidget {
     
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
+        color: Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 15,
             offset: const Offset(0, 10),
           ),
@@ -79,7 +79,7 @@ class MonthSummaryCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: (remaining / totalBudget).clamp(0.0, 1.0),
                 minHeight: 8,
-                backgroundColor: const Color(0xFFEF4444).withOpacity(0.2),
+                backgroundColor: const Color(0xFFEF4444).withValues(alpha: 0.2),
                 valueColor: AlwaysStoppedAnimation<Color>(
                   remaining > 0.2 * totalBudget ? const Color(0xFF22C55E) : const Color(0xFFFACC15),
                 ),

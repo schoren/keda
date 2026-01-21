@@ -117,15 +117,15 @@ class ExpensesScreen extends ConsumerWidget {
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (_, __) => Center(child: Text(l10n.errorLoadingCategories)),
+                error: (_, _) => Center(child: Text(l10n.errorLoadingCategories)),
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => Center(child: Text(l10n.errorLoadingAccounts)),
+            error: (_, _) => Center(child: Text(l10n.errorLoadingAccounts)),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, __) => Center(child: Text(l10n.errorLoadingExpenses)),
+        error: (_, _) => Center(child: Text(l10n.errorLoadingExpenses)),
       ),
     );
   }

@@ -1,4 +1,6 @@
-import 'dart:js' as js;
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:js' as js; // ignore: deprecated_member_use
+import 'package:flutter/foundation.dart';
 
 String? getRuntimeApiUrl() {
   try {
@@ -31,7 +33,7 @@ bool? getRuntimeTestMode() {
     
     // In Flutter Web, js.context['FF_CONFIG'] might return a Map or a JsObject
     // We try to access the property safely.
-    var val;
+    dynamic val;
     if (jsConf is Map) {
       val = jsConf['TEST_MODE'];
     } else {
@@ -42,7 +44,7 @@ bool? getRuntimeTestMode() {
     if (val is bool) return val;
     if (val is String) return val.toLowerCase() == 'true';
   } catch (e) {
-    print('[Dart SDK] Error reading TEST_MODE: $e');
+    debugPrint('[Dart SDK] Error reading TEST_MODE: $e');
   }
   return null;
 }
