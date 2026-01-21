@@ -42,6 +42,7 @@ services:
       GOOGLE_CLIENT_ID:
       TEST_MODE: "true"
       TEST_HOUSEHOLD_ID: test-household-id
+      ENABLE_SEMANTICS: "true"
     ports:
       - "8085:80"
     depends_on:
