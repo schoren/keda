@@ -252,7 +252,7 @@ android-run:
 	@echo "📱 Running on Android device..."
 	@set -a && . ./.env.dev && set +a && \
 	DEVICE_ID=$$(flutter devices | grep "•" | grep -E "mobile|android" | grep -vE "desktop|web|offline" | head -n 1 | awk -F'•' '{print $$2}' | xargs); \
-	cd client && flutter run -d $$DEVICE_ID --dart-define=GOOGLE_CLIENT_ID=$$GOOGLE_CLIENT_ID
+	cd client && flutter run -d $$DEVICE_ID --dart-define=GOOGLE_CLIENT_ID=$$GOOGLE_CLIENT_ID --dart-define=API_URL=$$API_URL
 
 android-clean:
 	@echo "🧹 Cleaning Android build..."
