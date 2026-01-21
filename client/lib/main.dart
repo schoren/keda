@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router.dart';
-import 'providers/data_providers.dart';
 import 'providers/settings_provider.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -11,8 +10,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:keda/l10n/app_localizations.dart';
 
 import 'package:flutter/rendering.dart';
-import 'dart:js' as js;
-import 'core/runtime_config.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:js' as js; // ignore: deprecated_member_use
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

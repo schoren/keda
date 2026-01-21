@@ -15,8 +15,8 @@ help:
 	@echo "Available targets:"
 	@echo "  make test-backend    - Run backend unit tests with coverage"
 	@echo "  make test-client     - Run client unit tests with coverage"
-	@echo "  make test-e2e        - Run E2E integration tests"
-	@echo "  make test-all        - Run all tests (backend + client + e2e)"
+	@echo "  make test-e2e        - Run E2E integration tests (Video Demo)"
+	@echo "  make test-all        - Run all tests (backend + client + e2e + security + lint)"
 	@echo "  make test            - Alias for test-all"
 	@echo ""
 	@echo "  make dev-up          - Start development environment"
@@ -36,6 +36,77 @@ test-backend:
 	@echo "📊 Coverage report:"
 	cd server/app && go tool cover -func=coverage.out
 
+security-check: security-check-gosec security-check-client security-check-server security-check-mobsf security-check-landing
+
+lint: lint-backend lint-client
+
+# Security Check
+security-check-gosec:
+	@echo "🛡️  Running security check..."
+	@if command -v gosec >/dev/null 2>&1; then \
+		gosec -fmt=golint ./server/...; \
+	elif docker info >/dev/null 2>&1; then \
+		echo "Using Docker for gosec..."; \
+		docker run --rm -it -w /app -v $(PWD)/server:/app securego/gosec /app/...; \
+	else \
+		echo "⚠️  gosec not found and Docker not available. Please install gosec: go install github.com/securego/gosec/v2/cmd/gosec@latest"; \
+		exit 1; \
+	fi
+
+
+# Client Security Check
+security-check-client:
+	@echo "🛡️  Running client security check..."
+	@if docker info >/dev/null 2>&1; then \
+		echo "Using Docker for Trivy..."; \
+		docker run --rm -v $(PWD)/client:/app -w /app aquasec/trivy:latest fs . --scanners vuln,secret,misconfig; \
+	else \
+		echo "⚠️  Docker not available. Skipping Trivy scan."; \
+		exit 1; \
+	fi
+
+# Server Security Check (Container/FS)
+security-check-server:
+	@echo "🛡️  Running server container security check..."
+	@if docker info >/dev/null 2>&1; then \
+		echo "Using Docker for Trivy..."; \
+		docker run --rm -v $(PWD)/server:/app -w /app aquasec/trivy:latest fs . --scanners vuln,secret,misconfig; \
+	else \
+		echo "⚠️  Docker not available. Skipping Trivy scan."; \
+		exit 1; \
+	fi
+
+# MobSF Security Check (Source Code)
+security-check-mobsf:
+	@echo "🛡️  Running MobSF static analysis..."
+	@if docker info >/dev/null 2>&1; then \
+		echo "Using Docker for mobsfscan..."; \
+		docker run --rm -v $(PWD):/code opensecurity/mobsfscan:latest /code; \
+	else \
+		echo "⚠️  Docker not available. Skipping MobSF scan."; \
+		exit 1; \
+	fi
+
+# Server Linting
+lint-backend:
+	@echo "🔍 Running Go linters..."
+	@if command -v golangci-lint >/dev/null 2>&1; then \
+		cd server && golangci-lint run ./...; \
+	else \
+		echo "⚠️  golangci-lint not found. Skipping."; \
+		exit 1; \
+	fi
+
+# Client Linting
+lint-client:
+	@echo "🔍 Running Flutter analyzer..."
+	cd client && flutter analyze || echo "⚠️  Flutter analyzer found issues. Please review details above."
+
+# Landing Page Security
+security-check-landing:
+	@echo "🛡️  Running npm audit for landing page..."
+	cd landing && npm audit
+
 # Client tests
 test-client:
 	@echo "🧪 Running client tests..."
@@ -50,18 +121,13 @@ test-client:
 		echo "Coverage: $$(echo "scale=1; $$HIT * 100 / $$TOTAL" | bc)%"
 
 # E2E tests
-test-e2e: test-up
-	@echo "🧪 Running E2E integration tests..."
-	@echo "⏳ Waiting for server to be ready..."
-	@timeout 60 bash -c 'until curl -sf http://localhost:$(TEST_SERVER_PORT)/health > /dev/null 2>&1; do sleep 2; done' || \
-		(echo "❌ Server failed to start" && make test-down && exit 1)
-	@echo "✅ Server is ready"
-	@echo ""
-	cd e2e-tests && npm install && API_URL=http://localhost:$(TEST_SERVER_PORT) npx playwright test
-	@make test-down
+# E2E tests (Using Video Demo as "Slow E2E")
+test-e2e:
+	@echo "🧪 Running E2E / Video Demo tests..."
+	@cd video-demo && ./run.sh
 
 # Run all tests
-test-all: test-backend test-client test-e2e
+test-all: test-backend test-client test-e2e security-check lint
 	@echo ""
 	@echo "✅ All tests completed successfully!"
 

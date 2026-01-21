@@ -17,7 +17,9 @@ import (
 
 func setupTestDB() *gorm.DB {
 	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	db.AutoMigrate(Entities...)
+	if err := db.AutoMigrate(Entities...); err != nil {
+		panic(err)
+	}
 	return db
 }
 
@@ -74,7 +76,8 @@ func TestCategoryCRUD(t *testing.T) {
 
 	// Extract the created category ID
 	var created Category
-	json.Unmarshal(w.Body.Bytes(), &created)
+	err := json.Unmarshal(w.Body.Bytes(), &created)
+	assert.NoError(t, err)
 	categoryID := created.ID
 
 	// Update
@@ -86,7 +89,8 @@ func TestCategoryCRUD(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	var updated Category
-	json.Unmarshal(w.Body.Bytes(), &updated)
+	err = json.Unmarshal(w.Body.Bytes(), &updated)
+	assert.NoError(t, err)
 	assert.Equal(t, "Gaming", updated.Name)
 
 	// Delete
@@ -142,7 +146,8 @@ func TestAccountCRUD(t *testing.T) {
 
 	// Extract the created account ID
 	var created Account
-	json.Unmarshal(w.Body.Bytes(), &created)
+	err := json.Unmarshal(w.Body.Bytes(), &created)
+	assert.NoError(t, err)
 	accountID := created.ID
 
 	// Get
@@ -152,7 +157,8 @@ func TestAccountCRUD(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	var accounts []Account
-	json.Unmarshal(w.Body.Bytes(), &accounts)
+	err = json.Unmarshal(w.Body.Bytes(), &accounts)
+	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, len(accounts), 1)
 
 	// Update
@@ -199,7 +205,8 @@ func TestGetMonthlySummary(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	var summary MonthlySummary
-	json.Unmarshal(w.Body.Bytes(), &summary)
+	err := json.Unmarshal(w.Body.Bytes(), &summary)
+	assert.NoError(t, err)
 	assert.Equal(t, float64(500), summary.TotalBudget)
 	assert.Equal(t, float64(100), summary.TotalSpent)
 	assert.Len(t, summary.Categories, 1)
@@ -228,7 +235,8 @@ func TestTransactionCRUD(t *testing.T) {
 
 	// Extract the created transaction ID
 	var created Transaction
-	json.Unmarshal(w.Body.Bytes(), &created)
+	err := json.Unmarshal(w.Body.Bytes(), &created)
+	assert.NoError(t, err)
 	transactionID := created.ID
 
 	// Get
@@ -238,7 +246,8 @@ func TestTransactionCRUD(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	var transactions []Transaction
-	json.Unmarshal(w.Body.Bytes(), &transactions)
+	err = json.Unmarshal(w.Body.Bytes(), &transactions)
+	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, len(transactions), 1)
 
 	// Update
@@ -306,7 +315,8 @@ func TestGetTransactionsFiltering(t *testing.T) {
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
 	var transactions []Transaction
-	json.Unmarshal(w.Body.Bytes(), &transactions)
+	err := json.Unmarshal(w.Body.Bytes(), &transactions)
+	assert.NoError(t, err)
 	assert.Len(t, transactions, 1)
 	assert.Equal(t, "t1", transactions[0].ID)
 
@@ -323,8 +333,9 @@ func TestJWTMiddleware(t *testing.T) {
 	h := NewHandlers(db)
 
 	// Set secret for test
-	os.Setenv("JWT_SECRET", "test_secret")
-	defer os.Unsetenv("JWT_SECRET")
+	err := os.Setenv("JWT_SECRET", "test_secret")
+	assert.NoError(t, err)
+	defer func() { _ = os.Unsetenv("JWT_SECRET") }()
 
 	r := gin.Default()
 	r.Use(h.JWTMiddleware())
@@ -345,8 +356,10 @@ func TestJWTMiddleware(t *testing.T) {
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
 
-	// 3. Valid Token but wrong HouseholdID
-	user := User{ID: "u1", HouseholdID: "hh1"}
+	// 3. Valid Token but wrong HouseholdID IN TOKEN vs URL
+	// Note: The user MUST exist in the DB now for the middleware to proceed to the household check
+	user := User{ID: "u1", HouseholdID: "hh1", Email: "u1@test.com", Name: "U1"}
+	db.Create(&user)
 	token, _ := h.generateJWT(user)
 
 	req, _ = http.NewRequest("GET", "/protected/hh2", nil)
@@ -355,12 +368,31 @@ func TestJWTMiddleware(t *testing.T) {
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusForbidden, w.Code)
 
-	// 4. Valid Token and correct HouseholdID
+	// 4. Valid Token and correct HouseholdID (Success Case)
 	req, _ = http.NewRequest("GET", "/protected/hh1", nil)
 	req.Header.Set("Authorization", "Bearer "+token)
 	w = httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
+
+	// 5. User Soft-Deleted (Revoked Access)
+	db.Delete(&user) // Soft delete
+	req, _ = http.NewRequest("GET", "/protected/hh1", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
+
+	// 6. User Changed Household (DB says hh2, Token says hh1)
+	// Restore user first
+	db.Unscoped().Model(&user).Update("deleted_at", nil) // Un-delete
+	db.Model(&user).Update("household_id", "hh2")        // Change household
+
+	req, _ = http.NewRequest("GET", "/protected/hh1", nil)
+	req.Header.Set("Authorization", "Bearer "+token) // Token still has hh1
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req) // Matches token vs URL, but fails DB check
+	assert.Equal(t, http.StatusForbidden, w.Code)
 }
 
 func TestHouseholdAndInvitation(t *testing.T) {
@@ -444,7 +476,8 @@ func TestGetMembers_IncludesCode(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	var members []MemberResponse
-	json.Unmarshal(w.Body.Bytes(), &members)
+	err := json.Unmarshal(w.Body.Bytes(), &members)
+	assert.NoError(t, err)
 	assert.Len(t, members, 1)
 	assert.Equal(t, "pending", members[0].Status)
 	assert.Equal(t, "SECRET123", members[0].InviteCode)
@@ -500,7 +533,7 @@ func TestAuthGoogle(t *testing.T) {
 			Email: "test@gmail.com",
 			Name:  "Test User",
 		}
-		json.NewEncoder(w).Encode(userInfo)
+		_ = json.NewEncoder(w).Encode(userInfo)
 	}))
 	defer server.Close()
 	h.googleAPIURL = server.URL
@@ -517,7 +550,8 @@ func TestAuthGoogle(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	var resp AuthResponse
-	json.Unmarshal(w.Body.Bytes(), &resp)
+	err := json.Unmarshal(w.Body.Bytes(), &resp)
+	assert.NoError(t, err)
 	assert.Equal(t, "test@gmail.com", resp.User.Email)
 	assert.NotEmpty(t, resp.Token)
 	assert.NotEmpty(t, resp.HouseholdID)
@@ -538,7 +572,7 @@ func TestAuthGoogle(t *testing.T) {
 			Email: "invited@gmail.com",
 			Name:  "Invited User",
 		}
-		json.NewEncoder(w).Encode(userInfo)
+		_ = json.NewEncoder(w).Encode(userInfo)
 	})
 
 	body, _ = json.Marshal(authReqInvite)
@@ -546,14 +580,15 @@ func TestAuthGoogle(t *testing.T) {
 	w = httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
-	json.Unmarshal(w.Body.Bytes(), &resp)
+	err = json.Unmarshal(w.Body.Bytes(), &resp)
+	assert.NoError(t, err)
 	assert.Equal(t, "hh-target", resp.HouseholdID)
 
 	// 4. Soft-deleted user
 	db.Model(&User{}).Where("email = ?", "test@gmail.com").Update("deleted_at", gorm.DeletedAt{Time: time.Now(), Valid: true})
 	server.Config.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		userInfo := GoogleUserInfo{ID: "google-id-123", Email: "test@gmail.com", Name: "Test User"}
-		json.NewEncoder(w).Encode(userInfo)
+		_ = json.NewEncoder(w).Encode(userInfo)
 	})
 	req, _ = http.NewRequest("POST", "/auth/google", bytes.NewBufferString(`{"access_token":"fake"}`))
 	w = httptest.NewRecorder()
@@ -661,7 +696,7 @@ func TestDBErrors(t *testing.T) {
 
 	// Break the DB
 	sqlDB, _ := db.DB()
-	sqlDB.Close()
+	_ = sqlDB.Close()
 
 	r := gin.Default()
 	r.GET("/households/:household_id/categories", h.GetCategories)
@@ -792,7 +827,8 @@ func TestTransactionCreatorInfo(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, w.Code)
 
 	var created Transaction
-	json.Unmarshal(w.Body.Bytes(), &created)
+	err := json.Unmarshal(w.Body.Bytes(), &created)
+	assert.NoError(t, err)
 	assert.Equal(t, userID, created.UserID)
 
 	// 2. Get Transactions (verify Preload)
@@ -802,7 +838,8 @@ func TestTransactionCreatorInfo(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	var transactions []Transaction
-	json.Unmarshal(w.Body.Bytes(), &transactions)
+	err = json.Unmarshal(w.Body.Bytes(), &transactions)
+	assert.NoError(t, err)
 	assert.Len(t, transactions, 1)
 	assert.Equal(t, "Test User", transactions[0].User.Name)
 }
@@ -833,7 +870,8 @@ func TestTransactionTimezone(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, w.Code)
 
 	var created Transaction
-	json.Unmarshal(w.Body.Bytes(), &created)
+	err := json.Unmarshal(w.Body.Bytes(), &created)
+	assert.NoError(t, err)
 
 	// Verify it's UTC in the struct/JSON response
 	assert.Equal(t, "UTC", created.Date.Location().String())
@@ -845,7 +883,8 @@ func TestTransactionTimezone(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	var list []Transaction
-	json.Unmarshal(w.Body.Bytes(), &list)
+	err = json.Unmarshal(w.Body.Bytes(), &list)
+	assert.NoError(t, err)
 	found := false
 	for _, tx := range list {
 		if tx.Description == "TZ Test" {
