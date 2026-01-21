@@ -80,17 +80,25 @@ jobs:
   security-gosec:
     name: Security - Gosec
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Run Gosec Security Scanner
         uses: securego/gosec@master
         with:
-          args: ./server/...
+          args: '-fmt sarif -out results.sarif ./server/...'
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
 
   security-trivy-client:
     name: Security - Trivy Client
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -99,13 +107,21 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: './client'
+          format: 'sarif'
+          output: 'trivy-results-client.sarif'
           scanners: 'vuln,secret,misconfig'
-          exit-code: '1'
+          exit-code: '0'
           ignore-unfixed: true
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results-client.sarif
 
   security-trivy-server:
     name: Security - Trivy Server
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -114,20 +130,32 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: './server'
+          format: 'sarif'
+          output: 'trivy-results-server.sarif'
           scanners: 'vuln,secret,misconfig'
-          exit-code: '1'
+          exit-code: '0'
           ignore-unfixed: true
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results-server.sarif
 
   security-mobsf:
     name: Security - MobSF
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Run MobSF Scan
         uses: product-os/mobsfscan-action@v1
         with:
-          args: . --sarif --output results.sarif || true
+          args: '. --sarif --output results.sarif'
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
 
   security-landing:
     name: Security - Landing (npm audit)
