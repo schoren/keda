@@ -27,6 +27,7 @@ help:
 	@echo "    make test-backend    - Run backend unit tests with coverage"
 	@echo "    make test-client     - Run client unit tests with coverage"
 	@echo "    make test-e2e        - Run E2E integration tests (Video Demo)"
+	@echo "    make test-android-integration - Run Android integration tests (needs emulator)"
 	@echo ""
 	@echo "  🔍 Code Quality"
 	@echo "    make lint            - Run all linters (backend + client)"
@@ -159,6 +160,14 @@ test-client:
 test-e2e:
 	@echo "🧪 Running E2E / Video Demo tests..."
 	@cd video-demo && ./run.sh
+
+# Android Integration tests
+test-android-integration:
+	@echo "🧪 Running Android Integration tests..."
+	@./scripts/ensure_emulator.sh
+	@cd client && flutter test integration_test/app_test.dart \
+		--dart-define=API_URL=http://10.0.2.2:8090 \
+		--dart-define=TEST_MODE=true
 
 # Run all tests
 test-all: test-backend test-client test-e2e security-check lint

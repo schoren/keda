@@ -359,7 +359,44 @@ jobs:
       - security-trivy-server
       - security-mobsf
       - security-landing
+      - android-integration-test
     runs-on: ubuntu-latest
     steps:
       - name: Cleanup
         run: echo "Done"
+
+  android-integration-test:
+    name: Android Integration Test (Headless)
+    needs: [build-android]
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.6'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        working-directory: ./client
+        run: flutter pub get
+
+      - name: Run Integration Tests (Headless Emulator)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 6
+          working-directory: ./client
+          script: flutter test integration_test/app_test.dart --dart-define=TEST_MODE=true

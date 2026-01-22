@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router.dart';
+import 'core/runtime_config.dart';
 import 'providers/settings_provider.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -23,7 +24,9 @@ class MyScrollBehavior extends MaterialScrollBehavior {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SemanticsBinding.instance.ensureSemantics();
+  if (!RuntimeConfig.testMode) {
+    SemanticsBinding.instance.ensureSemantics();
+  }
   
   configureUrlStrategy();
   await initializeDateFormatting(null, null);
