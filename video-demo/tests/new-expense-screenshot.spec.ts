@@ -21,5 +21,5 @@ test('Take New Expense Screenshot', async ({ page }) => {
 
   // Take screenshot
   await page.waitForTimeout(1000); // Wait for animations to settle
-  await page.screenshot({ path: 'screenshots/new-expense.png' });
+  await page.screenshot({ path: 'generated-assets/new-expense.png' });
 });

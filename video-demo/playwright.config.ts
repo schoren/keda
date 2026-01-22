@@ -4,6 +4,7 @@ const TIMEOUT = 120_000;
 
 export default defineConfig({
   testDir: './tests',
+  outputDir: './generated-assets',
   timeout: TIMEOUT,
   workers: 1,
   reporter: 'list',
