@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../widgets/premium_refresh_indicator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:keda/l10n/app_localizations.dart';
@@ -19,7 +20,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       body: categoriesAsync.when(
-        data: (categories) => RefreshIndicator(
+        data: (categories) => PremiumRefreshIndicator(
           onRefresh: () async {
             // Calculate current month for summary invalidation
             final now = DateTime.now();

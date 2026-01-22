@@ -9,7 +9,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:keda/l10n/app_localizations.dart';
 
 import 'package:flutter/rendering.dart';
+import 'dart:ui';
 import 'utils/web_utils.dart';
+
+class MyScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad,
+      };
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +47,7 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp.router(
       title: 'Keda',
+      scrollBehavior: MyScrollBehavior(),
       locale: settings.locale,
       theme: ThemeData(
         useMaterial3: true,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:keda/l10n/app_localizations.dart';
+import '../widgets/premium_refresh_indicator.dart';
 import '../providers/data_providers.dart';
 import '../utils/formatters.dart';
 import '../models/expense.dart';
@@ -39,7 +40,7 @@ class ExpensesScreen extends ConsumerWidget {
                   }).toList();
 
                   if (currentMonthExpenses.isEmpty) {
-                    return RefreshIndicator(
+                    return PremiumRefreshIndicator(
                       onRefresh: () async {
                         await Future.wait([
                           ref.refresh(expensesProvider.future),
@@ -69,7 +70,7 @@ class ExpensesScreen extends ConsumerWidget {
 
                   final dateKeys = groupedExpenses.keys.toList();
 
-                  return RefreshIndicator(
+                  return PremiumRefreshIndicator(
                     onRefresh: () async {
                       await Future.wait([
                         ref.refresh(expensesProvider.future),

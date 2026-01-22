@@ -5,6 +5,7 @@ import 'package:keda/l10n/app_localizations.dart';
 import '../models/account_type.dart';
 import '../providers/data_providers.dart';
 import '../models/finance_account.dart';
+import '../widgets/premium_refresh_indicator.dart';
 
 class ManageAccountsScreen extends ConsumerWidget {
   const ManageAccountsScreen({super.key});
@@ -19,7 +20,7 @@ class ManageAccountsScreen extends ConsumerWidget {
         title: Text(l10n.manageAccounts),
       ),
       body: accountsAsync.when(
-        data: (accounts) => RefreshIndicator(
+        data: (accounts) => PremiumRefreshIndicator(
           onRefresh: () async {
             await ref.refresh(accountsProvider.future);
           },

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../widgets/premium_refresh_indicator.dart';
 import 'package:keda/l10n/app_localizations.dart';
 import '../providers/data_providers.dart';
 import '../providers/auth_provider.dart';
@@ -172,7 +174,7 @@ class _MembersScreenState extends ConsumerState<MembersScreen> {
 
           final members = snapshot.data ?? [];
 
-          return RefreshIndicator(
+          return PremiumRefreshIndicator(
             onRefresh: () async {
               _loadMembers();
               // Wait for the future to complete
