@@ -197,6 +197,14 @@ jobs:
         with:
           flutter-version: '3.38.6'
           channel: 'stable'
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('client/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
       - name: Install dependencies
         working-directory: ./client
         run: flutter pub get
@@ -250,6 +258,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+          cache: 'gradle'
       
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -258,6 +267,14 @@ jobs:
           channel: 'stable'
           cache: true
       
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('client/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
       - name: Install dependencies
         working-directory: ./client
         run: flutter pub get
@@ -367,7 +384,6 @@ jobs:
 
   android-integration-test:
     name: Android Integration Test (Headless)
-    needs: [build-android]
     runs-on: macos-latest
     timeout-minutes: 30
     steps:
@@ -379,6 +395,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+          cache: 'gradle'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -386,6 +403,14 @@ jobs:
           flutter-version: '3.38.6'
           channel: 'stable'
           cache: true
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('client/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
 
       - name: Install dependencies
         working-directory: ./client
