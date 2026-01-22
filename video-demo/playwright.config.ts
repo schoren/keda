@@ -14,7 +14,8 @@ export default defineConfig({
     trace: 'off',
     launchOptions: {
       slowMo: 1000,
-    }
+    },
+    screenshot: 'only-on-failure',
   },
 
   projects: [
@@ -26,6 +27,4 @@ export default defineConfig({
       },
     },
   ],
-
-  testMatch: 'demo.spec.ts',
 });
