@@ -46,15 +46,14 @@ if [ $TEST_EXIT_CODE -eq 0 ]; then
   echo "✅ Assets generated."
   # Playwright saves assets in generated-assets/<test-name>/video.webm or screenshot.png
   
-  # 1. Handle videos: rename them to a clean test name to avoid collisions
-  # Format is usually: [file-slug]-[title-slug]-[project-name]
-  # We try to keep only the [file-slug] part.
   find generated-assets -mindepth 2 -name "*.webm" | while read -r video; do
     DIR_NAME=$(basename "$(dirname "$video")")
-    # Remove everything starting from the first capital letter (start of title slug or project)
-    # OR from a 5-char hex hash which Playwright sometimes inserts
-    CLEAN_NAME=$(echo "$DIR_NAME" | sed 's/-[A-Z].*//; s/-[0-9a-f]\{5\}.*//')
-    cp "$video" "generated-assets/${CLEAN_NAME}.webm"
+    # Extract the test name from Playwright's directory format.
+    # New logic: remove project name, then remove the hash if present, 
+    # then remove known prefixes like Video-Assets or Shortcuts.
+    # Also remove the file-name-screenshot- prefix if it matches the test name.
+    CLEAN_NAME=$(echo "$DIR_NAME" | sed -E 's/-Chromium.*//; s/-Record.*//; s/.*Video-Assets-//; s/.*Screenshots-//; s/.*Documentation-Video-Assets-//; s/.*Documentation-Screenshots-//; s/-[a-f0-9]{5}-.*//; s/-[a-f0-9]{5}$//; s/^new-expense-screenshot-//; s/^language-selector-screenshot-//')
+    mv "$video" "generated-assets/${CLEAN_NAME}.webm"
   done
 
   # 2. Handle screenshots: consolidated in the root

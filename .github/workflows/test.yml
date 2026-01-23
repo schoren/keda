@@ -2,13 +2,9 @@ name: Tests
 
 on:
   pull_request:
-    branches: [ main, develop ]
-    paths-ignore:
-      - 'landing/**'
+    branches: [ main ]
   push:
-    branches: [ main, develop ]
-    paths-ignore:
-      - 'landing/**'
+    branches: [ main ]
 
 permissions:
   contents: read
@@ -349,8 +345,8 @@ jobs:
           push: true
           tags: schoren/keda-${{ matrix.image }}:${{ github.sha }}
 
-  preview-generator-test:
-    name: Video Demo Test (Playwright)
+  generate-previews:
+    name: Generate Previews
     needs: [build-images, setup-playwright]
     runs-on: ubuntu-latest
     steps:
@@ -446,12 +442,38 @@ jobs:
           working-directory: ./client
           script: flutter test integration_test/app_test.dart --dart-define=TEST_MODE=true --dart-define=INTEGRATION_TEST=true --dart-define=MOCK_DATA=true
 
+  build-landing-and-docs:
+    name: Build Landing & Docs
+    needs: [generate-previews]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            landing/package-lock.json
+            docs/package-lock.json
+      - name: Download Previews
+        uses: actions/download-artifact@v4
+        with:
+          name: marketing-assets
+          path: preview-generator/generated-assets
+      - name: Build Landing and Docs
+        run: make landing-build
+        env:
+          APP_URL: https://app.getkeda.app
+          GITHUB_REPO_URL: https://github.com/schoren/keda
+          CONTACT_EMAIL: info@getkeda.app
+
   cleanup:
     if: always()
     needs: 
       - backend-tests
       - client-tests
-      - preview-generator-test
       - lint-backend
       - lint-client
       - security-gosec
@@ -461,6 +483,7 @@ jobs:
       - security-landing
       - android-integration-test
       - build-android
+      - build-landing-and-docs
     runs-on: ubuntu-latest
     steps:
       - name: Cleanup
