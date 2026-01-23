@@ -253,6 +253,7 @@ landing-serve: landing-build
 # Documentation
 docs-build:
 	@echo "📥 Importing assets..."
+	mkdir -p docs/public
 	rm -rf docs/public/assets
 	cp -r preview-generator/generated-assets docs/public/assets
 	cp client/assets/logo.png docs/public/assets/
