@@ -28,7 +28,7 @@ jobs:
       version: ${{ steps.get_version.outputs.version }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -57,7 +57,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -69,7 +69,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Server
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./server
           push: true
@@ -89,7 +89,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -101,7 +101,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Client
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./client
           push: true
@@ -120,10 +120,10 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '17'
@@ -137,7 +137,7 @@ jobs:
           cache: true
       
       - name: Cache Flutter dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.pub-cache
           key: ${{ runner.os }}-pub-${{ hashFiles('client/pubspec.lock') }}
@@ -153,7 +153,7 @@ jobs:
         run: flutter build apk --release --build-name=${{ needs.bump.outputs.version }} --build-number=${{ github.run_number }}
       
       - name: Upload Release APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: keda_android_${{ needs.bump.outputs.version }}.apk
           path: client/build/app/outputs/flutter-apk/app-release.apk
@@ -163,16 +163,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Cache node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: preview-generator/node_modules
           key: ${{ runner.os }}-node-preview-generator-${{ hashFiles('preview-generator/package-lock.json') }}
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('preview-generator/package-lock.json') }}
@@ -193,7 +193,7 @@ jobs:
         run: ./run.sh
 
       - name: Upload release assets
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: generated-previews
           path: preview-generator/generated-assets/
@@ -205,17 +205,21 @@ jobs:
       contents: write
     steps:
       - name: Download release assets
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: generated-previews
           path: .
           merge-multiple: true
 
       - name: Download APK artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: keda_android_${{ needs.bump.outputs.version }}.apk
           path: .
+
+      - name: Create Assets Zip
+        run: |
+          zip -r keda_assets_${{ needs.bump.outputs.version }}.zip *.webm *.png keda_android_${{ needs.bump.outputs.version }}.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -223,9 +227,8 @@ jobs:
           tag_name: ${{ needs.bump.outputs.version }}
           name: Release ${{ needs.bump.outputs.version }}
           files: |
-            *.webm
-            *.png
             keda_android_${{ needs.bump.outputs.version }}.apk
+            keda_assets_${{ needs.bump.outputs.version }}.zip
           draft: false
           prerelease: false
           generate_release_notes: true
