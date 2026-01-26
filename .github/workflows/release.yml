@@ -150,13 +150,15 @@ jobs:
       
       - name: Build APK (Release)
         working-directory: ./client
-        run: flutter build apk --release --build-name=${{ needs.bump.outputs.version }} --build-number=${{ github.run_number }}
+        run: |
+          flutter build apk --release --build-name=${{ needs.bump.outputs.version }} --build-number=${{ github.run_number }}
+          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/keda_android_${{ needs.bump.outputs.version }}.apk
       
       - name: Upload Release APK
         uses: actions/upload-artifact@v6
         with:
-          name: keda_android_${{ needs.bump.outputs.version }}.apk
-          path: client/build/app/outputs/flutter-apk/app-release.apk
+          name: keda_android_apk
+          path: client/build/app/outputs/flutter-apk/keda_android_${{ needs.bump.outputs.version }}.apk
 
   generate-previews:
     needs: [bump, build-server, build-client]
@@ -214,12 +216,13 @@ jobs:
       - name: Download APK artifact
         uses: actions/download-artifact@v7
         with:
-          name: keda_android_${{ needs.bump.outputs.version }}.apk
+          name: keda_android_apk
           path: .
+          merge-multiple: true
 
       - name: Create Assets Zip
         run: |
-          zip -r keda_assets_${{ needs.bump.outputs.version }}.zip *.webm *.png keda_android_${{ needs.bump.outputs.version }}.apk
+          zip -r keda_assets_${{ needs.bump.outputs.version }}.zip *.webm *.png
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

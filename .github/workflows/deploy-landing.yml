@@ -44,7 +44,9 @@ jobs:
         if: ${{ inputs.release_tag != '' }}
         run: |
           mkdir -p preview-generator/generated-assets
-          gh release download ${{ inputs.release_tag }} --pattern "*.png" --pattern "*.webm" --dir preview-generator/generated-assets --clobber
+          gh release download ${{ inputs.release_tag }} --pattern "keda_assets_*.zip" --dir . --clobber
+          unzip -o keda_assets_*.zip -d preview-generator/generated-assets
+          rm keda_assets_*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
