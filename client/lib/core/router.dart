@@ -15,6 +15,7 @@ import '../views/expenses_screen.dart';
 import '../views/navigation_shell.dart';
 import '../views/settings_screen.dart';
 import '../views/initial_splash_screen.dart';
+import '../views/server_settings_screen.dart';
 
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -155,6 +156,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/splash',
         builder: (context, state) => const InitialSplashScreen(),
+      ),
+      GoRoute(
+        path: '/server-settings',
+        builder: (context, state) => const ServerSettingsScreen(),
       ),
     ],
 
