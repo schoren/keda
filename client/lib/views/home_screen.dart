@@ -8,6 +8,7 @@ import '../providers/data_providers.dart';
 import '../utils/formatters.dart';
 import '../utils/ios_keyboard_fix.dart';
 import './widgets/month_summary_card.dart';
+import '../widgets/month_navigation_selector.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -16,15 +17,14 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final categoriesAsync = ref.watch(categoriesProvider);
     final (totalBudget, totalSpent) = ref.watch(monthlyTotalsProvider);
+    final isCurrentMonth = ref.watch(isCurrentMonthProvider);
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: categoriesAsync.when(
         data: (categories) => PremiumRefreshIndicator(
           onRefresh: () async {
-            // Calculate current month for summary invalidation
-            final now = DateTime.now();
-            final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+            final month = ref.read(selectedMonthStringProvider);
             
             // Invalidate providers
             ref.invalidate(monthlySummaryProvider(month));
@@ -50,10 +50,17 @@ class HomeScreen extends ConsumerWidget {
                 slivers: [
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: MonthSummaryCard(
-                        totalBudget: totalBudget,
-                        totalSpent: totalSpent,
+                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+                      child: Column(
+                        children: [
+                          const MonthNavigationSelector(),
+                          const SizedBox(height: 12),
+                          MonthSummaryCard(
+                            totalBudget: totalBudget,
+                            totalSpent: totalSpent,
+                            selectedMonth: ref.watch(selectedMonthProvider),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -194,16 +201,18 @@ class HomeScreen extends ConsumerWidget {
                                         height: 32,
                                         child: Text(l10n.viewDetail, style: const TextStyle(fontSize: 14)),
                                       ),
-                                      PopupMenuItem(
-                                        value: 'edit',
-                                        height: 32,
-                                        child: Text(l10n.edit, style: const TextStyle(fontSize: 14)),
-                                      ),
-                                      PopupMenuItem(
-                                        value: 'delete',
-                                        height: 32,
-                                        child: Text(l10n.delete, style: const TextStyle(fontSize: 14, color: Colors.red)),
-                                      ),
+                                      if (isCurrentMonth) ...[
+                                        PopupMenuItem(
+                                          value: 'edit',
+                                          height: 32,
+                                          child: Text(l10n.edit, style: const TextStyle(fontSize: 14)),
+                                        ),
+                                        PopupMenuItem(
+                                          value: 'delete',
+                                          height: 32,
+                                          child: Text(l10n.delete, style: const TextStyle(fontSize: 14, color: Colors.red)),
+                                        ),
+                                      ],
                                     ],
                                   ),
                                 ),
@@ -223,13 +232,13 @@ class HomeScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error: $err')),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: isCurrentMonth ? FloatingActionButton.extended(
         onPressed: () {
           context.push('/manage-category/new');
         },
         label: Text(l10n.newCategory),
         icon: const Icon(Icons.add),
-      ),
+      ) : null,
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:keda/l10n/app_localizations.dart';
 import '../providers/data_providers.dart';
 import '../utils/formatters.dart';
 import '../models/expense.dart';
+import '../widgets/month_navigation_selector.dart';
 
 class CategoryDetailScreen extends ConsumerWidget {
   final String categoryId;
@@ -36,18 +37,16 @@ class CategoryDetailScreen extends ConsumerWidget {
              data: (expenses) {
                return accountsAsync.when(
                  data: (accounts) {
-                   final now = DateTime.now();
-                   final currentMonthExpenses = expenses.where((e) {
-                     final localDate = e.date.toLocal();
-                     return e.categoryId == categoryId && 
-                            localDate.month == now.month && 
-                            localDate.year == now.year;
-                   }).toList();
+                   final currentMonthExpenses = expenses.where((e) => e.categoryId == categoryId).toList();
                    
-                   return Column(
-                     children: [
-                       Card(
-                         margin: const EdgeInsets.all(16),
+                    return Column(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(top: 16),
+                          child: MonthNavigationSelector(),
+                        ),
+                        Card(
+                          margin: const EdgeInsets.all(16),
                          child: Padding(
                            padding: const EdgeInsets.all(16),
                            child: Column(

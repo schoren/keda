@@ -8,6 +8,7 @@ import '../utils/formatters.dart';
 import '../models/expense.dart';
 import '../models/finance_account.dart';
 import '../widgets/user_avatar.dart';
+import '../widgets/month_navigation_selector.dart';
 
 class ExpensesScreen extends ConsumerWidget {
   const ExpensesScreen({super.key});
@@ -31,13 +32,7 @@ class ExpensesScreen extends ConsumerWidget {
             data: (accounts) {
               return categoriesAsync.when(
                 data: (categories) {
-                  // Filter for current month/year
-                  final now = DateTime.now();
-                  final currentMonthExpenses = expenses.where((e) {
-                    final localDate = e.date.toLocal();
-                    return localDate.month == now.month && 
-                           localDate.year == now.year;
-                  }).toList();
+                  final currentMonthExpenses = expenses;
 
                   if (currentMonthExpenses.isEmpty) {
                     return PremiumRefreshIndicator(
@@ -48,8 +43,12 @@ class ExpensesScreen extends ConsumerWidget {
                           ref.refresh(categoriesProvider.future),
                         ]);
                       },
-                      child: ListView(
+                      child: Column(
                         children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: MonthNavigationSelector(),
+                          ),
                           Center(
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
@@ -78,70 +77,80 @@ class ExpensesScreen extends ConsumerWidget {
                         ref.refresh(categoriesProvider.future),
                       ]);
                     },
-                    child: ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: dateKeys.length,
-                      itemBuilder: (context, index) {
-                        final dateKey = dateKeys[index];
-                        final dayExpenses = groupedExpenses[dateKey]!;
-                        final displayDate = DateFormat.yMMMMEEEEd(Localizations.localeOf(context).toString()).format(dayExpenses.first.date.toLocal());
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                              child: Text(
-                                displayDate,
-                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                  ),
-                              ),
-                            ),
-                            ...dayExpenses.map((expense) {
-                              final account = accounts.firstWhere((a) => a.id == expense.accountId, orElse: () => accounts.first);
-                              final category = categories.firstWhere((c) => c.id == expense.categoryId, orElse: () => categories.first);
-                              final timeStr = DateFormat.Hm(Localizations.localeOf(context).toString()).format(expense.date.toLocal());
-
-                              return ListTile(
-                                leading: expense.user == null
-                                  ? const CircleAvatar(
-                                      child: Icon(Icons.receipt_long),
-                                    )
-                                  : UserAvatar(
-                                      pictureUrl: expense.user!.pictureUrl,
-                                      name: expense.user!.name,
-                                      color: expense.user!.color,
-                                    ),
-                                title: Text(expense.note ?? l10n.noNote),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '$timeStr • ${category.name} • ${account.getLocalizedDisplayName(l10n)}',
-                                      style: Theme.of(context).textTheme.bodySmall,
-                                    ),
-                                    if (expense.user != null)
-                                      Text(
-                                        l10n.createdBy(expense.user!.name),
-                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                          fontSize: 10,
-                                          color: Colors.grey,
-                                          fontStyle: FontStyle.italic,
+                    child: Column(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.0),
+                          child: MonthNavigationSelector(),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: dateKeys.length,
+                            itemBuilder: (context, index) {
+                              final dateKey = dateKeys[index];
+                              final dayExpenses = groupedExpenses[dateKey]!;
+                              final displayDate = DateFormat.yMMMMEEEEd(Localizations.localeOf(context).toString()).format(dayExpenses.first.date.toLocal());
+      
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                                    child: Text(
+                                      displayDate,
+                                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                        color: Theme.of(context).colorScheme.primary,
+                                        fontWeight: FontWeight.bold,
                                         ),
+                                    ),
+                                  ),
+                                  ...dayExpenses.map((expense) {
+                                    final account = accounts.firstWhere((a) => a.id == expense.accountId, orElse: () => accounts.first);
+                                    final category = categories.firstWhere((c) => c.id == expense.categoryId, orElse: () => categories.first);
+                                    final timeStr = DateFormat.Hm(Localizations.localeOf(context).toString()).format(expense.date.toLocal());
+      
+                                    return ListTile(
+                                      leading: expense.user == null
+                                        ? const CircleAvatar(
+                                            child: Icon(Icons.receipt_long),
+                                          )
+                                        : UserAvatar(
+                                            pictureUrl: expense.user!.pictureUrl,
+                                            name: expense.user!.name,
+                                            color: expense.user!.color,
+                                          ),
+                                      title: Text(expense.note ?? l10n.noNote),
+                                      subtitle: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '$timeStr • ${category.name} • ${account.getLocalizedDisplayName(l10n)}',
+                                            style: Theme.of(context).textTheme.bodySmall,
+                                          ),
+                                          if (expense.user != null)
+                                            Text(
+                                              l10n.createdBy(expense.user!.name),
+                                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                fontSize: 10,
+                                                color: Colors.grey,
+                                                fontStyle: FontStyle.italic,
+                                              ),
+                                            ),
+                                        ],
                                       ),
-                                  ],
-                                ),
-                                trailing: Text(
-                                  Formatters.formatMoney(expense.amount, locale),
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
-                                ),
+                                      trailing: Text(
+                                        Formatters.formatMoney(expense.amount, locale),
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                    );
+                                  }),
+                                ],
                               );
-                            }),
-                          ],
-                        );
-                      },
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },

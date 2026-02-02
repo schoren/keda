@@ -169,5 +169,8 @@
   "serverUrl": "Server URL",
   "setServerUrl": "Set server URL",
   "serverUrlDescription": "This is the server URL that the application will use to connect.",
-  "invalidUrl": "Invalid URL"
+  "invalidUrl": "Invalid URL",
+  "date": "DATE",
+  "prevMonth": "Previous month",
+  "nextMonth": "Next month"
 }
