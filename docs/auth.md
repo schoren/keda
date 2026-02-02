@@ -16,13 +16,19 @@ If you are hosting your own Keda instance, you need to configure the application
 
 If you haven't logged in yet, click on the **Set server URL** button at the bottom of the screen.
 
-![Server URL Configuration in Login](/assets/server-url-login.png)
+<video autoplay loop muted playsinline>
+  <source src="/assets/server-url-login.webm" type="video/webm">
+  Your browser does not support the video tag.
+</video>
 
 ### From Settings
 
 If you are already logged in, you can change the server URL from the **Settings** tab. Look for the **Server URL** item.
 
-![Server URL in Settings](/assets/server-url-settings.png)
+<video autoplay loop muted playsinline>
+  <source src="/assets/server-url-settings.webm" type="video/webm">
+  Your browser does not support the video tag.
+</video>
 
 ## Personal Profile
 

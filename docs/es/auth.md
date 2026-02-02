@@ -16,13 +16,19 @@ Si estás alojando tu propia instancia de Keda, necesitas configurar la aplicaci
 
 Si aún no has iniciado sesión, haz clic en el botón **Configurar URL del servidor** en la parte inferior de la pantalla.
 
-![Configuración de URL en Login](/assets/server-url-login.png)
+<video autoplay loop muted playsinline>
+  <source src="/assets/server-url-login.webm" type="video/webm">
+  Tu navegador no soporta el tag de video.
+</video>
 
 ### Desde Ajustes
 
 Si ya has iniciado sesión, puedes cambiar la URL del servidor desde la pestaña de **Configuración**. Busca el ítem **URL del Servidor**.
 
-![URL del Servidor en Ajustes](/assets/server-url-settings.png)
+<video autoplay loop muted playsinline>
+  <source src="/assets/server-url-settings.webm" type="video/webm">
+  Tu navegador no soporta el tag de video.
+</video>
 
 ## Perfil Personal
 

@@ -51,7 +51,7 @@ if [ $TEST_EXIT_CODE -eq 0 ]; then
     # New logic: remove project name, then remove the hash if present, 
     # then remove known prefixes like Video-Assets or Shortcuts.
     # Also remove the file-name-screenshot- prefix if it matches the test name.
-    CLEAN_NAME=$(echo "$DIR_NAME" | sed -E 's/-Chromium.*//; s/-Record.*//; s/.*Video-Assets-//; s/.*Screenshots-//; s/.*Documentation-Video-Assets-//; s/.*Documentation-Screenshots-//; s/-[a-f0-9]{5}-.*//; s/-[a-f0-9]{5}$//; s/^new-expense-screenshot-//; s/^language-selector-screenshot-//')
+    CLEAN_NAME=$(echo "$DIR_NAME" | sed -E 's/-Chromium.*//; s/-Record.*//; s/.*Video-Assets-//; s/.*Screenshots-//; s/.*Documentation-Video-Assets-//; s/.*Documentation-Screenshots-//; s/.*Server-URL-from-Login-//; s/-[a-f0-9]{5}-.*//; s/-[a-f0-9]{5}$//; s/^new-expense-screenshot-//; s/^language-selector-screenshot-//; s/^docs-assets-//')
     mv "$video" "generated-assets/${CLEAN_NAME}.webm"
   done
 
