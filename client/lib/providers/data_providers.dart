@@ -11,6 +11,34 @@ import '../core/runtime_config.dart';
 import '../models/account_type.dart';
 import '../core/update_logic.dart';
 import '../providers/settings_provider.dart';
+import 'package:intl/intl.dart';
+
+// ============================================================================
+// SELECTION
+// ============================================================================
+
+class SelectedMonth extends Notifier<DateTime> {
+  @override
+  DateTime build() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month);
+  }
+
+  void setMonth(DateTime date) => state = date;
+}
+
+final selectedMonthProvider = NotifierProvider<SelectedMonth, DateTime>(SelectedMonth.new);
+
+final isCurrentMonthProvider = Provider<bool>((ref) {
+  final selected = ref.watch(selectedMonthProvider);
+  final now = DateTime.now();
+  return selected.year == now.year && selected.month == now.month;
+});
+
+final selectedMonthStringProvider = Provider<String>((ref) {
+  final selected = ref.watch(selectedMonthProvider);
+  return '${selected.year}-${selected.month.toString().padLeft(2, '0')}';
+});
 
 // ============================================================================
 // API CLIENT
@@ -60,10 +88,9 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
       final current = await future;
       state = AsyncData([...current, created]);
       ref.invalidate(currentMonthSummaryProvider);
-    final now = DateTime.now();
-    final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
-    ref.invalidate(monthlySummaryProvider(month));
-    return created;
+      final month = ref.read(selectedMonthStringProvider);
+      ref.invalidate(monthlySummaryProvider(month));
+      return created;
     } catch (e) {
       if (kDebugMode) print('Failed to create category: $e');
       rethrow;
@@ -79,9 +106,8 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
         current.map((c) => c.id == updated.id ? updated : c).toList(),
       );
       ref.invalidate(currentMonthSummaryProvider);
-    final now = DateTime.now();
-    final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
-    ref.invalidate(monthlySummaryProvider(month));
+      final month = ref.read(selectedMonthStringProvider);
+      ref.invalidate(monthlySummaryProvider(month));
     } catch (e) {
       if (kDebugMode) print('Failed to update category: $e');
       rethrow;
@@ -95,9 +121,8 @@ class CategoriesNotifier extends AsyncNotifier<List<Category>> {
       final current = await future;
       state = AsyncData(current.where((c) => c.id != id).toList());
       ref.invalidate(currentMonthSummaryProvider);
-    final now = DateTime.now();
-    final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
-    ref.invalidate(monthlySummaryProvider(month));
+      final month = ref.read(selectedMonthStringProvider);
+      ref.invalidate(monthlySummaryProvider(month));
     } catch (e) {
       if (kDebugMode) print('Failed to delete category: $e');
       rethrow;
@@ -199,8 +224,7 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
     final apiClient = ref.watch(apiClientProvider);
     try {
       if (apiClient.householdId == null) return [];
-      final now = DateTime.now();
-      final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+      final month = ref.watch(selectedMonthStringProvider);
       return await apiClient.getTransactions(month: month);
     } catch (e) {
       if (kDebugMode) print('Failed to fetch expenses from server: $e');
@@ -229,8 +253,7 @@ class ExpensesNotifier extends AsyncNotifier<List<Expense>> {
   void _refreshAll() {
     ref.invalidateSelf();
     ref.invalidate(currentMonthSummaryProvider);
-    final now = DateTime.now();
-    final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+    final month = ref.read(selectedMonthStringProvider);
     ref.invalidate(monthlySummaryProvider(month));
   }
 }
@@ -267,8 +290,7 @@ final suggestedNotesProvider = FutureProvider.family<List<String>, String>((ref,
 });
 
 final currentMonthSummaryProvider = FutureProvider<MonthlySummary>((ref) async {
-  final now = DateTime.now();
-  final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+  final month = ref.watch(selectedMonthStringProvider);
   return ref.watch(monthlySummaryProvider(month).future);
 });
 

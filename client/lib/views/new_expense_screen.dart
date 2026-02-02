@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,10 +28,18 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
 
   String? _selectedAccountId;
   static const String _createNewAccountKey = 'CREATE_NEW_ACCOUNT';
+  late DateTime _selectedDate;
 
   @override
   void initState() {
     super.initState();
+    final selectedMonth = ref.read(selectedMonthProvider);
+    final now = DateTime.now();
+    if (selectedMonth.year == now.year && selectedMonth.month == now.month) {
+      _selectedDate = now;
+    } else {
+      _selectedDate = DateTime(selectedMonth.year, selectedMonth.month, 1);
+    }
     Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) {
         IOSKeyboardFix.stop();
@@ -60,7 +69,7 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
     final amount = double.parse(_amountController.text);
     final newExpense = Expense(
       id: const Uuid().v4(),
-      date: DateTime.now(),
+      date: _selectedDate,
       categoryId: widget.categoryId,
       accountId: _selectedAccountId!,
       amount: amount,
@@ -281,6 +290,70 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                     ],
                   ),
                 ),
+              const SizedBox(height: 24),
+              // Date Picker
+              InkWell(
+                onTap: () async {
+                  final selectedMonth = ref.read(selectedMonthProvider);
+                  final now = DateTime.now();
+                  final isCurrentMonth = selectedMonth.year == now.year && selectedMonth.month == now.month;
+                  
+                  final firstDate = DateTime(selectedMonth.year, selectedMonth.month, 1);
+                  final lastDate = isCurrentMonth 
+                    ? now 
+                    : DateTime(selectedMonth.year, selectedMonth.month + 1, 0);
+
+                  final DateTime? picked = await showDatePicker(
+                    context: context,
+                    initialDate: _selectedDate.isAfter(lastDate) ? lastDate : (_selectedDate.isBefore(firstDate) ? firstDate : _selectedDate),
+                    firstDate: firstDate,
+                    lastDate: lastDate,
+                  );
+                  if (picked != null && picked != _selectedDate) {
+                    setState(() {
+                      _selectedDate = DateTime(
+                        picked.year,
+                        picked.month,
+                        picked.day,
+                        _selectedDate.hour,
+                        _selectedDate.minute,
+                      );
+                    });
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.calendar_today, color: Color(0xFF64748B), size: 20),
+                      const SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.date,
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF64748B),
+                            ),
+                          ),
+                          Text(
+                            DateFormat.yMMMMd(locale).format(_selectedDate),
+                            style: GoogleFonts.inter(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      const Icon(Icons.chevron_right, color: Color(0xFFCBD5E1)),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(height: 24),
               Autocomplete<String>(
                 optionsBuilder: (TextEditingValue textEditingValue) {

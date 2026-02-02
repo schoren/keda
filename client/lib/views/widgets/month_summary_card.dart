@@ -8,19 +8,20 @@ import '../../utils/formatters.dart';
 class MonthSummaryCard extends StatelessWidget {
   final double totalBudget;
   final double totalSpent;
+  final DateTime selectedMonth;
 
   const MonthSummaryCard({
     super.key,
     required this.totalBudget,
     required this.totalSpent,
+    required this.selectedMonth,
   });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final now = DateTime.now();
     final locale = Localizations.localeOf(context).toString();
-    final monthName = DateFormat('MMMM yyyy', locale).format(now);
+    final monthName = DateFormat('MMMM yyyy', locale).format(selectedMonth);
     // Capitalize first letter
     final formattedMonth = monthName[0].toUpperCase() + monthName.substring(1);
 
