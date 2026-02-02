@@ -10,6 +10,7 @@ import '../providers/auth_provider.dart';
 import '../core/runtime_config.dart';
 import '../models/account_type.dart';
 import '../core/update_logic.dart';
+import '../providers/settings_provider.dart';
 
 // ============================================================================
 // API CLIENT
@@ -17,8 +18,9 @@ import '../core/update_logic.dart';
 
 final apiClientProvider = Provider((ref) {
   final authState = ref.watch(authProvider);
+  final settings = ref.watch(settingsProvider);
   return ApiClient(
-    baseUrl: RuntimeConfig.apiUrl,
+    baseUrl: settings.serverUrl,
     householdId: authState.householdId,
     authToken: authState.token,
   );

@@ -7,9 +7,28 @@ Keda uses a simple and secure authentication system.
 When you first open the app, you will be prompted to sign in. We currently support:
 
 - **Google Sign-In**: The easiest way to get started. Just click the Google button and follow the prompts.
-- **Server URL**: If you are hosting your own Keda instance, you can enter your server's URL in the settings.
 
-![Login Screen](/assets/settings.png)
+## Self-hosting and Server URL
+
+If you are hosting your own Keda instance, you need to configure the application to connect to your server.
+
+### From the Login Screen
+
+If you haven't logged in yet, click on the **Set server URL** button at the bottom of the screen.
+
+<video autoplay loop muted playsinline>
+  <source src="/assets/server-url-login.webm" type="video/webm">
+  Your browser does not support the video tag.
+</video>
+
+### From Settings
+
+If you are already logged in, you can change the server URL from the **Settings** tab. Look for the **Server URL** item.
+
+<video autoplay loop muted playsinline>
+  <source src="/assets/server-url-settings.webm" type="video/webm">
+  Your browser does not support the video tag.
+</video>
 
 ## Personal Profile
 

@@ -64,6 +64,59 @@ test.describe('Documentation Video Assets', () => {
 
     await page.waitForTimeout(2000);
   });
+
+  test('server-url-settings', async ({ page }) => {
+    // Navigate to Settings
+    const tab = page.getByLabel('Settings').first();
+    await tab.click();
+
+    // Click Server URL item
+    const serverUrlItem = page.getByRole('button', { name: /Server URL/i }).first();
+    await serverUrlItem.click();
+
+    // Fill new URL
+    const urlInput = page.getByRole('textbox', { name: /Server URL/i });
+    await urlInput.waitFor({ state: 'visible' });
+
+    await urlInput.click({ clickCount: 3 });
+    await page.keyboard.press('Backspace');
+    await urlInput.pressSequentially('https://keda.example.com', { delay: 100 });
+
+    // Save
+    const saveBtn = page.getByRole('button', { name: /SAVE/i });
+    await saveBtn.click();
+
+    await page.waitForTimeout(1000);
+  });
+
+});
+
+test.describe('Server URL from Login', () => {
+  test('server-url-login', async ({ page }) => {
+    await setupMarketingPage(page);
+
+    // Navigate with forceShowLogin
+    await page.goto('/login?forceShowLogin=true');
+    await page.locator('flt-glass-pane').waitFor({ state: 'attached' });
+    await page.waitForTimeout(3000);
+
+    const configBtn = page.getByRole('button', { name: /Set server URL/i });
+    await configBtn.click();
+
+    // Fill new URL
+    const urlInput = page.getByRole('textbox', { name: /Server URL/i });
+    await urlInput.waitFor({ state: 'visible' });
+
+    await urlInput.click({ clickCount: 3 });
+    await page.keyboard.press('Backspace');
+    await urlInput.pressSequentially('https://keda.example.com', { delay: 100 });
+
+    // Save
+    const saveBtn = page.getByRole('button', { name: /SAVE/i });
+    await saveBtn.click();
+
+    await page.waitForTimeout(1000);
+  });
 });
 
 test.describe('Documentation Screenshots', () => {
@@ -90,4 +143,5 @@ test.describe('Documentation Screenshots', () => {
     await page.waitForTimeout(2000);
     await page.screenshot({ path: 'generated-assets/settings.png' });
   });
+
 });

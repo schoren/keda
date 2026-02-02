@@ -637,6 +637,30 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'EXCEDIDO POR {amount}'**
   String exceededBy(String amount);
+
+  /// No description provided for @serverUrl.
+  ///
+  /// In es, this message translates to:
+  /// **'URL del Servidor'**
+  String get serverUrl;
+
+  /// No description provided for @setServerUrl.
+  ///
+  /// In es, this message translates to:
+  /// **'Configurar URL del servidor'**
+  String get setServerUrl;
+
+  /// No description provided for @serverUrlDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta es la URL del servidor que la aplicación usará para conectarse.'**
+  String get serverUrlDescription;
+
+  /// No description provided for @invalidUrl.
+  ///
+  /// In es, this message translates to:
+  /// **'URL no válida'**
+  String get invalidUrl;
 }
 
 class _AppLocalizationsDelegate

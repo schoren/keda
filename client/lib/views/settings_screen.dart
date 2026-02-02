@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:keda/l10n/app_localizations.dart';
 import '../providers/settings_provider.dart';
@@ -79,6 +80,20 @@ class SettingsScreen extends ConsumerWidget {
                 ref.read(settingsProvider.notifier).setLanguage(value);
               },
             ),
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.dns_outlined),
+            title: Text(l10n.serverUrl),
+            subtitle: Text(
+              settings.serverUrl,
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: const Color(0xFF64748B),
+              ),
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/server-settings'),
           ),
           const Divider(),
           ListTile(

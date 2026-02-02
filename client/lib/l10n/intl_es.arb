@@ -165,5 +165,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "serverUrl": "URL del Servidor",
+  "setServerUrl": "Configurar URL del servidor",
+  "serverUrlDescription": "Esta es la URL del servidor que la aplicación usará para conectarse.",
+  "invalidUrl": "URL no válida"
 }

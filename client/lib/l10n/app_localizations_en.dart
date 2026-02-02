@@ -297,4 +297,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String exceededBy(String amount) {
     return 'EXCEEDED BY $amount';
   }
+
+  @override
+  String get serverUrl => 'Server URL';
+
+  @override
+  String get setServerUrl => 'Set server URL';
+
+  @override
+  String get serverUrlDescription =>
+      'This is the server URL that the application will use to connect.';
+
+  @override
+  String get invalidUrl => 'Invalid URL';
 }

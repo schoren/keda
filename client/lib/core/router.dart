@@ -15,6 +15,7 @@ import '../views/expenses_screen.dart';
 import '../views/navigation_shell.dart';
 import '../views/settings_screen.dart';
 import '../views/initial_splash_screen.dart';
+import '../views/server_settings_screen.dart';
 
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -37,19 +38,21 @@ final routerProvider = Provider<GoRouter>((ref) {
       final authState = ref.read(authProvider);
       final loggingIn = state.matchedLocation == '/login';
       final splashing = state.matchedLocation == '/splash';
+      final settingServer = state.matchedLocation == '/server-settings';
       
       if (authState.isInitialLoading) {
         return splashing ? null : '/splash';
       }
 
       if (!authState.isAuthenticated) {
-        if (loggingIn) return null;
+        if (loggingIn || settingServer) return null;
         final query = state.uri.queryParameters;
         if (query.isNotEmpty) {
           return Uri(path: '/login', queryParameters: query).toString();
         }
         return '/login';
       }
+
       if (loggingIn || splashing) {
         return '/';
       }
@@ -155,6 +158,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/splash',
         builder: (context, state) => const InitialSplashScreen(),
+      ),
+      GoRoute(
+        path: '/server-settings',
+        builder: (context, state) => const ServerSettingsScreen(),
       ),
     ],
 

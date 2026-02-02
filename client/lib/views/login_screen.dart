@@ -86,6 +86,15 @@ class LoginScreen extends ConsumerWidget {
                 );
               }
             ),
+            const SizedBox(height: 24),
+            TextButton.icon(
+              onPressed: () => context.push('/server-settings'),
+              icon: const Icon(Icons.settings, size: 18),
+              label: Text(l10n.setServerUrl),
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF64748B),
+              ),
+            ),
           ],
         ),
       ),
