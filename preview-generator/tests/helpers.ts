@@ -190,24 +190,23 @@ export const mockDate = async (page: Page, dateStr: string) => {
     const mockTime = new Date(s).getTime();
     const OriginalDate = Date;
 
+    function MockDate(...args: any[]) {
+      if (args.length === 0) {
+        return new OriginalDate(mockTime);
+      }
+      // @ts-ignore
+      return new OriginalDate(...args);
+    }
+
+    MockDate.prototype = OriginalDate.prototype;
+    MockDate.now = () => mockTime;
+    MockDate.UTC = OriginalDate.UTC;
+    MockDate.parse = OriginalDate.parse;
+
     // @ts-ignore
-    window.Date = class extends OriginalDate {
-      constructor(...args: any[]) {
-        if (args.length === 0) {
-          super(mockTime);
-        } else {
-          // @ts-ignore
-          super(...args);
-        }
-      }
+    window.Date = MockDate;
 
-      static now() {
-        return mockTime;
-      }
-    };
-
-    // Ensure Date.now is also updated on the class itself
-    Date.now = () => mockTime;
+    console.log(`[MockDate] Persistently mocking date to: ${new OriginalDate(mockTime).toISOString()}`);
   }, dateStr);
 };
 

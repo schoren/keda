@@ -6,6 +6,11 @@ test('Record Demo Video', async ({ page }) => {
 
   page.on('console', msg => console.log(`[Browser Console] ${msg.text()}`));
 
+  // Mock recommendations to be empty for general tests
+  await page.route('**/recommendations', async route => {
+    await route.fulfill({ status: 200, body: JSON.stringify({ suggestions: [] }) });
+  });
+
   // Mock date to 15th to hide recommendations (persistent)
   await mockDate(page, '2026-02-15T12:00:00');
 

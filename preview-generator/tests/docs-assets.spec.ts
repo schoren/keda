@@ -3,7 +3,12 @@ import { setupMarketingPage, mockDate } from './helpers';
 
 test.describe('Documentation Video Assets', () => {
   test.beforeEach(async ({ page }) => {
+    page.on('console', msg => console.log(`[Browser Console] ${msg.text()}`));
     await setupMarketingPage(page);
+    // Mock recommendations to be empty for all general tests
+    await page.route('**/recommendations', async route => {
+      await route.fulfill({ status: 200, body: JSON.stringify({ suggestions: [] }) });
+    });
     // Mock date to 15th to hide recommendations by default (persistent)
     await mockDate(page, '2026-02-15T12:00:00');
     await page.goto('/');
@@ -123,6 +128,11 @@ test.describe('Server URL from Login', () => {
 
 test.describe('Documentation Screenshots', () => {
   test.beforeEach(async ({ page }) => {
+    page.on('console', msg => console.log(`[Browser Console] ${msg.text()}`));
+    // Mock recommendations to be empty for all general tests
+    await page.route('**/recommendations', async route => {
+      await route.fulfill({ status: 200, body: JSON.stringify({ suggestions: [] }) });
+    });
     // Mock date to 15th to hide recommendations by default (persistent)
     await mockDate(page, '2026-02-15T12:00:00');
     await page.goto('/');
@@ -149,6 +159,9 @@ test.describe('Documentation Screenshots', () => {
   });
 
   test('recommendations-notification', async ({ page }) => {
+    // UNMOCK recommendations for this test
+    await page.unroute('**/recommendations');
+
     // Override the default mock to show recommendations
     await mockDate(page, '2026-02-01T12:00:00');
 
@@ -161,6 +174,9 @@ test.describe('Documentation Screenshots', () => {
   });
 
   test('recommendations-dialog', async ({ page }) => {
+    // UNMOCK recommendations for this test
+    await page.unroute('**/recommendations');
+
     // Override the default mock to show recommendations
     await mockDate(page, '2026-02-01T12:00:00');
 
