@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/recommendation_provider.dart';
+import '../../l10n/app_localizations.dart';
 import 'recommendation_dialog.dart';
 
 class RecommendationNotification extends ConsumerWidget {
@@ -9,6 +10,7 @@ class RecommendationNotification extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(recommendationProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     if (state.isLoading || state.isDismissed || state.recommendations.isEmpty) {
       return const SizedBox.shrink();
@@ -40,15 +42,16 @@ class RecommendationNotification extends ConsumerWidget {
               children: [
                 const Icon(Icons.auto_awesome, color: Colors.white, size: 20),
                 const SizedBox(width: 8),
-                const Text(
-                  'Sugerencias de Presupuesto',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                Expanded(
+                  child: Text(
+                    l10n.recommendationsTitle,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
-                const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.close, color: Colors.white70, size: 20),
                   onPressed: () => ref.read(recommendationProvider.notifier).dismiss(),
@@ -58,9 +61,9 @@ class RecommendationNotification extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Basado en tus gastos del mes pasado, tenemos algunas recomendaciones para ajustar tus categorías.',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
+            Text(
+              l10n.recommendationsSubtitle,
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -79,7 +82,7 @@ class RecommendationNotification extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text('Ver Sugerencias'),
+                child: Text(l10n.viewSuggestions),
               ),
             ),
           ],
