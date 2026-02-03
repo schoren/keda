@@ -144,4 +144,37 @@ test.describe('Documentation Screenshots', () => {
     await page.screenshot({ path: 'generated-assets/settings.png' });
   });
 
+  test('recommendations-notification', async ({ page }) => {
+    // We don't need to mock date if the seeder matches current month, 
+    // but for stability let's ensure we are in the first days of a month
+    await page.evaluate(() => {
+      const Feb1st2026 = new Date('2026-02-01T12:00:00').getTime();
+      Date.now = () => Feb1st2026;
+    });
+
+    await page.goto('/');
+    await page.locator('flt-glass-pane').waitFor({ state: 'attached' });
+    await page.waitForTimeout(5000);
+
+    // The notification should be visible now
+    await page.screenshot({ path: 'generated-assets/recommendations-notification.png' });
+  });
+
+  test('recommendations-dialog', async ({ page }) => {
+    await page.evaluate(() => {
+      const Feb1st2026 = new Date('2026-02-01T12:00:00').getTime();
+      Date.now = () => Feb1st2026;
+    });
+
+    await page.goto('/');
+    await page.locator('flt-glass-pane').waitFor({ state: 'attached' });
+    await page.waitForTimeout(5000);
+
+    const viewBtn = page.getByRole('button', { name: /View Suggestions|Ver Sugerencias/i });
+    await viewBtn.click();
+    await page.waitForTimeout(1000);
+
+    await page.screenshot({ path: 'generated-assets/recommendations-dialog.png' });
+  });
+
 });
