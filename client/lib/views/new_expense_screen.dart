@@ -526,23 +526,25 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
-                  child: TextButton.icon(
+                  child: ElevatedButton.icon(
                     onPressed: _showDeleteConfirmation,
-                    icon: const Icon(Icons.delete_outline, color: Colors.red),
+                    icon: const Icon(Icons.delete_outline, color: Colors.white),
                     label: Text(
                       l10n.deleteExpense,
                       style: GoogleFonts.inter(
-                        color: Colors.red,
+                        color: Colors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
                       ),
                     ),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 20),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24),
-                        side: const BorderSide(color: Colors.red, width: 1),
                       ),
+                      elevation: 0,
                     ),
                   ),
                 ),
