@@ -18,6 +18,14 @@ void forceNumericInput() {
   }
 }
 
+void primeKeyboard() {
+  try {
+    js.context.callMethod('primeKeyboard');
+  } catch (e) {
+    // Ignore
+  }
+}
+
 void configureUrlStrategy() {
   usePathUrlStrategy();
 }

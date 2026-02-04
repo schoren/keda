@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:keda/l10n/app_localizations.dart';
 import '../providers/data_providers.dart';
 import '../utils/formatters.dart';
+import '../utils/web_utils.dart';
 import './widgets/month_summary_card.dart';
 import '../widgets/month_navigation_selector.dart';
 import './widgets/recommendation_notification.dart';

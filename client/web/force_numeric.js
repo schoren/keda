@@ -33,3 +33,11 @@ window.forceNumericInput = function () {
     }
   }, 100);
 };
+
+window.primeKeyboard = function() {
+  var input = document.getElementById('ios-keyboard-primer');
+  if (input) {
+    input.focus();
+    input.click();
+  }
+};

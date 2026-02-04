@@ -55,6 +55,12 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
       }
     }
 
+    // Auto-focus logic with JS fix
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        forceNumericInput();
+      }
+    });
   }
 
   void _loadExpense() {
