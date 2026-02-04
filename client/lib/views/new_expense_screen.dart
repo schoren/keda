@@ -91,16 +91,17 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
   }
 
   Future<void> _save(List<FinanceAccount> accounts) async {
+    final l10n = AppLocalizations.of(context)!;
     if (_amountController.text.isEmpty) {
        ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter an amount')),
+        SnackBar(content: Text(l10n.enterAmount)),
       );
       return;
     }
 
     if (_selectedCategoryId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a category')),
+        SnackBar(content: Text(l10n.pleaseSelectCategory)),
       );
       return;
     }
@@ -118,7 +119,7 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
     final amount = double.tryParse(_amountController.text) ?? 0.0;
     if (amount <= 0) {
        ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid amount')),
+        SnackBar(content: Text(l10n.invalidAmount)),
       );
       return;
     }
@@ -222,13 +223,23 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                   final stepNum = index + 1;
                   final isActive = stepNum <= _currentStep;
                   return Expanded(
-                    child: Container(
-                      height: 4,
-                      margin: const EdgeInsets.symmetric(horizontal: 2),
-                      decoration: BoxDecoration(
-                        color: isActive ? const Color(0xFF22C55E) : const Color(0xFFE2E8F0),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 4,
+                          margin: const EdgeInsets.symmetric(horizontal: 2),
+                          decoration: BoxDecoration(
+                            color: isActive ? const Color(0xFF22C55E) : const Color(0xFFE2E8F0),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        if (stepNum == _currentStep)
+                          Text(
+                            l10n.stepXofY(stepNum.toString(), '3'),
+                            style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.bold, color: const Color(0xFF22C55E)),
+                          ),
+                      ],
                     ),
                   );
                 }),
@@ -408,8 +419,9 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                 focusNode: focusNode,
                 textCapitalization: TextCapitalization.sentences,
                 style: GoogleFonts.inter(fontSize: 16),
+                scrollPadding: const EdgeInsets.only(bottom: 200), // Safari fix
                 decoration: InputDecoration(
-                  hintText: 'Add a note...',
+                  hintText: l10n.addNote,
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
@@ -484,6 +496,8 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
   }
 
   Widget _buildBottomButtons(List<FinanceAccount> accounts) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -500,7 +514,10 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                 elevation: 0,
               ),
-              child: Text('Save Expense', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold)),
+              child: Text(
+                _isEditing ? l10n.updateExpense : l10n.saveExpense, 
+                style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold)
+              ),
             ),
           ),
           if (_currentStep < 3) ...[
@@ -513,7 +530,10 @@ class _NewExpenseScreenState extends ConsumerState<NewExpenseScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   foregroundColor: const Color(0xFF64748B),
                 ),
-                child: const Text('Next Step', style: TextStyle(fontWeight: FontWeight.bold)),
+                child: Text(
+                  _currentStep == 1 ? l10n.addDetails : l10n.chooseAccount,
+                  style: const TextStyle(fontWeight: FontWeight.bold)
+                ),
               ),
             ),
           ],
