@@ -10,7 +10,6 @@ import (
 	"math/big"
 	"net/http"
 	"net/mail"
-	"os"
 	"time"
 
 	"github.com/schoren/keda/server/config"
@@ -820,15 +819,15 @@ func (h *Handlers) JWTMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		secret := os.Getenv("JWT_SECRET")
+		secret := h.cfg.JWTSecret
 		if secret == "" {
 			secret = "default_secret_change_me"
 		}
 
 		// Bypass for TEST_MODE
-		if os.Getenv("TEST_MODE") == "true" && tokenString == "test-mode-dummy-token" {
+		if h.cfg.TestMode && tokenString == "test-mode-dummy-token" {
 			// Use configured test household or default
-			householdID := os.Getenv("TEST_HOUSEHOLD_ID")
+			householdID := h.cfg.TestHousehold
 			if householdID == "" {
 				householdID = "test-household-id"
 			}
@@ -1051,7 +1050,7 @@ func (h *Handlers) AuthGoogle(c *gin.Context) {
 }
 
 func (h *Handlers) generateJWT(user User) (string, error) {
-	secret := os.Getenv("JWT_SECRET")
+	secret := h.cfg.JWTSecret
 	if secret == "" {
 		secret = "default_secret_change_me"
 	}
