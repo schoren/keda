@@ -24,7 +24,7 @@ services:
       KEDA_DB_PASSWORD: demo_password
       KEDA_DB_NAME: keda_demo
       KEDA_JWT_SECRET: demo_jwt_secret
-      KEDA_ENCRYPTION_KEY: demo_encryption_key
+      KEDA_ENCRYPTION_KEY: a9edc576dc0c7839de7d93398db1265793868c6dd926c6bfd58427ed301f732d
       KEDA_PORT: 8090
       KEDA_TEST_MODE: "true"
       KEDA_TEST_HOUSEHOLD_ID: test-household-id

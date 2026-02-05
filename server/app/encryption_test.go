@@ -1,7 +1,6 @@
 package app
 
 import (
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,8 +8,7 @@ import (
 
 func TestEncryption(t *testing.T) {
 	testKey := "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-	os.Setenv("ENCRYPTION_KEY", testKey)
-	defer os.Unsetenv("ENCRYPTION_KEY")
+	SetupEncryption(testKey)
 
 	plainText := "Hola Keda!"
 
@@ -33,8 +31,7 @@ func TestEncryption(t *testing.T) {
 
 func TestEncryptionDeterministic(t *testing.T) {
 	testKey := "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-	os.Setenv("ENCRYPTION_KEY", testKey)
-	defer os.Unsetenv("ENCRYPTION_KEY")
+	SetupEncryption(testKey)
 
 	plainText := "Same content"
 
@@ -52,8 +49,7 @@ func TestEncryptionDeterministic(t *testing.T) {
 
 func TestHashSensitive(t *testing.T) {
 	testKey := "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-	os.Setenv("ENCRYPTION_KEY", testKey)
-	defer os.Unsetenv("ENCRYPTION_KEY")
+	SetupEncryption(testKey)
 
 	email := "Test@Example.Com "
 	hash1 := HashSensitive(email)

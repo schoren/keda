@@ -9,28 +9,28 @@ import (
 
 // Config holds all configuration for the application.
 type Config struct {
-	Port           string `mapstructure:"PORT"`
-	ListenAddress  string `mapstructure:"LISTEN_ADDRESS"`
-	EncryptionKey  string `mapstructure:"ENCRYPTION_KEY"`
-	JWTSecret      string `mapstructure:"JWT_SECRET"`
-	GoogleClientID string `mapstructure:"GOOGLE_CLIENT_ID"`
-	AppURL         string `mapstructure:"APP_URL"`
-	TestMode       bool   `mapstructure:"TEST_MODE"`
-	TestHousehold  string `mapstructure:"TEST_HOUSEHOLD_ID"`
+	Port           string `mapstructure:"port"`
+	ListenAddress  string `mapstructure:"listen_address"`
+	EncryptionKey  string `mapstructure:"encryption_key"`
+	JWTSecret      string `mapstructure:"jwt_secret"`
+	GoogleClientID string `mapstructure:"google_client_id"`
+	AppURL         string `mapstructure:"app_url"`
+	TestMode       bool   `mapstructure:"test_mode"`
+	TestHousehold  string `mapstructure:"test_household_id"`
 
 	// Database
-	DBHost     string `mapstructure:"DB_HOST"`
-	DBUser     string `mapstructure:"DB_USER"`
-	DBPassword string `mapstructure:"DB_PASSWORD"`
-	DBName     string `mapstructure:"DB_NAME"`
-	DBPort     string `mapstructure:"DB_PORT"`
+	DBHost     string `mapstructure:"db_host"`
+	DBUser     string `mapstructure:"db_user"`
+	DBPassword string `mapstructure:"db_password"`
+	DBName     string `mapstructure:"db_name"`
+	DBPort     string `mapstructure:"db_port"`
 
 	// SMTP
-	SMTPHost string `mapstructure:"SMTP_HOST"`
-	SMTPPort string `mapstructure:"SMTP_PORT"`
-	SMTPUser string `mapstructure:"SMTP_USER"`
-	SMTPPass string `mapstructure:"SMTP_PASS"`
-	SMTPFrom string `mapstructure:"SMTP_FROM"`
+	SMTPHost string `mapstructure:"smtp_host"`
+	SMTPPort string `mapstructure:"smtp_port"`
+	SMTPUser string `mapstructure:"smtp_user"`
+	SMTPPass string `mapstructure:"smtp_pass"`
+	SMTPFrom string `mapstructure:"smtp_from"`
 }
 
 // LoadConfig loads configuration from environment variables and/or a config file.
@@ -42,14 +42,24 @@ func LoadConfig(path string) (*Config, error) {
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	// Set defaults
-	viper.SetDefault("PORT", "8080")
-	viper.SetDefault("LISTEN_ADDRESS", "0.0.0.0")
-	viper.SetDefault("DB_HOST", "localhost")
-	viper.SetDefault("DB_PORT", "5432")
-	viper.SetDefault("DB_USER", "postgres")
-	viper.SetDefault("DB_NAME", "keda")
-	viper.SetDefault("SMTP_PORT", "1025")
-	viper.SetDefault("SMTP_FROM", "noreply@keda.local")
+	viper.SetDefault("port", "8080")
+	viper.SetDefault("listen_address", "0.0.0.0")
+	viper.SetDefault("encryption_key", "")
+	viper.SetDefault("jwt_secret", "")
+	viper.SetDefault("google_client_id", "")
+	viper.SetDefault("app_url", "")
+	viper.SetDefault("test_mode", false)
+	viper.SetDefault("test_household_id", "")
+	viper.SetDefault("db_host", "localhost")
+	viper.SetDefault("db_user", "postgres")
+	viper.SetDefault("db_password", "")
+	viper.SetDefault("db_name", "keda")
+	viper.SetDefault("db_port", "5432")
+	viper.SetDefault("smtp_host", "")
+	viper.SetDefault("smtp_port", "1025")
+	viper.SetDefault("smtp_user", "")
+	viper.SetDefault("smtp_pass", "")
+	viper.SetDefault("smtp_from", "noreply@keda.local")
 
 	if path != "" {
 		viper.SetConfigFile(path)

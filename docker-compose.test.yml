@@ -23,7 +23,7 @@ services:
       KEDA_DB_PASSWORD: test_password
       KEDA_DB_NAME: keda_test
       KEDA_JWT_SECRET: test_jwt_secret_key_for_e2e_testing
-      KEDA_ENCRYPTION_KEY: test_encryption_key
+      KEDA_ENCRYPTION_KEY: a9edc576dc0c7839de7d93398db1265793868c6dd926c6bfd58427ed301f732d
       KEDA_TEST_MODE: "true"
       KEDA_PORT: 8090
     ports:
