@@ -18,17 +18,17 @@ services:
       args:
         APP_VERSION: ${APP_VERSION:-local-dev}
     environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: demo_user
-      DB_PASSWORD: demo_password
-      DB_NAME: keda_demo
-      JWT_SECRET: demo_jwt_secret
-      ENCRYPTION_KEY: demo_encryption_key
-      PORT: 8090
-      TEST_MODE: "true"
-      TEST_HOUSEHOLD_ID: test-household-id
-      APP_URL: http://localhost:8085
+      KEDA_DB_HOST: db
+      KEDA_DB_PORT: 5432
+      KEDA_DB_USER: demo_user
+      KEDA_DB_PASSWORD: demo_password
+      KEDA_DB_NAME: keda_demo
+      KEDA_JWT_SECRET: demo_jwt_secret
+      KEDA_ENCRYPTION_KEY: demo_encryption_key
+      KEDA_PORT: 8090
+      KEDA_TEST_MODE: "true"
+      KEDA_TEST_HOUSEHOLD_ID: test-household-id
+      KEDA_APP_URL: http://localhost:8085
     ports:
       - "8092:8090"
     depends_on:
