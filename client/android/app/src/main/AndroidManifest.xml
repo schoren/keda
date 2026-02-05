@@ -3,7 +3,8 @@
         android:label="keda"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
-        android:allowBackup="false">
+        android:allowBackup="false"
+        android:debuggable="false">
         <activity
             android:name=".MainActivity"
             android:exported="true"
