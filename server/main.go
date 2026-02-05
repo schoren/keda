@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/schoren/keda/server/app"
+	"github.com/schoren/keda/server/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -19,6 +19,11 @@ var (
 )
 
 func main() {
+	cfg, err := config.LoadConfig("")
+	if err != nil {
+		log.Fatalf("Could not load config: %v", err)
+	}
+
 	r := gin.Default()
 
 	// Configure CORS
@@ -30,10 +35,10 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	initDB()
+	initDB(cfg)
 
 	// Initialize handlers
-	handlers := app.NewHandlers(db)
+	handlers := app.NewHandlers(db, cfg)
 
 	// Health check
 	r.GET("/health", func(c *gin.Context) {
@@ -49,7 +54,7 @@ func main() {
 	r.POST("/auth/google", handlers.AuthGoogle)
 
 	// Test-only authentication (only enabled when TEST_MODE=true)
-	if os.Getenv("TEST_MODE") == "true" {
+	if cfg.TestMode {
 		log.Println("⚠️  TEST MODE ENABLED - Test authentication endpoint available at /auth/test-login")
 		r.POST("/auth/test-login", handlers.TestLogin)
 	}
@@ -97,30 +102,27 @@ func main() {
 		h.GET("/recommendations", handlers.GetRecommendations)
 	}
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8090"
-	}
+	port := cfg.Port
 	log.Printf("Server version: %s", Version)
 	log.Printf("Server running on port %s", port)
-	if err := r.Run(":" + port); err != nil {
+	if err := r.Run(cfg.ListenAddress + ":" + port); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
 	}
 }
 
-func initDB() {
+func initDB(cfg *config.Config) {
 	// Check for encryption key
-	if _, err := app.GetEncryptionKey(); err != nil {
-		log.Fatalf("Encryption key error: %v. Please set ENCRYPTION_KEY as a 32-byte hex string.", err)
+	if _, err := app.SetupEncryption(cfg.EncryptionKey); err != nil {
+		log.Fatalf("Encryption key error: %v. Please set KEDA_ENCRYPTION_KEY as a 32-byte hex string.", err)
 	}
 
 	var err error
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_PORT"),
+		cfg.DBHost,
+		cfg.DBUser,
+		cfg.DBPassword,
+		cfg.DBName,
+		cfg.DBPort,
 	)
 
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -136,8 +138,8 @@ func initDB() {
 	}
 
 	// Seed data if in TEST_MODE
-	if os.Getenv("TEST_MODE") == "true" {
-		householdID := os.Getenv("TEST_HOUSEHOLD_ID")
+	if cfg.TestMode {
+		householdID := cfg.TestHousehold
 		if householdID == "" {
 			householdID = "test-household-id"
 		}

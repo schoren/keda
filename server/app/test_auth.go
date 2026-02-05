@@ -2,17 +2,17 @@ package app
 
 import (
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 // TestLogin is a test-only endpoint that creates/authenticates users without Google OAuth
+// TestLogin provides a bypass for Google Auth during e2e tests
 // Only enabled when TEST_MODE environment variable is set to "true"
 func (h *Handlers) TestLogin(c *gin.Context) {
 	// Double-check TEST_MODE is enabled
-	if os.Getenv("TEST_MODE") != "true" {
+	if !h.cfg.TestMode {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Test login only available in test mode"})
 		return
 	}

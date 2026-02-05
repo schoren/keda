@@ -13,6 +13,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/schoren/keda/server/config"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -41,12 +43,14 @@ func getRandomColor() string {
 
 type Handlers struct {
 	db           *gorm.DB
+	cfg          *config.Config
 	googleAPIURL string
 }
 
-func NewHandlers(db *gorm.DB) *Handlers {
+func NewHandlers(db *gorm.DB, cfg *config.Config) *Handlers {
 	return &Handlers{
 		db:           db,
+		cfg:          cfg,
 		googleAPIURL: "https://www.googleapis.com/oauth2/v3/userinfo",
 	}
 }
@@ -911,7 +915,7 @@ func (h *Handlers) AuthGoogle(c *gin.Context) {
 		return
 	}
 
-	googleClientID := os.Getenv("GOOGLE_CLIENT_ID")
+	googleClientID := h.cfg.GoogleClientID
 	if googleClientID == "" {
 		log.Println("WARNING: GOOGLE_CLIENT_ID is not set")
 	}

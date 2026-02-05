@@ -10,28 +10,40 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
-	"os"
 	"strings"
 )
 
 // Encryption prefix to identify encrypted data
 const encryptionPrefix = "enc:"
 
-// GetEncryptionKey returns the encryption key from environment variables.
+var (
+	// encryptionKey stores the encryption key for the app.
+	encryptionKey []byte
+)
+
+// SetupEncryption initializes the encryption key.
 // It must be a 32-byte hex string (for AES-256).
-func GetEncryptionKey() ([]byte, error) {
-	keyHex := os.Getenv("ENCRYPTION_KEY")
+func SetupEncryption(keyHex string) ([]byte, error) {
 	if keyHex == "" {
-		return nil, fmt.Errorf("ENCRYPTION_KEY environment variable is not set")
+		return nil, fmt.Errorf("encryption key is not set")
 	}
 	key, err := hex.DecodeString(keyHex)
 	if err != nil {
-		return nil, fmt.Errorf("ENCRYPTION_KEY must be a valid hex string: %v", err)
+		return nil, fmt.Errorf("encryption key must be a valid hex string: %v", err)
 	}
 	if len(key) != 32 {
-		return nil, fmt.Errorf("ENCRYPTION_KEY must be 32 bytes (64 hex characters) for AES-256")
+		return nil, fmt.Errorf("encryption key must be 32 bytes (64 hex characters) for AES-256")
 	}
+	encryptionKey = key
 	return key, nil
+}
+
+// GetEncryptionKey returns the current encryption key.
+func GetEncryptionKey() ([]byte, error) {
+	if len(encryptionKey) == 0 {
+		return nil, fmt.Errorf("encryption key not initialized. Call SetupEncryption first.")
+	}
+	return encryptionKey, nil
 }
 
 // Encrypt encrypts plain text using AES-GCM and returns a string with "enc:<iv>:<ciphertext>" format.
