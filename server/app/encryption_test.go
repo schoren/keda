@@ -4,11 +4,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestEncryption(t *testing.T) {
 	testKey := "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-	SetupEncryption(testKey)
+	_, err := SetupEncryption(testKey)
+	require.NoError(t, err)
 
 	plainText := "Hola Keda!"
 
@@ -31,7 +33,8 @@ func TestEncryption(t *testing.T) {
 
 func TestEncryptionDeterministic(t *testing.T) {
 	testKey := "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-	SetupEncryption(testKey)
+	_, err := SetupEncryption(testKey)
+	require.NoError(t, err)
 
 	plainText := "Same content"
 
@@ -49,7 +52,8 @@ func TestEncryptionDeterministic(t *testing.T) {
 
 func TestHashSensitive(t *testing.T) {
 	testKey := "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-	SetupEncryption(testKey)
+	_, err := SetupEncryption(testKey)
+	require.NoError(t, err)
 
 	email := "Test@Example.Com "
 	hash1 := HashSensitive(email)
