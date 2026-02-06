@@ -41,7 +41,7 @@ func SetupEncryption(keyHex string) ([]byte, error) {
 // GetEncryptionKey returns the current encryption key.
 func GetEncryptionKey() ([]byte, error) {
 	if len(encryptionKey) == 0 {
-		return nil, fmt.Errorf("encryption key not initialized. Call SetupEncryption first.")
+		return nil, fmt.Errorf("encryption key not initialized. Call SetupEncryption first")
 	}
 	return encryptionKey, nil
 }

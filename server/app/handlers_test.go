@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/schoren/keda/server/config"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -20,7 +21,8 @@ func setupTestDB() (*gorm.DB, *config.Config) {
 	// Set a valid test encryption key (32 bytes = 64 hex chars)
 	cfg, _ := config.LoadConfig("")
 	cfg.EncryptionKey = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-	SetupEncryption(cfg.EncryptionKey)
+	_, err := SetupEncryption(cfg.EncryptionKey)
+	require.NoError(t, err)
 
 	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err := db.AutoMigrate(Entities...); err != nil {
