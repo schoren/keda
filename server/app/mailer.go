@@ -4,20 +4,15 @@ import (
 	"fmt"
 	"net/mail"
 	"net/smtp"
-	"os"
 )
 
 func (h *Handlers) SendInvitationEmail(to, code string) error {
-	host := os.Getenv("SMTP_HOST")
-	port := os.Getenv("SMTP_PORT")
-	user := os.Getenv("SMTP_USER")
-	pass := os.Getenv("SMTP_PASS")
-	from := os.Getenv("SMTP_FROM")
-	appURL := os.Getenv("APP_URL")
-
-	if from == "" {
-		from = "noreply@keda.local"
-	}
+	host := h.cfg.SMTPHost
+	port := h.cfg.SMTPPort
+	user := h.cfg.SMTPUser
+	pass := h.cfg.SMTPPass
+	from := h.cfg.SMTPFrom
+	appURL := h.cfg.AppURL
 
 	subject := "Te han invitado a unirte a un hogar en Keda"
 	body := fmt.Sprintf("Hola!\n\nTe han invitado a compartir los gastos de un hogar en Keda.\n\nPara unirte, haz click en el siguiente enlace o usa el código de invitación al loguearte: %s\n\nLink: %s/invite?code=%s\n\n¡Te esperamos!", code, appURL, code)

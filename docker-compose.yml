@@ -5,8 +5,8 @@ services:
       args:
         APP_VERSION: ${APP_VERSION:-local-dev}
     environment:
-      - API_URL=${API_URL:-http://localhost:8090}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - API_URL=${KEDA_API_URL:-http://localhost:8090}
+      - GOOGLE_CLIENT_ID=${KEDA_GOOGLE_CLIENT_ID}
     ports:
       - "8080:80"
     depends_on:
@@ -21,18 +21,19 @@ services:
     ports:
       - "8090:8090"
     environment:
-      - DB_HOST=db
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=keda
-      - DB_PORT=5432
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - JWT_SECRET=${JWT_SECRET}
-      - SMTP_HOST=mailpit
-      - SMTP_PORT=1025
-      - SMTP_USER=
-      - SMTP_PASS=
-      - APP_URL=http://localhost:8080
+      - KEDA_DB_HOST=db
+      - KEDA_DB_USER=postgres
+      - KEDA_DB_PASSWORD=postgres
+      - KEDA_DB_NAME=keda
+      - KEDA_DB_PORT=5432
+      - KEDA_GOOGLE_CLIENT_ID=${KEDA_GOOGLE_CLIENT_ID}
+      - KEDA_JWT_SECRET=${KEDA_JWT_SECRET}
+      - KEDA_ENCRYPTION_KEY=${KEDA_ENCRYPTION_KEY}
+      - KEDA_SMTP_HOST=mailpit
+      - KEDA_SMTP_PORT=1025
+      - KEDA_SMTP_USER=
+      - KEDA_SMTP_PASS=
+      - KEDA_APP_URL=http://localhost:8080
     healthcheck:
       test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8090/health" ]
       interval: 5s
