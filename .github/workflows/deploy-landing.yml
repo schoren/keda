@@ -64,6 +64,7 @@ jobs:
           APP_URL: ${{ vars.APP_URL || 'https://app.getkeda.app' }}
           GITHUB_REPO_URL: ${{ vars.GITHUB_REPO_URL || 'https://github.com/schoren/keda' }}
           CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL || 'info@getkeda.app' }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

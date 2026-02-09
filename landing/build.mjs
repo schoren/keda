@@ -11,13 +11,17 @@ const DIST_DIR = path.join(__dirname, 'dist');
 
 const TRANSLATIONS = JSON.parse(fs.readFileSync(path.join(SRC_DIR, 'translations.json'), 'utf-8'));
 
+const RELEASE_TAG = process.env.RELEASE_TAG || 'v1.0.0';
+const GITHUB_REPO_URL = process.env.GITHUB_REPO_URL || 'https://github.com/schoren/keda';
+
 const ENV_VARS = {
   APP_URL: process.env.APP_URL || '/app',
-  GITHUB_REPO_URL: process.env.GITHUB_REPO_URL || 'https://github.com/schoren/keda',
+  GITHUB_REPO_URL,
   APP_STORE_URL: process.env.APP_STORE_URL || '#',
   PLAY_STORE_URL: process.env.PLAY_STORE_URL || '#',
   CONTACT_EMAIL: process.env.CONTACT_EMAIL || 'info@getkeda.app',
-  DEMO_VIDEO_URL: process.env.DEMO_VIDEO_URL || '../assets/demo.webm'
+  DEMO_VIDEO_URL: process.env.DEMO_VIDEO_URL || '../assets/demo.webm',
+  ANDROID_APK_URL: `${GITHUB_REPO_URL}/releases/download/${RELEASE_TAG}/keda_android_${RELEASE_TAG}.apk`
 };
 
 async function build() {

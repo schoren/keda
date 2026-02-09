@@ -32,6 +32,8 @@ export default defineConfig({
             text: 'Getting Started',
             items: [
               { text: 'Introduction', link: '/' },
+              { text: 'Install on iOS', link: '/pwa' },
+              { text: 'Install on Android', link: '/android' },
               { text: 'Authentication', link: '/auth' }
             ]
           },
@@ -62,6 +64,8 @@ export default defineConfig({
             text: 'Primeros Pasos',
             items: [
               { text: 'Introducción', link: '/es/' },
+              { text: 'Instalar en iOS', link: '/es/pwa' },
+              { text: 'Instalar en Android', link: '/es/android' },
               { text: 'Autenticación', link: '/es/auth' }
             ]
           },
