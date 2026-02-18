@@ -93,28 +93,29 @@ jobs:
         with:
           sarif_file: results.sarif
 
-  security-trivy-client:
-    name: Security - Trivy Client
+
+  security-trivy-new-client:
+    name: Security - Trivy New Client
     runs-on: ubuntu-latest
     permissions:
       security-events: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      - name: Run Trivy for Client
+      - name: Run Trivy for New Client
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
           scan-ref: './client'
           format: 'sarif'
-          output: 'trivy-results-client.sarif'
+          output: 'trivy-results-client-new.sarif'
           scanners: 'vuln,secret,misconfig'
           exit-code: '0'
           ignore-unfixed: true
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: trivy-results-client.sarif
+          sarif_file: trivy-results-client-new.sarif
 
   security-trivy-server:
     name: Security - Trivy Server
@@ -166,6 +167,58 @@ jobs:
         working-directory: ./landing
         run: npm audit
 
+  warmup-node-cache:
+    name: Setup Node & Turbo Cache
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+      - name: Install dependencies
+        working-directory: ./client
+        run: npm ci
+
+  lint-new-client:
+    name: Lint New Client (Turbo)
+    needs: [warmup-node-cache]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        working-directory: ./client
+        run: npm ci
+      - name: Lint
+        working-directory: ./client
+        run: npm run lint
+
+  test-new-client:
+    name: Test New Client (Turbo)
+    needs: [warmup-node-cache]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        working-directory: ./client
+        run: npm ci
+      - name: Test
+        working-directory: ./client
+        run: npm test
+
   lint-backend:
     name: Lint Backend (Go)
     runs-on: ubuntu-latest
@@ -182,141 +235,8 @@ jobs:
           version: v2.6.1
           working-directory: server
 
-  warmup-client-caches:
-    name: Setup Android & Flutter Cache
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-      - name: Set up Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-          cache: 'gradle'
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.38.6'
-          channel: 'stable'
-          cache: true
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v5
-        with:
-          path: ~/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('client/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
-      - name: Install dependencies
-        working-directory: ./client
-        run: flutter pub get
 
-  lint-client:
-    name: Lint Client (Flutter)
-    needs: [warmup-client-caches]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.38.6'
-          channel: 'stable'
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v5
-        with:
-          path: ~/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('client/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
 
-      - name: Install dependencies
-        working-directory: ./client
-        run: flutter pub get
-      - name: Analyze
-        working-directory: ./client
-        run: flutter analyze || echo "::warning::Flutter analyzer found issues"
-
-  client-tests:
-    name: Client Tests (Flutter)
-    needs: [warmup-client-caches]
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-      
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.38.6'
-          channel: 'stable'
-          cache: true
-      
-      - name: Install dependencies
-        working-directory: ./client
-        run: flutter pub get
-      
-      - name: Run build_runner
-        working-directory: ./client
-        run: dart run build_runner build --delete-conflicting-outputs
-      
-      - name: Run tests with coverage
-        working-directory: ./client
-        run: flutter test --coverage
-      
-      - name: Upload coverage
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./client/coverage/lcov.info
-          flags: client
-          fail_ci_if_error: false
-
-  build-android:
-    name: Build Android APK
-    needs: [warmup-client-caches]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-      
-      - name: Set up Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-          cache: 'gradle'
-      
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.38.6'
-          channel: 'stable'
-          cache: true
-      
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v5
-        with:
-          path: ~/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('client/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
-
-      - name: Install dependencies
-        working-directory: ./client
-        run: flutter pub get
-      
-      - name: Build APK (Debug)
-        working-directory: ./client
-        run: flutter build apk --debug
-      
-      - name: Upload APK
-        uses: actions/upload-artifact@v6
-        with:
-          name: app-debug.apk
-          path: client/build/app/outputs/flutter-apk/app-debug.apk
-          retention-days: 7
 
   build-images:
     name: Build ${{ matrix.image }} Image
@@ -391,56 +311,6 @@ jobs:
           path: preview-generator/generated-assets/
           retention-days: 7
 
-  android-integration-test:
-    name: Android Integration Test (Headless)
-    needs: [warmup-client-caches]
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
-      - name: Set up Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-          cache: 'gradle'
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.38.6'
-          channel: 'stable'
-          cache: true
-
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v5
-        with:
-          path: ~/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('client/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
-
-      - name: Install dependencies
-        working-directory: ./client
-        run: flutter pub get
-
-      - name: Run Integration Tests (Headless Emulator)
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          target: google_apis
-          arch: x86_64
-          profile: Nexus 6
-          working-directory: ./client
-          script: flutter test integration_test/app_test.dart --dart-define=TEST_MODE=true --dart-define=INTEGRATION_TEST=true --dart-define=MOCK_DATA=true
 
   build-landing-and-docs:
     name: Build Landing & Docs
@@ -473,16 +343,14 @@ jobs:
     if: always()
     needs: 
       - backend-tests
-      - client-tests
       - lint-backend
-      - lint-client
+      - lint-new-client
+      - test-new-client
       - security-gosec
-      - security-trivy-client
+      - security-trivy-new-client
       - security-trivy-server
       - security-mobsf
       - security-landing
-      - android-integration-test
-      - build-android
       - build-landing-and-docs
     runs-on: ubuntu-latest
     steps:

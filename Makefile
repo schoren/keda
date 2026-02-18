@@ -25,19 +25,18 @@ help:
 	@echo "    make test            - Run all tests (backend + client + e2e + security + lint)"
 	@echo "    make test-quick      - Run backend + client tests (skip slow E2E)"
 	@echo "    make test-backend    - Run backend unit tests with coverage"
-	@echo "    make test-client     - Run client unit tests with coverage"
+	@echo "    make test-client     - Run client tests"
 	@echo "    make test-e2e        - Run E2E integration tests (Preview Generator)"
-	@echo "    make test-android-integration - Run Android integration tests (needs emulator)"
 	@echo ""
 	@echo "  🔍 Code Quality"
 	@echo "    make lint            - Run all linters (backend + client)"
 	@echo "    make lint-backend    - Run Go linters (golangci-lint)"
-	@echo "    make lint-client     - Run Flutter analyzer"
+	@echo "    make lint-client     - Run client linters"
 	@echo ""
 	@echo "  🛡️  Security"
 	@echo "    make security-check  - Run all security scans"
 	@echo "    make security-check-gosec   - Static analysis for Go"
-	@echo "    make security-check-client  - Trivy scan for client"
+	@echo "    make security-check-client  - npm audit for client"
 	@echo "    make security-check-server  - Trivy scan for server"
 	@echo "    make security-check-mobsf   - MobSF static analysis"
 	@echo "    make security-check-landing - npm audit for landing page"
@@ -54,13 +53,6 @@ help:
 	@echo "  🧹 Maintenance"
 	@echo "    make clean           - Clean all test artifacts and containers"
 	@echo "    make help            - Show this help message"
-	@echo ""
-	@echo "  📱 Android"
-	@echo "    make android-setup   - Setup Android environment (Java, SDK)"
-	@echo "    make android-build   - Build Android APK (debug)"
-	@echo "    make android-release - Build Android APK (release)"
-	@echo "    make android-run     - Run Android app on connected device/emulator"
-	@echo "    make android-clean   - Clean Android build artifacts"
 	@echo ""
 
 # Backend tests
@@ -92,13 +84,7 @@ security-check-gosec:
 # Client Security Check
 security-check-client:
 	@echo "🛡️  Running client security check..."
-	@if docker info >/dev/null 2>&1; then \
-		echo "Using Docker for Trivy..."; \
-		docker run --rm -v $(PWD)/client:/app -w /app aquasec/trivy:latest fs . --scanners vuln,secret,misconfig; \
-	else \
-		echo "⚠️  Docker not available. Skipping Trivy scan."; \
-		exit 1; \
-	fi
+	cd client && npm audit
 
 # Server Security Check (Container/FS)
 security-check-server:
@@ -134,8 +120,8 @@ lint-backend:
 
 # Client Linting
 lint-client:
-	@echo "🔍 Running Flutter analyzer..."
-	cd client && flutter analyze || echo "⚠️  Flutter analyzer found issues. Please review details above."
+	@echo "🔍 Running new client linters..."
+	cd client && npm run lint
 
 # Landing Page Security
 security-check-landing:
@@ -144,30 +130,8 @@ security-check-landing:
 
 # Client tests
 test-client:
-	@echo "🧪 Running client tests..."
-	cd client && flutter test --coverage
-	@echo ""
-	@echo "📊 Coverage summary:"
-	@cd client && \
-		TOTAL=$$(grep "LF:" coverage/lcov.info | cut -d: -f2 | awk '{s+=$$1} END {print s}') && \
-		HIT=$$(grep "LH:" coverage/lcov.info | cut -d: -f2 | awk '{s+=$$1} END {print s}') && \
-		echo "Total Lines: $$TOTAL" && \
-		echo "Hit Lines: $$HIT" && \
-		echo "Coverage: $$(echo "scale=1; $$HIT * 100 / $$TOTAL" | bc)%"
-
-test-e2e:
-	@echo "🧪 Running E2E / Preview Generator tests..."
-	@cd preview-generator && ./run.sh
-
-# Android Integration tests
-test-android-integration:
-	@echo "🧪 Running Android Integration tests..."
-	@./scripts/ensure_emulator.sh
-	@cd client && flutter test integration_test/app_test.dart \
-		--dart-define=API_URL=http://10.0.2.2:8090 \
-		--dart-define=TEST_MODE=true \
-		--dart-define=INTEGRATION_TEST=true \
-		--dart-define=MOCK_DATA=true
+	@echo "🧪 Running new client tests..."
+	cd client && npm test
 
 # Run all tests
 test-all: test-backend test-client test-e2e security-check lint
@@ -277,26 +241,3 @@ generate-assets:
 	@echo "✅ Assets generated and distributed."
 
 # Android Targets
-android-setup:
-	@echo "🤖 Setting up Android environment..."
-	@./scripts/setup_android.sh
-
-android-build:
-	@echo "🔨 Building Android APK (Debug)..."
-	cd client && flutter build apk --debug
-
-android-release:
-	@echo "🚀 Building Android APK (Release)..."
-	cd client && flutter build apk --release
-
-android-run:
-	@echo "📱 Ensuring Android device/emulator is ready..."
-	@./scripts/ensure_emulator.sh
-	@echo "📱 Running on Android device..."
-	@set -a && . ./.env.dev && set +a && \
-	DEVICE_ID=$$(flutter devices | grep "•" | grep -E "mobile|android" | grep -vE "desktop|web|offline" | head -n 1 | awk -F'•' '{print $$2}' | xargs); \
-	cd client && flutter run -d $$DEVICE_ID --dart-define=GOOGLE_CLIENT_ID=$$GOOGLE_CLIENT_ID --dart-define=API_URL=$$API_URL
-
-android-clean:
-	@echo "🧹 Cleaning Android build..."
-	cd client && flutter clean

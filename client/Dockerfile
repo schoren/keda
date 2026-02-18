@@ -1,81 +1,57 @@
-# Stage 1: Build Flutter Web
-FROM ghcr.io/cirruslabs/flutter:stable AS builder
+FROM node:20-alpine AS base
 
+# Stage 1: Prune
+FROM base AS builder
+RUN apk add --no-cache libc6-compat
+RUN apk update
+# Set working directory
+WORKDIR /app
+RUN npm install -g turbo
+COPY . .
+RUN turbo prune web --docker
+
+# Stage 2: Install dependencies
+FROM base AS installer
+RUN apk add --no-cache libc6-compat
+RUN apk update
 WORKDIR /app
 
-# Enable BuildKit cache for pub get
-RUN --mount=type=cache,target=/root/.pub-cache \
-  flutter config --no-analytics
+# First install dependencies (as they change less often)
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/package-lock.json ./package-lock.json
+RUN npm install
 
-# Copy pubspec files first for dependency caching
-COPY pubspec.yaml pubspec.lock ./
-RUN --mount=type=cache,target=/root/.pub-cache \
-  flutter pub get
+# Build the project
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
 
-# Copy the rest of the source code
-COPY . .
+# Uncomment and use build args if needed
+# ARG APP_VERSION
+# ENV APP_VERSION=${APP_VERSION}
 
-ARG APP_VERSION=local-dev
-# Build web with cache for pub-cache
-RUN --mount=type=cache,target=/root/.pub-cache \
-  flutter build web --dart-define=APP_VERSION=$APP_VERSION --pwa-strategy=none
+RUN npx turbo build --filter=web
 
-RUN sed -i "s|APP_VERSION_PLACEHOLD|$APP_VERSION|g" build/web/index.html
+# Stage 3: Runner
+FROM base AS runner
+WORKDIR /app
 
-# Stage 2: Serve with Nginx
-FROM nginx:alpine
+# Don't run production as root
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+USER nextjs
 
-COPY --from=builder /app/build/web /usr/share/nginx/html
+COPY --from=installer /app/apps/web/next.config.js .
+COPY --from=installer /app/apps/web/package.json .
 
-# Copy custom nginx config if needed, or rely on default
-# For SPA, we often need to fallback to index.html
-RUN echo 'server { \
-  listen 80; \
-  server_name localhost; \
-  root /usr/share/nginx/html; \
-  index index.html; \
-  \
-  # Cache Control for HTML, JS, CSS and Version files (no cache, always re-validate) \
-  location ~* \.(?:html|json|js|css)$ { \
-  add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"; \
-  expires off; \
-  } \
-  \
-  # Cache Control for Static Assets (long-lived cache for immutable-like assets) \
-  location ~* \.(?:png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|otf|wasm)$ { \
-  add_header Cache-Control "public, max-age=31536000, immutable"; \
-  access_log off; \
-  } \
-  \
-  location / { \
-  try_files $uri $uri/ /index.html; \
-  } \
-  }' > /etc/nginx/conf.d/default.conf
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
-# Expose port 80
-EXPOSE 80
+EXPOSE 3000
 
-# Hardening: Healthcheck
-HEALTHCHECK --interval=30s --timeout=3s \
-  CMD wget --quiet --tries=1 --spider http://localhost:80/ || exit 1
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
 
-# Hardening: Run as non-root user
-# Nginx alpine image has 'nginx' user built-in.
-# We need to give ownership of /usr/share/nginx/html to nginx user
-# And also permissions for /var/run/nginx.pid and /var/cache/nginx
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
-  chmod -R 755 /usr/share/nginx/html && \
-  mkdir -p /var/cache/nginx && \
-  chown -R nginx:nginx /var/cache/nginx && \
-  mkdir -p /var/log/nginx && \
-  chown -R nginx:nginx /var/log/nginx && \
-  touch /var/run/nginx.pid && \
-  chown -R nginx:nginx /var/run/nginx.pid
-
-# Switch to non-root user
-USER nginx
-
-# Replace placeholders with actual environment variables at runtime
-# Using a temp file strategy because we can't sed in place as easily without read/write issues if not careful, 
-# but sed -i works if we own the file.
-CMD ["/bin/sh", "-c", "sed -i \"s|API_URL_PLACEHOLD|${API_URL:-http://localhost:8090}|g; s|GOOGLE_CLIENT_ID_PLACEHOLD|${GOOGLE_CLIENT_ID:-}|g; s|TEST_MODE_PLACEHOLD|${TEST_MODE:-false}|g; s|TEST_HOUSEHOLD_ID_PLACEHOLD|${TEST_HOUSEHOLD_ID:-}|g\" /usr/share/nginx/html/config.js && nginx -g 'daemon off;'"]
+CMD ["node", "apps/web/server.js"]
