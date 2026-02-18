@@ -141,6 +141,10 @@ test-all: test-backend test-client test-e2e security-check lint
 test: test-all
 
 # Development environment
+dev-client:
+	@echo "🚀 Starting frontend with dev variables..."
+	@set -a && . ./.env.dev && set +a && cd client && npm run dev
+
 dev-up:
 	@echo "🚀 Starting development environment..."
 	$(DEV_DOCKER_COMPOSE) up -d
@@ -227,7 +231,7 @@ docs-build:
 
 docs-serve:
 	@echo "🚀 Serving documentation locally..."
-	cd docs && npx vitepress dev --port 3001
+	cd docs && npx vitepress dev
 
 # Assets Generation
 generate-assets:

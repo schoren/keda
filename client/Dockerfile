@@ -25,9 +25,13 @@ RUN npm install
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
-# Uncomment and use build args if needed
-# ARG APP_VERSION
-# ENV APP_VERSION=${APP_VERSION}
+# Declare build arguments
+ARG API_URL
+ARG GOOGLE_CLIENT_ID
+
+# Set environment variables for the build
+ENV NEXT_PUBLIC_API_URL=${API_URL}
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
 
 RUN npx turbo build --filter=web
 

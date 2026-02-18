@@ -4,6 +4,8 @@ services:
       context: ./client
       args:
         APP_VERSION: ${APP_VERSION:-local-dev}
+        API_URL: ${KEDA_API_URL:-http://localhost:8090}
+        GOOGLE_CLIENT_ID: ${KEDA_GOOGLE_CLIENT_ID}
     environment:
       - API_URL=${KEDA_API_URL:-http://localhost:8090}
       - GOOGLE_CLIENT_ID=${KEDA_GOOGLE_CLIENT_ID}
