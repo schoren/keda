@@ -18,11 +18,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const config = {
+    apiUrl: process.env.KEDA_API_URL || "http://localhost:809",
+    googleClientId: process.env.KEDA_GOOGLE_CLIENT_ID || "",
+  };
+
   return (
     <html lang="es" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans`}>
-        <Providers>
+        <Providers config={config}>
           {children}
+
         </Providers>
       </body>
     </html>

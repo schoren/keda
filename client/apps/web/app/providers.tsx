@@ -13,7 +13,18 @@ export function useApi() {
   return context;
 }
 
-export function Providers({ children }: { children: React.ReactNode }) {
+interface ProvidersConfig {
+  apiUrl: string;
+  googleClientId: string;
+}
+
+export function Providers({
+  children,
+  config
+}: {
+  children: React.ReactNode;
+  config: ProvidersConfig;
+}) {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
@@ -24,14 +35,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }));
 
   const apiClient = useMemo(() => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8090";
-    return new ApiClient(baseUrl);
-  }, []);
-
-  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
+    return new ApiClient(config.apiUrl);
+  }, [config.apiUrl]);
 
   return (
-    <GoogleOAuthProvider clientId={googleClientId}>
+    <GoogleOAuthProvider clientId={config.googleClientId}>
       <ApiContext.Provider value={apiClient}>
         <QueryClientProvider client={queryClient}>
           {children}

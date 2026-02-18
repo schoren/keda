@@ -1,5 +1,5 @@
 services:
-  web:
+  client:
     build:
       context: ./client
       target: development
@@ -21,4 +21,4 @@ services:
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
     depends_on:
-      - web
+      - client
