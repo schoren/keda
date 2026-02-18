@@ -11,12 +11,12 @@ interface NumPadProps {
 export function NumPad({ value, onChange }: NumPadProps) {
   const handlePress = (key: string) => {
     if (key === "backspace") {
-      onChange(value.slice(0, -1) || "0");
+      onChange(value.length <= 1 ? "" : value.slice(0, -1));
       return;
     }
 
     if (key === "." && value.includes(".")) return;
-    if (key === "." && value === "0") {
+    if (key === "." && (value === "0" || value === "")) {
       onChange("0.");
       return;
     }
@@ -46,6 +46,7 @@ export function NumPad({ value, onChange }: NumPadProps) {
           key={key}
           type="button"
           onClick={() => handlePress(key)}
+          aria-label={key === "backspace" ? "backspace" : key}
           className={cn(
             "h-14 rounded-xl text-lg font-medium transition-colors",
             "bg-accent/50 hover:bg-accent active:bg-accent/80",
