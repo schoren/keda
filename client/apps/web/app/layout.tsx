@@ -13,13 +13,15 @@ export const metadata: Metadata = {
   description: "Gestión inteligente de gastos familiares",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const config = {
-    apiUrl: process.env.KEDA_API_URL || "http://localhost:809",
+    apiUrl: process.env.KEDA_API_URL || "http://localhost:8090",
     googleClientId: process.env.KEDA_GOOGLE_CLIENT_ID || "",
   };
 

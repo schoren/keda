@@ -143,11 +143,7 @@ test: test-all
 # Development environment
 dev:
 	@echo "🚀 Starting development environment..."
-	$(DEV_DOCKER_COMPOSE) up
-
-dev-build:
-	@echo "🔨 Building images..."
-	$(DEV_DOCKER_COMPOSE) build
+	$(DEV_DOCKER_COMPOSE) up --build
 
 dev-clean:
 	@echo "🧹 Cleaning development environment..."

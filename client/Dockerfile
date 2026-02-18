@@ -34,13 +34,6 @@ CMD ["npm", "run", "dev"]
 
 # Stage 4: Build the project
 FROM development AS builder-web
-# Declare build arguments
-ARG API_URL
-ARG GOOGLE_CLIENT_ID
-
-# Set environment variables for the build
-ENV NEXT_PUBLIC_API_URL=${API_URL}
-ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
 
 RUN turbo build --filter=web
 
