@@ -27,3 +27,16 @@ docs/public/assets
 # client-old
 >>>>>>> Stashed changes
 .worktrees/
+
+# React Client
+client/node_modules/
+client/.next/
+client/.turbo/
+server/tmp/
+
+# Node
+**/node_modules
+**/.next
+**/.turbo
+**/dist
+**/build

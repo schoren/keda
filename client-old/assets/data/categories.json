@@ -1,0 +1,32 @@
+[
+  {
+    "id": "cat1",
+    "name": "Supermercado",
+    "monthlyBudget": 50000.0,
+    "isActive": true
+  },
+  {
+    "id": "cat2",
+    "name": "Hogar",
+    "monthlyBudget": 20000.0,
+    "isActive": true
+  },
+  {
+    "id": "cat3",
+    "name": "Salud",
+    "monthlyBudget": 15000.0,
+    "isActive": true
+  },
+  {
+    "id": "cat4",
+    "name": "Entretenimiento",
+    "monthlyBudget": 10000.0,
+    "isActive": true
+  },
+  {
+    "id": "cat5",
+    "name": "Restaurants",
+    "monthlyBudget": 25000.0,
+    "isActive": true
+  }
+]

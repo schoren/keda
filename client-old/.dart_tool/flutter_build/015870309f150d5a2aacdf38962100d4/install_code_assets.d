@@ -1,0 +1,1 @@
+ /Users/schoren/dev/family-finance/client/.dart_tool/flutter_build/015870309f150d5a2aacdf38962100d4/native_assets.json: 
