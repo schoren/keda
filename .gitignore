@@ -18,4 +18,12 @@ preview-generator/generated-assets
 docs/.vitepress/dist
 docs/.vitepress/cache
 docs/node_modules
+<<<<<<< Updated upstream
 docs/public/assets
+=======
+docs/public/assets
+
+
+# client-old
+>>>>>>> Stashed changes
+.worktrees/
