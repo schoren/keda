@@ -95,6 +95,13 @@ export class ApiClient {
     return this.request<Account[]>(`${this.householdPath}/accounts`);
   }
 
+  async createAccount(account: Partial<Account>): Promise<Account> {
+    return this.request<Account>(`${this.householdPath}/accounts`, {
+      method: 'POST',
+      body: JSON.stringify(account),
+    });
+  }
+
   // Transactions
   async getTransactions(month?: string): Promise<Transaction[]> {
     const path = `${this.householdPath}/transactions${month ? `?month=${month}` : ''}`;

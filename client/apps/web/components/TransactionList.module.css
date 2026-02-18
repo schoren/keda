@@ -1,0 +1,142 @@
+.container {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.header {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.filterBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: #888;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.2s;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.item:hover {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expense {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.income {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mainInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.note {
+  font-weight: 500;
+  color: #fff;
+}
+
+.amount {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.expenseText {
+  color: #fff;
+}
+
+.incomeText {
+  color: #10b981;
+}
+
+.subInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.category {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #444;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.skeleton {
+  padding: 3rem;
+  text-align: center;
+  color: #444;
+}
+
+.empty {
+  padding: 3rem;
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.error {
+  padding: 2rem;
+  color: #ef4444;
+  text-align: center;
+}

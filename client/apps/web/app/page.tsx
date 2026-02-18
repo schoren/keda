@@ -1,12 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { Summary } from "../components/Summary";
+import { AccountList } from "../components/AccountList";
+import { TransactionList } from "../components/TransactionList";
+import { DashboardLayout } from "../components/DashboardLayout";
+import { Modal } from "../components/Modal";
+import { TransactionForm } from "../components/TransactionForm";
 import styles from "./page.module.css";
 import Image from "next/image";
+import { Plus } from "lucide-react";
 
 export default function Home() {
-  const { user, householdId, login, logout, isAuthenticated, isLoading } = useAuth();
+  const { user, householdId, login, isAuthenticated, isLoading } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
 
@@ -20,37 +28,46 @@ export default function Home() {
 
   if (isAuthenticated && householdId) {
     return (
-      <main className={styles.dashboard}>
-        <header className={styles.header}>
-          <div className={styles.userProfile}>
-            {user?.picture_url && (
-              <Image
-                src={user.picture_url}
-                alt={user.name}
-                width={40}
-                height={40}
-                className={styles.avatar}
-              />
-            )}
-            <div>
-              <h3>Hola, {user?.name}!</h3>
-              <p>Hogar: {householdId.slice(0, 8)}...</p>
-            </div>
-          </div>
-          <button onClick={logout} className={styles.secondaryBtn}>Cerrar sesión</button>
-        </header>
-
+      <DashboardLayout>
         <div className={styles.content}>
-          <div className={styles.grid}>
-            <Summary month={currentMonth} householdId={householdId} />
-
-            <div className={styles.placeholderCard}>
-              <h3>Cuentas</h3>
-              <p>Próximamente: Lista de tus bancos y tarjetas.</p>
+          <div className={styles.headerTitle}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h1>Dashboard</h1>
+                <p>Resumen de tu economía familiar</p>
+              </div>
+              <button className={styles.primaryBtn} onClick={() => setIsModalOpen(true)}>
+                <Plus size={20} />
+                <span>Nueva Transacción</span>
+              </button>
             </div>
           </div>
+
+          <div className={styles.grid}>
+            <div className={styles.mainCol}>
+              <Summary month={currentMonth} householdId={householdId} />
+              <div style={{ marginTop: '1.5rem' }}>
+                <TransactionList month={currentMonth} />
+              </div>
+            </div>
+
+            <div className={styles.sideCol}>
+              <AccountList />
+            </div>
+          </div>
+
+          <Modal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            title="Registrar Transacción"
+          >
+            <TransactionForm
+              onSuccess={() => setIsModalOpen(false)}
+              onCancel={() => setIsModalOpen(false)}
+            />
+          </Modal>
         </div>
-      </main>
+      </DashboardLayout>
     );
   }
 
