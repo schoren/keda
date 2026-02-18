@@ -62,3 +62,23 @@ export interface Invitation {
   household_id: string;
   status: 'pending' | 'accepted' | 'expired';
 }
+
+export type AccountType = 'cash' | 'card' | 'bank';
+
+export interface Recommendation {
+  categoryId: string;
+  categoryName: string;
+  action: string;
+  amount: number;
+  isSelected: boolean;
+}
+
+export interface MemberInfo {
+  id: string;
+  name: string;
+  email: string;
+  picture_url?: string;
+  color?: string;
+  status: 'active' | 'pending';
+  invite_code?: string;
+}

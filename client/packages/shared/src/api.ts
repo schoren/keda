@@ -1,4 +1,4 @@
-import { Account, Category, Household, Transaction, User } from './entities';
+import { Account, Category, Household, Invitation, MemberInfo, Recommendation, Transaction, User } from './entities';
 
 export interface AuthResponse {
   token: string;
@@ -90,6 +90,19 @@ export class ApiClient {
     });
   }
 
+  async updateCategory(id: string, category: Partial<Category>): Promise<Category> {
+    return this.request<Category>(`${this.householdPath}/categories/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(category),
+    });
+  }
+
+  async deleteCategory(id: string): Promise<void> {
+    await this.request<void>(`${this.householdPath}/categories/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
   // Accounts
   async getAccounts(): Promise<Account[]> {
     return this.request<Account[]>(`${this.householdPath}/accounts`);
@@ -99,6 +112,19 @@ export class ApiClient {
     return this.request<Account>(`${this.householdPath}/accounts`, {
       method: 'POST',
       body: JSON.stringify(account),
+    });
+  }
+
+  async updateAccount(id: string, account: Partial<Account>): Promise<Account> {
+    return this.request<Account>(`${this.householdPath}/accounts/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(account),
+    });
+  }
+
+  async deleteAccount(id: string): Promise<void> {
+    await this.request<void>(`${this.householdPath}/accounts/${id}`, {
+      method: 'DELETE',
     });
   }
 
@@ -115,8 +141,74 @@ export class ApiClient {
     });
   }
 
+  async updateTransaction(id: string, transaction: Partial<Transaction>): Promise<Transaction> {
+    return this.request<Transaction>(`${this.householdPath}/transactions/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(transaction),
+    });
+  }
+
+  async deleteTransaction(id: string): Promise<void> {
+    await this.request<void>(`${this.householdPath}/transactions/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
   // Summary
   async getSummary(month: string): Promise<MonthlySummary> {
     return this.request<MonthlySummary>(`${this.householdPath}/summary/${month}`);
   }
+
+  // Recommendations
+  async getRecommendations(): Promise<Recommendation[]> {
+    return this.request<Recommendation[]>(`${this.householdPath}/recommendations`);
+  }
+
+  async applyRecommendations(recommendations: Recommendation[]): Promise<void> {
+    await this.request<void>(`${this.householdPath}/recommendations/apply`, {
+      method: 'POST',
+      body: JSON.stringify({ recommendations }),
+    });
+  }
+
+  // Members
+  async getMembers(): Promise<MemberInfo[]> {
+    return this.request<MemberInfo[]>(`${this.householdPath}/members`);
+  }
+
+  async removeMember(memberId: string): Promise<void> {
+    await this.request<void>(`${this.householdPath}/members/${memberId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Invitations
+  async createInvitation(email: string): Promise<Invitation> {
+    return this.request<Invitation>(`${this.householdPath}/invitations`, {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  // Suggested Notes
+  async getSuggestedNotes(categoryId: string): Promise<string[]> {
+    return this.request<string[]>(`${this.householdPath}/transactions/suggestions?category_id=${categoryId}`);
+  }
+
+  // Server Version
+  async getServerVersion(): Promise<string> {
+    const data = await this.request<{ version: string }>('/version');
+    return data.version;
+  }
 }
+
+// Utility: format money with locale
+export function formatMoney(amount: number, locale: string = 'es'): string {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
+
