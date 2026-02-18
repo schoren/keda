@@ -6,7 +6,7 @@ TEST_SERVER_PORT := 8091
 DEV_DOCKER_COMPOSE := docker compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml
 
 # Use timestamp as version for development to facilitate testing update notifications
-export APP_VERSION ?= dev-$(shell date +%Y%m%d%H%M%S)
+export APP_VERSION ?= dev
 
 # Default target
 help:
@@ -141,29 +141,9 @@ test-all: test-backend test-client test-e2e security-check lint
 test: test-all
 
 # Development environment
-dev-client:
-	@echo "🚀 Starting frontend with dev variables..."
-	@set -a && . ./.env.dev && set +a && cd client && npm run dev
-
-dev-up:
+dev:
 	@echo "🚀 Starting development environment..."
-	$(DEV_DOCKER_COMPOSE) up -d
-	@echo "✅ Development environment started"
-	@echo "   Client: $$(grep '^APP_URL=' .env.dev | cut -d '=' -f2)"
-	@echo "   Server: $$(grep '^API_URL=' .env.dev | cut -d '=' -f2)"
-	@echo "   Mailpit: http://localhost:8025"
-
-dev-rebuild:
-	@echo "🔨 Rebuilding development environment..."
-	$(DEV_DOCKER_COMPOSE) up -d --build
-
-dev-restart:
-	@echo "🔨 Restarting development environment..."
-	$(DEV_DOCKER_COMPOSE) restart
-
-dev-down:
-	@echo "🛑 Stopping development environment..."
-	$(DEV_DOCKER_COMPOSE) down
+	$(DEV_DOCKER_COMPOSE) up
 
 dev-clean:
 	@echo "🧹 Cleaning development environment..."

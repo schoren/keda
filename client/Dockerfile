@@ -16,15 +16,23 @@ RUN apk add --no-cache libc6-compat
 RUN apk update
 WORKDIR /app
 
-# First install dependencies (as they change less often)
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
+RUN npm install
+
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/package-lock.json ./package-lock.json
 RUN npm install
 
-# Build the project
-COPY --from=builder /app/out/full/ .
-COPY turbo.json turbo.json
+# Stage 3: Development (with source code and deps)
+FROM installer AS development
+WORKDIR /app
+RUN npm install -g turbo
 
+CMD ["npm", "run", "dev"]
+
+# Stage 4: Build the project
+FROM installer AS builder-web
 # Declare build arguments
 ARG API_URL
 ARG GOOGLE_CLIENT_ID
@@ -33,7 +41,7 @@ ARG GOOGLE_CLIENT_ID
 ENV NEXT_PUBLIC_API_URL=${API_URL}
 ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
 
-RUN npx turbo build --filter=web
+RUN turbo build --filter=web
 
 # Stage 3: Runner
 FROM base AS runner
@@ -44,14 +52,14 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer /app/apps/web/next.config.js .
-COPY --from=installer /app/apps/web/package.json .
+COPY --from=builder-web /app/apps/web/next.config.js .
+COPY --from=builder-web /app/apps/web/package.json .
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
+COPY --from=builder-web --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=builder-web --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder-web --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
 EXPOSE 3000
 

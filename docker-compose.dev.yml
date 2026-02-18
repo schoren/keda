@@ -1,4 +1,20 @@
 services:
+  client:
+    build:
+      context: ./client
+      target: development
+    volumes:
+      - ./client:/app
+      - /app/apps/web/.next
+      - /app/apps/docs/.next
+
+  server:
+    build:
+      context: ./server
+      target: development
+    volumes:
+      - ./server:/app
+
   tunnel:
     image: cloudflare/cloudflared:latest
     restart: always

@@ -1,4 +1,4 @@
-FROM golang:1.24-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 COPY go.mod go.sum ./
@@ -8,6 +8,13 @@ COPY . .
 ARG APP_VERSION=local-dev
 RUN go build -o server -ldflags "-X main.Version=${APP_VERSION}" .
 
+# dev runner
+FROM golang:1.25-alpine AS development
+WORKDIR /app
+RUN go install github.com/air-verse/air@v1.64.5
+CMD ["air"]
+
+# Runner
 FROM alpine:3.21
 
 WORKDIR /app
