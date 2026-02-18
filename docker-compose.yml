@@ -4,16 +4,11 @@ services:
       context: ./client
       args:
         APP_VERSION: ${APP_VERSION:-local-dev}
-        API_URL: ${KEDA_API_URL:-http://localhost:8090}
-        GOOGLE_CLIENT_ID: ${KEDA_GOOGLE_CLIENT_ID}
     environment:
       - API_URL=${KEDA_API_URL:-http://localhost:8090}
       - GOOGLE_CLIENT_ID=${KEDA_GOOGLE_CLIENT_ID}
     ports:
-      - "3000:3000" # New client port
-    depends_on:
-      server:
-        condition: service_healthy
+      - "3000:3000"
 
   server:
     build:

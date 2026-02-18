@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { DashboardLayout } from "../../components/DashboardLayout";
-import { TransactionList } from "../../components/TransactionList";
-import { Modal } from "../../components/Modal";
-import { TransactionForm } from "../../components/TransactionForm";
-import styles from "../page.module.css";
-import { useAuth } from "../../hooks/useAuth";
+import { DashboardLayout } from "@/components/DashboardLayout";
+import { TransactionList } from "@/components/TransactionList";
+import { Modal } from "@/components/Modal";
+import { TransactionForm } from "@/components/TransactionForm";
+import { useAuth } from "@/hooks/useAuth";
 import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function TransactionsPage() {
   const { isAuthenticated } = useAuth();
@@ -19,23 +19,22 @@ export default function TransactionsPage() {
 
   return (
     <DashboardLayout>
-      <div className={styles.content}>
-        <div className={styles.headerTitle}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <h1>Transacciones</h1>
-              <p>Historial de ingresos y gastos</p>
-            </div>
-            <button className={styles.primaryBtn} onClick={() => setIsModalOpen(true)}>
-              <Plus size={20} />
-              <span>Nuevo Gasto</span>
-            </button>
+      <div className="px-5 md:px-8 py-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-xl font-bold text-foreground">Transacciones</h1>
+            <p className="text-sm text-muted-foreground">Historial de ingresos y gastos</p>
           </div>
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-keda-green hover:bg-keda-green-dark text-white gap-2"
+          >
+            <Plus size={18} />
+            Nuevo Gasto
+          </Button>
         </div>
 
-        <div className={styles.singleColumn}>
-          <TransactionList month={currentMonth} />
-        </div>
+        <TransactionList month={currentMonth} />
 
         <Modal
           isOpen={isModalOpen}

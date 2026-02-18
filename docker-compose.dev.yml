@@ -1,13 +1,12 @@
 services:
-  client:
+  web:
     build:
       context: ./client
       target: development
     volumes:
       - ./client:/app
       - /app/apps/web/.next
-      - /app/apps/docs/.next
-
+    command: [ "npm", "run", "dev" ]
   server:
     build:
       context: ./server
@@ -21,3 +20,5 @@ services:
     command: tunnel run
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - web

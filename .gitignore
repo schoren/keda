@@ -4,6 +4,7 @@
 .env
 .env.dev
 server/server
+server/tmp/
 server/app/coverage.out
 
 landing/.env
@@ -18,14 +19,11 @@ preview-generator/generated-assets
 docs/.vitepress/dist
 docs/.vitepress/cache
 docs/node_modules
-<<<<<<< Updated upstream
-docs/public/assets
-=======
 docs/public/assets
 
 
-# client-old
->>>>>>> Stashed changes
+client-old
+
 .worktrees/
 
 # React Client

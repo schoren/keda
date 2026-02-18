@@ -1,32 +1,31 @@
 "use client";
 
 import { Sidebar } from "./Sidebar";
-import styles from "./DashboardLayout.module.css";
-import { useAuth } from "../hooks/useAuth";
+import { BottomNav } from "./BottomNav";
+import { useAuth } from "@/hooks/useAuth";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return (
-      <div className={styles.loading}>
-        <div className={styles.spinner}></div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-8 h-8 border-4 border-keda-green/30 border-t-keda-green rounded-full animate-spin" />
       </div>
     );
   }
 
-  // If not authenticated, the pages themselves should handle redirection or show login
-  // but for the layout of authenticated pages, we assume we want the sidebar
   if (!isAuthenticated) {
     return <>{children}</>;
   }
 
   return (
-    <div className={styles.container}>
+    <div className="min-h-screen bg-background">
       <Sidebar />
-      <main className={styles.main}>
+      <main className="md:pl-60 pb-20 md:pb-0">
         {children}
       </main>
+      <BottomNav />
     </div>
   );
 }

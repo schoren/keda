@@ -2,13 +2,14 @@ FROM node:20-alpine AS base
 
 # Stage 1: Prune
 FROM base AS builder
+ARG PRUNE_TARGET=web
 RUN apk add --no-cache libc6-compat
 RUN apk update
 # Set working directory
 WORKDIR /app
 RUN npm install -g turbo
 COPY . .
-RUN turbo prune web --docker
+RUN turbo prune ${PRUNE_TARGET} --docker
 
 # Stage 2: Install dependencies
 FROM base AS installer
@@ -32,7 +33,7 @@ RUN npm install -g turbo
 CMD ["npm", "run", "dev"]
 
 # Stage 4: Build the project
-FROM installer AS builder-web
+FROM development AS builder-web
 # Declare build arguments
 ARG API_URL
 ARG GOOGLE_CLIENT_ID

@@ -145,6 +145,10 @@ dev:
 	@echo "🚀 Starting development environment..."
 	$(DEV_DOCKER_COMPOSE) up
 
+dev-build:
+	@echo "🔨 Building images..."
+	$(DEV_DOCKER_COMPOSE) build
+
 dev-clean:
 	@echo "🧹 Cleaning development environment..."
 	$(DEV_DOCKER_COMPOSE) down -v
