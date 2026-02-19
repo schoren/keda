@@ -1,10 +1,10 @@
 # Implementation Plan: "What's Left" Dashboard Redesign
 
-## Phase 1: Shared Logic & Types
+## Phase 1: Shared Logic & Types [checkpoint: 6b5ca21]
 - [x] Task: Implement shared budget health logic in `@repo/shared` 3acdebb
     - [x] Write unit tests for budget status calculation (Success, Warning, Danger)
     - [x] Export `getBudgetStatus` and related constants/types from `@repo/shared`
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Shared Logic & Types' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Shared Logic & Types' (Protocol in workflow.md)
 
 ## Phase 2: Visual Updates to Category Components
 - [ ] Task: Update `CategoryCard` for "What's Left" focus
