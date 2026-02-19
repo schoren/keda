@@ -1,5 +1,6 @@
-FROM node:25.6.1-alpine AS base
-RUN apk add --no-cache libc6-compat
+FROM node:25-slim AS base
+RUN apt-get update && apt-get install -y --no-install-recommends libc6 && rm -rf /var/lib/apt/lists/*
+RUN npm install -g corepack@latest --force && corepack enable && corepack prepare npm@10.7.0 --activate
 RUN npm install -g turbo
 
 # Stage 2: Prune the project
@@ -7,6 +8,15 @@ FROM base AS pruner
 WORKDIR /app
 COPY . .
 RUN turbo prune --scope=web --docker
+
+# DEVELOPMENT IMAGE
+FROM base AS development
+WORKDIR /app
+
+COPY . .
+RUN npm ci
+
+CMD ["npm", "run", "dev", "--filter=web"]
 
 # Stage 3: Install dependencies
 FROM base AS installer
@@ -29,8 +39,8 @@ FROM base AS runner
 WORKDIR /app
 
 # Don't run production as root
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN groupadd --system --gid 1001 nodejs && \
+  useradd --system --uid 1001 -g nodejs nextjs
 USER nextjs
 
 COPY --from=builder /app/apps/web/next.config.js .
