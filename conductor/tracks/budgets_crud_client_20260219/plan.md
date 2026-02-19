@@ -1,11 +1,11 @@
 # Implementation Plan: Budget Management CRUD (Client)
 
-## Phase 1: Shared Logic & Types
+## Phase 1: Shared Logic & Types [checkpoint: 4fc7c69]
 - [x] Task: Verify and update shared Category entities and ApiClient methods
-    - [ ] Ensure `Category` entity in `shared` package matches backend requirements (MonthlyBudget, Icon, etc.)
-    - [ ] Add unit tests for `ApiClient.createCategory`, `ApiClient.updateCategory`, and `ApiClient.deleteCategory`
-    - [ ] Implement/Update shared logic if necessary
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Shared Logic & Types' (Protocol in workflow.md)
+    - [x] Ensure `Category` entity in `shared` package matches backend requirements (MonthlyBudget, Icon, etc.)
+    - [x] Add unit tests for `ApiClient.createCategory`, `ApiClient.updateCategory`, and `ApiClient.deleteCategory`
+    - [x] Implement/Update shared logic if necessary
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Shared Logic & Types' (Protocol in workflow.md)
 
 ## Phase 2: Budget List UI
 - [ ] Task: Create Budget List Page (`/budgets`)
