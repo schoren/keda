@@ -15,15 +15,15 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Budget List UI' (Protocol in workflow.md)
 
 ## Phase 3: Budget Create/Edit Form
-- [ ] Task: Implement Budget Form Component
-    - [ ] Write tests for the form validation and submission
-    - [ ] Create `BudgetForm.tsx` using Shadcn UI (Form, Input, Button, Icon selector)
-    - [ ] Implement "Create Budget" functionality with a Modal
-- [ ] Task: Implement Edit Budget functionality
-    - [ ] Write tests for editing an existing budget
-    - [ ] Update `BudgetForm.tsx` to support "Edit" mode
-    - [ ] Integrate Edit Modal into the `BudgetListItem`
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Budget Create/Edit Form' (Protocol in workflow.md)
+- [x] Task: Implement Budget Form Component
+    - [x] Write tests for the form validation and submission
+    - [x] Create `BudgetForm.tsx` using Shadcn UI (Form, Input, Button, Icon selector)
+    - [x] Implement "Create Budget" functionality with a Modal
+- [x] Task: Implement Edit Budget functionality
+    - [x] Write tests for editing an existing budget
+    - [x] Update `BudgetForm.tsx` to support "Edit" mode
+    - [x] Integrate Edit Modal into the `BudgetListItem`
+- [~] Task: Conductor - User Manual Verification 'Phase 3: Budget Create/Edit Form' (Protocol in workflow.md)
 
 ## Phase 4: Delete & Refinement
 - [ ] Task: Implement Delete Budget functionality

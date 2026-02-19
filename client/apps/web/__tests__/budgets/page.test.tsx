@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import BudgetsPage from "@/app/budget-management/page";
 import { useApi } from "@/app/providers";
@@ -63,5 +63,20 @@ describe("BudgetsPage", () => {
     // Check if budgets are displayed
     expect(screen.getByText("$500")).toBeInTheDocument();
     expect(screen.getByText("$1,000")).toBeInTheDocument();
+  });
+
+  it("opens the create budget modal when clicking add button", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <BudgetsPage />
+      </QueryClientProvider>
+    );
+
+    const addButtons = screen.getAllByRole("button", { name: /agregar/i });
+    fireEvent.click(addButtons[0]);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Crear Presupuesto").length).toBeGreaterThan(0);
+    });
   });
 });
