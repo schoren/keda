@@ -89,24 +89,22 @@ function DashboardContent({
   });
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
-      <main className="flex-1 px-6 pb-32 pt-10 space-y-8 max-w-7xl mx-auto w-full text-left">
-        {/* Desktop Summary - Visible ONLY on desktop, at the top */}
-        <div className="hidden md:block">
-          <Summary month={month} householdId={householdId} />
+    <div className="p-6 md:p-10 space-y-8 max-w-7xl mx-auto w-full text-left pb-32">
+      {/* Desktop Summary - Visible ONLY on desktop, at the top */}
+      <div className="hidden md:block">
+        <Summary month={month} householdId={householdId} />
+      </div>
+
+      {/* Categories Section - Maximized View */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('dashboard.categories_to_spend')}</h2>
         </div>
 
-        {/* Categories Section - Maximized View */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('dashboard.categories_to_spend')}</h2>
-          </div>
-
-          {summary?.categories && (
-            <CategoryGrid categories={summary.categories} />
-          )}
-        </section>
-      </main>
+        {summary?.categories && (
+          <CategoryGrid categories={summary.categories} />
+        )}
+      </section>
 
       {/* Slim Fixed Bottom Summary for Mobile ONLY */}
       <div className="md:hidden">
