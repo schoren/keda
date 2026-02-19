@@ -26,11 +26,11 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Budget Create/Edit Form' (Protocol in workflow.md)
 
 ## Phase 4: Delete & Refinement
-- [ ] Task: Implement Delete Budget functionality
-    - [ ] Write tests for deleting a budget with confirmation
-    - [ ] Create a `DeleteCategoryDialog` component
-    - [ ] Integrate delete functionality into the Budget List
-- [ ] Task: Final UI Polish & Mobile Responsiveness
-    - [ ] Ensure the budgets page looks great on mobile
-    - [ ] Add loading states and error handling for all API operations
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Delete & Refinement' (Protocol in workflow.md)
+- [x] Task: Implement Delete Budget functionality
+    - [x] Write tests for deleting a budget with confirmation
+    - [x] Create a `DeleteCategoryDialog` component
+    - [x] Integrate delete functionality into the Budget List
+- [x] Task: Final UI Polish & Mobile Responsiveness
+    - [x] Ensure the budgets page looks great on mobile
+    - [x] Add loading states and error handling for all API operations
+- [~] Task: Conductor - User Manual Verification 'Phase 4: Delete & Refinement' (Protocol in workflow.md)

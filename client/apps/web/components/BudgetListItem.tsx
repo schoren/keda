@@ -46,6 +46,7 @@ export function BudgetListItem({ category, onEdit, onDelete }: BudgetListItemPro
             variant="ghost"
             size="icon"
             onClick={() => onEdit?.(category)}
+            aria-label={t('common.edit')}
             className="w-8 h-8 rounded-lg text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 transition-colors"
           >
             <Edit2 className="w-4 h-4" />
@@ -54,6 +55,7 @@ export function BudgetListItem({ category, onEdit, onDelete }: BudgetListItemPro
             variant="ghost"
             size="icon"
             onClick={() => onDelete?.(category)}
+            aria-label={t('common.delete')}
             className="w-8 h-8 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
           >
             <Trash2 className="w-4 h-4" />
