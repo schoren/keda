@@ -9,13 +9,11 @@ import { Summary } from "@/components/Summary";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import Image from "next/image";
 import Link from "next/link";
-import { Plus, Search, Bell } from "lucide-react";
+import { Search, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MonthNavigator } from "@/components/MonthNavigator";
 import { RecommendationsBanner } from "@/components/RecommendationsBanner";
-import { DashboardAccountSummary } from "@/components/DashboardAccountSummary";
-import { RecentTransactions } from "@/components/RecentTransactions";
-import { CategoryCard } from "@/components/CategoryCard";
+import { CategoryGrid } from "@/components/CategoryGrid";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -26,7 +24,7 @@ export default function Home() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="w-8 h-8 border-4 border-keda-green/30 border-t-keda-green rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
       </div>
     );
   }
@@ -92,18 +90,6 @@ function DashboardContent({
     enabled: !!householdId,
   });
 
-  const { data: accounts } = useQuery({
-    queryKey: ["accounts"],
-    queryFn: () => api.getAccounts(),
-    enabled: !!householdId,
-  });
-
-  const { data: transactions } = useQuery({
-    queryKey: ["transactions", month],
-    queryFn: () => api.getTransactions(month),
-    enabled: !!householdId,
-  });
-
   return (
     <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
       {/* Premium Header - Stitch Inspired */}
@@ -144,57 +130,23 @@ function DashboardContent({
 
       {/* Main Content Area */}
       <main className="flex-1 px-6 pb-24 space-y-8 max-w-7xl mx-auto w-full">
-        {/* Top Summary Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Minimized Summary Section */}
+        <div className="grid grid-cols-1 gap-6">
           <Summary month={month} householdId={householdId} />
-          {accounts && <DashboardAccountSummary accounts={accounts} />}
         </div>
 
         {/* Categories Section - Maximized View */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('dashboard.categories_to_spend')}</h2>
+            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('dashboard.categories_to_spend')}</h2>
             <Link href="/budget-management" className="text-[10px] font-black text-emerald-500 hover:underline">{t('dashboard.view_all')}</Link>
           </div>
 
           <RecommendationsBanner />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {summary?.categories && summary.categories.length > 0 ? (
-              summary.categories.map((cat) => (
-                <CategoryCard key={cat.id} category={cat} />
-              ))
-            ) : (
-              <div className="col-span-full bg-white rounded-[24px] border border-dashed border-slate-200 p-12 text-center">
-                <p className="text-slate-400 font-bold mb-4">{t('dashboard.no_categories')}</p>
-                <Link href="/budget-management">
-                  <Button className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl px-6">
-                    {t('dashboard.get_started')}
-                  </Button>
-                </Link>
-              </div>
-            )}
-
-            {/* Add New Quick Entry */}
-            <Link
-              href="/expenses/new"
-              className="group flex items-center justify-center gap-3 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[24px] p-6 hover:border-emerald-500/50 hover:bg-emerald-50/10 transition-all min-h-[100px]"
-            >
-              <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Plus className="w-5 h-5 text-slate-400 group-hover:text-emerald-500" />
-              </div>
-              <span className="text-sm font-black text-slate-400 group-hover:text-emerald-500">{t('dashboard.new_expense')}</span>
-            </Link>
-          </div>
-        </section>
-
-        {/* Recent Activity Section */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('dashboard.recent_activity')}</h2>
-            <Link href="/transactions" className="text-[10px] font-black text-emerald-500 hover:underline">{t('dashboard.view_all')}</Link>
-          </div>
-          {transactions && <RecentTransactions transactions={transactions} />}
+          {summary?.categories && (
+            <CategoryGrid categories={summary.categories} />
+          )}
         </section>
       </main>
     </div>
