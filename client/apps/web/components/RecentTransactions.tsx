@@ -4,7 +4,6 @@ import { Transaction } from "@repo/shared";
 import { format, isToday, isYesterday } from "date-fns";
 import { es, enUS } from "date-fns/locale";
 import { ArrowUpRight, ArrowDownLeft, Receipt } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@repo/i18n";
 

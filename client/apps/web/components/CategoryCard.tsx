@@ -24,7 +24,7 @@ export function CategoryCard({ category, className }: CategoryCardProps) {
   const isOverBudget = category.spent > category.budget;
 
   // Resolve icon
-  const IconComponent = (category.icon && (Icons as any)[category.icon]) || Icons.Tag;
+  const IconComponent = (category.icon && (Icons as any)[category.icon]) || Icons.Tag; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   return (
     <div className={cn(

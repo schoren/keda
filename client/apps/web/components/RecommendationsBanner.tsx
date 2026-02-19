@@ -3,7 +3,7 @@
 import { useApi } from "../app/providers";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Recommendation } from "@repo/shared";
-import { Lightbulb, Check, X, ArrowRight } from "lucide-react";
+import { Lightbulb, Check, X } from "lucide-react";
 import { useState } from "react";
 import { formatMoney } from "@repo/shared";
 import { useTranslation } from "@repo/i18n";

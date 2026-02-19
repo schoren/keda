@@ -2,7 +2,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "@/app/providers";
-import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@repo/i18n";
 

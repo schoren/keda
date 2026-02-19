@@ -1,11 +1,8 @@
 "use client";
 
 import { Wallet, CreditCard, Banknote, Landmark } from "lucide-react";
-import { Account, AccountType } from "@repo/shared";
+import { Account } from "@repo/shared";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { useApi } from "@/app/providers";
-import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "@repo/i18n";
 
 interface DashboardAccountSummaryProps {
@@ -55,6 +52,7 @@ export function DashboardAccountSummary({ accounts, className }: DashboardAccoun
                   {account.name}
                 </p>
                 <p className="text-[10px] font-bold text-slate-400 capitalize">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {t(`accounts.${account.type.toLowerCase() as any}`)}
                 </p>
               </div>

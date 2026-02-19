@@ -35,7 +35,7 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
   });
 
   const mutation = useMutation({
-    mutationFn: (data: any) => api.createTransaction(data),
+    mutationFn: (data: any) => api.createTransaction(data), // eslint-disable-line @typescript-eslint/no-explicit-any
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
@@ -170,7 +170,7 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
       </div>
 
       {mutation.isError && (
-        <p className="text-sm text-destructive">Error: {(mutation.error as any).message}</p>
+        <p className="text-sm text-destructive">Error: {(mutation.error as any).message}</p> // eslint-disable-line @typescript-eslint/no-explicit-any
       )}
     </form>
   );

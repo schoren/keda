@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { RecentTransactions } from '../RecentTransactions';
 import { Transaction } from '@repo/shared';

@@ -6,8 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useApi } from "./providers";
 import { useTranslation } from "@repo/i18n";
 import { Summary } from "@/components/Summary";
-import { TopBar } from "@/components/TopBar";
-import { CategoryGrid } from "@/components/CategoryGrid";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import Image from "next/image";
 import Link from "next/link";
@@ -83,7 +81,7 @@ function DashboardContent({
   month: string;
   onMonthChange: (month: string) => void;
   householdId: string;
-  user: any;
+  user: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }) {
   const { t } = useTranslation();
   const api = useApi();

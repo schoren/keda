@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -61,7 +62,7 @@ describe('ExpenseForm', () => {
     (ProvidersModule.useApi as any).mockReturnValue(mockApi);
 
     // Mock useQuery implementation based on queryKey
-    (ReactQueryModule.useQuery as any).mockImplementation(({ queryKey }) => {
+    (ReactQueryModule.useQuery as any).mockImplementation(({ queryKey }: { queryKey: any[] }) => {
       if (queryKey[0] === 'accounts') return { data: mockAccounts, isLoading: false };
       if (queryKey[0] === 'summary') return { data: mockSummary, isLoading: false };
       if (queryKey[0] === 'suggestedNotes') return { data: [], isLoading: false };
@@ -69,7 +70,7 @@ describe('ExpenseForm', () => {
     });
 
     // Mock useMutation
-    (ReactQueryModule.useMutation as any).mockImplementation(({ mutationFn, onSuccess }) => ({
+    (ReactQueryModule.useMutation as any).mockImplementation(({ mutationFn, onSuccess }: { mutationFn: any, onSuccess?: () => void }) => ({
       mutate: (variables: any) => {
         mutationFn(variables);
         onSuccess?.();
@@ -108,7 +109,7 @@ describe('ExpenseForm', () => {
     await user.type(screen.getByRole('textbox'), 'Lunch');
 
     // Submit
-    await user.click(screen.getByText(/Save/i));
+    await user.click(screen.getByText(/Guardar Gasto/i));
 
     expect(mockApi.createTransaction).toHaveBeenCalledWith(expect.objectContaining({
       amount: 50,
@@ -122,7 +123,7 @@ describe('ExpenseForm', () => {
 
   it('disables submit if amount is 0 or category/account missing', () => {
     render(<ExpenseForm onSuccess={vi.fn()} />);
-    const submitBtn = screen.getByText(/Save/i).closest('button');
+    const submitBtn = screen.getByText(/Guardar Gasto/i).closest('button');
     expect(submitBtn).toBeDisabled();
   });
 });

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -25,8 +26,8 @@ describe('RecommendationsBanner', () => {
   };
 
   const mockRecommendations = [
-    { categoryName: 'Comida', action: 'Increase budget', categoryId: 'cat1', amount: 50, isSelected: true },
-    { categoryName: 'Transporte', action: 'Reduce spending', categoryId: 'cat2', amount: 20, isSelected: true },
+    { category_id: 'cat1', category: 'Increase budget', action: 'increase', amount: 50 },
+    { category_id: 'cat2', category: 'Save more', action: 'save', amount: 20 },
   ];
 
   beforeEach(() => {

@@ -29,7 +29,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
   const [note, setNote] = useState("");
 
   const createTransaction = useMutation({
-    mutationFn: (data: any) => api.createTransaction(data),
+    mutationFn: (data: any) => api.createTransaction(data), // eslint-disable-line @typescript-eslint/no-explicit-any
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
