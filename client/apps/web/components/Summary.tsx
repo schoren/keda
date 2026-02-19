@@ -44,36 +44,49 @@ export function Summary({ month, householdId }: SummaryProps) {
   const remaining = summary.total_budget - summary.total_spent;
 
   return (
-    <div className="bg-white rounded-lg border border-border p-5">
-      <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-        Presupuesto Mensual
+    <div className="bg-white rounded-[24px] border border-slate-100 p-6 shadow-sm">
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
+        PRESUPUESTO MENSUAL
       </p>
-      <div className="flex items-baseline gap-2 mb-3">
-        <span className="text-2xl font-bold text-foreground">
-          ${summary.total_spent.toLocaleString()}
-        </span>
-        <span className="text-sm text-muted-foreground">
-          / ${summary.total_budget.toLocaleString()}
-        </span>
-        <div className="flex-1" />
-        <span className={cn(
-          "text-xs font-semibold px-2 py-0.5 rounded-full",
-          percent > 90
-            ? "bg-red-100 text-red-700"
-            : "bg-keda-green-light text-keda-green-dark"
-        )}>
-          {Math.round(percent)}% gastado
-        </span>
+
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl font-black text-slate-900">
+              ${summary.total_spent.toLocaleString()}
+            </span>
+            <span className="text-sm font-bold text-slate-400">
+              / ${summary.total_budget.toLocaleString()}
+            </span>
+          </div>
+
+          <div className={cn(
+            "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider",
+            percent > 90
+              ? "bg-red-50 text-red-500"
+              : "bg-emerald-50 text-emerald-500"
+          )}>
+            {Math.round(percent)}% GASTADO
+          </div>
+        </div>
+
+        {/* Progress Bar - Large focal point */}
+        <div className="w-full h-3 bg-slate-50 rounded-full overflow-hidden">
+          <div
+            className={cn(
+              "h-full transition-all duration-1000 ease-out",
+              percent > 90 ? "bg-red-500" : "bg-emerald-500"
+            )}
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+
+        {remaining < 0 && (
+          <p className="text-xs font-bold text-red-500 text-center">
+            Te has pasado por ${Math.abs(remaining).toLocaleString()}
+          </p>
+        )}
       </div>
-      <Progress value={percent} className="h-2" />
-      <p className={cn(
-        "text-sm mt-2 font-medium",
-        remaining >= 0 ? "text-keda-green" : "text-destructive"
-      )}>
-        {remaining >= 0
-          ? `Te quedan $${remaining.toLocaleString()} este mes`
-          : `Te has pasado por $${Math.abs(remaining).toLocaleString()}`}
-      </p>
     </div>
   );
 }

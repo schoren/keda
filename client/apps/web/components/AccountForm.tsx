@@ -18,6 +18,7 @@ export function AccountForm({ onSuccess, onCancel }: AccountFormProps) {
   const [type, setType] = useState<"debit" | "credit">("debit");
 
   const mutation = useMutation({
+
     mutationFn: (data: any) => api.createAccount(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
