@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from '@jest/globals';
-import { initI18n, i18n } from './index';
+import { initI18n, i18n } from './index.js';
 
 describe('i18n shared package', () => {
   beforeAll(() => {

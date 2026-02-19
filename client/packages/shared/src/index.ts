@@ -1,2 +1,2 @@
-export * from "./entities";
-export * from "./api";
+export * from "./entities.js";
+export * from "./api.js";

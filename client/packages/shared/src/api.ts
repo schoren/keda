@@ -1,4 +1,4 @@
-import { Account, Category, Household, Invitation, MemberInfo, Recommendation, Transaction, User } from './entities';
+import { Account, Category, Invitation, MemberInfo, Recommendation, Transaction, User } from './entities.js';
 
 export interface AuthResponse {
   token: string;

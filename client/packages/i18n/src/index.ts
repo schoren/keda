@@ -1,20 +1,27 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import en from './locales/en.json';
-import es from './locales/es.json';
+import en from './locales/en.json' with { type: 'json' };
+import es from './locales/es.json' with { type: 'json' };
 
 const resources = {
   en: { translation: en },
   es: { translation: es },
 };
 
-export const initI18n = (options: any = {}) => {
+export interface InitI18nOptions {
+  language?: string;
+  detector?: unknown;
+  [key: string]: unknown;
+}
+
+export const initI18n = (options: InitI18nOptions = {}) => {
   if (i18n.isInitialized) return i18n;
 
   const { language, detector, ...rest } = options;
 
   if (detector) {
-    i18n.use(detector);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    i18n.use(detector as any);
   }
 
   i18n
