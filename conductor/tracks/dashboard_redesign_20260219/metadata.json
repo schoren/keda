@@ -1,0 +1,8 @@
+{
+  "track_id": "dashboard_redesign_20260219",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-02-19T18:15:00Z",
+  "updated_at": "2026-02-19T18:15:00Z",
+  "description": "Redesign the dashboard to focus exclusively on category life bars and remaining budget, following the getkeda design."
+}
