@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "./providers";
 import { useTranslation } from "@repo/i18n";
+import { Summary } from "@/components/Summary";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import Image from "next/image";
 import Link from "next/link";
@@ -89,7 +90,12 @@ function DashboardContent({
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
-      <main className="flex-1 px-6 pb-32 pt-10 space-y-8 max-w-7xl mx-auto w-full">
+      <main className="flex-1 px-6 pb-32 pt-10 space-y-8 max-w-7xl mx-auto w-full text-left">
+        {/* Desktop Summary - Visible ONLY on desktop, at the top */}
+        <div className="hidden md:block">
+          <Summary month={month} householdId={householdId} />
+        </div>
+
         {/* Categories Section - Maximized View */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
@@ -102,8 +108,10 @@ function DashboardContent({
         </section>
       </main>
 
-      {/* Slim Fixed Bottom Summary for Everyone */}
-      <SlimSummary summary={summary} />
+      {/* Slim Fixed Bottom Summary for Mobile ONLY */}
+      <div className="md:hidden">
+        <SlimSummary summary={summary} />
+      </div>
     </div>
   );
 }
