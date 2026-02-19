@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  transpilePackages: ["@repo/ui", "@repo/shared", "@repo/i18n"],
   images: {
     remotePatterns: [
       {
