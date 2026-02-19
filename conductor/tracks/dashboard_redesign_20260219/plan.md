@@ -24,11 +24,23 @@
     - [x] Ensure the Category Grid is the most visually dominant section
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Dashboard Layout Refactoring' (Protocol in workflow.md)
 
-## Phase 4: State & Polish
-- [ ] Task: Verify Real-time Life Bar Updates
-    - [ ] Write integration test verifying that adding an expense immediately updates the category card's Life Bar
-    - [ ] Ensure smooth transitions and no layout shifts during updates
-- [ ] Task: Final Mobile UI Audit
-    - [ ] Verify that 24px radius and condensed grid look perfect on small screens
-    - [ ] Confirm zero-friction tapping targets meet accessibility standards (min 44px)
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: State & Polish' (Protocol in workflow.md)
+## Phase 4: State & Polish [checkpoint: 9edffec]
+- [x] Task: Verify Real-time Life Bar Updates
+    - [x] Write integration test verifying that adding an expense immediately updates the category card's Life Bar
+    - [x] Ensure smooth transitions and no layout shifts during updates
+- [x] Task: Final Mobile UI Audit
+    - [x] Verify that 24px radius and condensed grid look perfect on small screens
+    - [x] Confirm zero-friction tapping targets meet accessibility standards (min 44px)
+- [x] Task: Conductor - User Manual Verification 'Phase 4: State & Polish' (Protocol in workflow.md)
+
+## Phase 5: Mobile Layout Refinements
+- [ ] Task: Implement Mobile Sidebar (Hamburger Menu)
+    - [ ] Update `DashboardLayout.tsx` to include a mobile-friendly drawer or slide-out menu.
+    - [ ] Remove `BottomNav` on mobile to free up vertical space.
+- [ ] Task: Condense Dashboard Header
+    - [ ] Update `app/page.tsx` to use a minimal header on mobile (Hamburger + Month Navigator).
+    - [ ] Remove search, notifications, and profile card from the mobile view.
+- [ ] Task: Create Slim Fixed Bottom Summary
+    - [ ] Implement `MobileSummary.tsx` showing Total vs Spent with a thin Life Bar.
+    - [ ] Fix this summary to the bottom of the viewport on mobile devices.
+- [ ] Task: Conductor - User Manual Verification 'Phase 5: Mobile Layout Refinements' (Protocol in workflow.md)

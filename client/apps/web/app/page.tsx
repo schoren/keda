@@ -148,8 +148,6 @@ function DashboardContent({
             <Link href="/budget-management" className="text-[10px] font-black text-emerald-500 hover:underline">{t('dashboard.view_all')}</Link>
           </div>
 
-          <RecommendationsBanner />
-
           {summary?.categories && (
             <CategoryGrid categories={summary.categories} />
           )}
