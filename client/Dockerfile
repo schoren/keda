@@ -20,7 +20,7 @@ CMD ["npm", "run", "dev"]
 FROM installer AS builder-web
 
 COPY . .
-RUN turbo build
+RUN npm run build
 
 # Stage 4: Runner
 FROM base AS runner
