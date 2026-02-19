@@ -7,14 +7,14 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Shared Logic & Types' (Protocol in workflow.md)
 
 ## Phase 2: Visual Updates to Category Components
-- [ ] Task: Update `CategoryCard` for "What's Left" focus
-    - [ ] Write unit tests for `CategoryCard` using shared health logic
-    - [ ] Update `CategoryCard.tsx` to make "Remaining" amount the primary numeric element
-    - [ ] Ensure 24px border radius and monospace amounts
-- [ ] Task: Update `CategoryGrid` for Zero-Friction navigation
-    - [ ] Write unit tests for redirection logic when a category is tapped
-    - [ ] Update `CategoryGrid.tsx` or `CategoryCard` to link directly to `/expenses/new?categoryId={id}`
-    - [ ] Add the "Add Quick Expense" placeholder at the end of the grid
+- [x] Task: Update `CategoryCard` for "What's Left" focus e153a5f
+    - [x] Write unit tests for `CategoryCard` using shared health logic
+    - [x] Update `CategoryCard.tsx` to make "Remaining" amount the primary numeric element
+    - [x] Ensure 24px border radius and monospace amounts
+- [x] Task: Update `CategoryGrid` for Zero-Friction navigation e153a5f
+    - [x] Write unit tests for redirection logic when a category is tapped
+    - [x] Update `CategoryGrid.tsx` or `CategoryCard` to link directly to `/expenses/new?categoryId={id}`
+    - [x] Add the "Add Quick Expense" placeholder at the end of the grid
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Visual Updates to Category Components' (Protocol in workflow.md)
 
 ## Phase 3: Dashboard Layout Refactoring
