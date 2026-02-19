@@ -8,10 +8,10 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Shared Logic & Types' (Protocol in workflow.md)
 
 ## Phase 2: Budget List UI
-- [ ] Task: Create Budget List Page (`/budgets`)
-    - [ ] Write tests for fetching and displaying the list of budgets
-    - [ ] Implement the `/budgets/page.tsx` using `ApiClient.getCategories()`
-    - [ ] Create a `BudgetListItem` component to display each category neatly
+- [x] Task: Create Budget List Page (`/budgets`)
+    - [x] Write tests for fetching and displaying the list of budgets
+    - [x] Implement the `/budgets/page.tsx` using `ApiClient.getCategories()`
+    - [x] Create a `BudgetListItem` component to display each category neatly
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Budget List UI' (Protocol in workflow.md)
 
 ## Phase 3: Budget Create/Edit Form
