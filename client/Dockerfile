@@ -19,6 +19,7 @@ CMD ["npm", "run", "dev"]
 # Stage 3: Build the project
 FROM installer AS builder-web
 
+COPY . .
 RUN turbo build
 
 # Stage 4: Runner
