@@ -13,8 +13,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useTranslation } from "@repo/i18n";
+import { X } from "lucide-react";
+import { Button } from "./ui/button";
 
-export function Sidebar() {
+interface SidebarProps {
+  onClose?: () => void;
+}
+
+export function Sidebar({ onClose }: SidebarProps) {
   const { t, i18n } = useTranslation();
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -27,13 +33,23 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="hidden md:flex md:flex-col md:w-60 md:fixed md:inset-y-0 bg-white border-r border-border">
+    <aside className="flex flex-col w-60 h-full bg-white border-r border-border">
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-5 h-16 border-b border-border">
-        <div className="w-8 h-8 rounded-lg bg-keda-green flex items-center justify-center">
-          <span className="text-white font-bold text-sm">K</span>
+      <div className="flex items-center justify-between px-5 h-16 border-b border-border">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-keda-green flex items-center justify-center">
+            <span className="text-white font-bold text-sm">K</span>
+          </div>
+          <span className="font-semibold text-lg text-foreground">Keda</span>
         </div>
-        <span className="font-semibold text-lg text-foreground">Keda</span>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={onClose}
+          className="md:hidden text-slate-400"
+        >
+          <X className="w-5 h-5" />
+        </Button>
       </div>
 
       {/* Navigation */}
