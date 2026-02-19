@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { CategoryCard } from "../CategoryCard";
-import { BudgetStatus } from "@repo/shared";
 
 describe("CategoryCard Redesign", () => {
   const mockCategory = {

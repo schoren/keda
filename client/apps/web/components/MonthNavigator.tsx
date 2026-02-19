@@ -4,7 +4,6 @@ import { ChevronLeft, ChevronRight, Lightbulb } from "lucide-react";
 import { format, addMonths, subMonths, parse } from "date-fns";
 import { es, enUS } from "date-fns/locale";
 import { useTranslation } from "@repo/i18n";
-import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "@/app/providers";
 import Link from "next/link";

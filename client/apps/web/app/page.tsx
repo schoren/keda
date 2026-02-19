@@ -8,7 +8,6 @@ import { useTranslation } from "@repo/i18n";
 import { Summary } from "@/components/Summary";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import Image from "next/image";
-import Link from "next/link";
 import { MonthNavigator } from "@/components/MonthNavigator";
 import { CategoryGrid } from "@/components/CategoryGrid";
 import { cn } from "@/lib/utils";
@@ -114,7 +113,12 @@ function DashboardContent({
   );
 }
 
-function SlimSummary({ summary }: { summary: any }) {
+interface MonthlySummary {
+  total_budget: number;
+  total_spent: number;
+}
+
+function SlimSummary({ summary }: { summary: MonthlySummary | undefined }) {
   const { t } = useTranslation();
   if (!summary) return null;
 
