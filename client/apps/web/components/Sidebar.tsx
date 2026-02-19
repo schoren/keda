@@ -37,8 +37,8 @@ export function Sidebar({ onClose }: SidebarProps) {
       {/* Logo */}
       <div className="flex items-center justify-between px-5 h-16 border-b border-border">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-keda-green flex items-center justify-center">
-            <span className="text-white font-bold text-sm">K</span>
+          <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center">
+            <Image src="/logo.png" alt="Keda" width={32} height={32} />
           </div>
           <span className="font-semibold text-lg text-foreground">Keda</span>
         </div>
