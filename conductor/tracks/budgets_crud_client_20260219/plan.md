@@ -1,7 +1,7 @@
 # Implementation Plan: Budget Management CRUD (Client)
 
 ## Phase 1: Shared Logic & Types
-- [ ] Task: Verify and update shared Category entities and ApiClient methods
+- [x] Task: Verify and update shared Category entities and ApiClient methods
     - [ ] Ensure `Category` entity in `shared` package matches backend requirements (MonthlyBudget, Icon, etc.)
     - [ ] Add unit tests for `ApiClient.createCategory`, `ApiClient.updateCategory`, and `ApiClient.deleteCategory`
     - [ ] Implement/Update shared logic if necessary
