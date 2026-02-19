@@ -1,0 +1,103 @@
+{
+  "common": {
+    "logout": "Cerrar sesión",
+    "search": "Buscar",
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "add": "Agregar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "hello": "HOLA,",
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "no_description": "Sin descripción"
+  },
+  "nav": {
+    "overview": "Resumen",
+    "expenses": "Gastos",
+    "budgets": "Presupuestos",
+    "accounts": "Cuentas",
+    "reports": "Reportes",
+    "family": "Familia",
+    "settings": "Ajustes"
+  },
+  "accounts": {
+    "title": "TUS CUENTAS",
+    "active": "Activas",
+    "bank": "Banco",
+    "cash": "Efectivo",
+    "card": "Tarjeta",
+    "credit": "Crédito",
+    "add_account": "Agregar Cuenta",
+    "balance": "Saldo"
+  },
+  "transactions": {
+    "title": "ACTIVIDAD",
+    "expense_in": "GASTO EN",
+    "category_placeholder": "CATEGORÍA",
+    "no_activity": "No hay actividad reciente"
+  },
+  "login": {
+    "title": "Keda",
+    "subtitle": "Finanzas familiares simplificadas",
+    "description": "Controla tus gastos con transparencia y facilidad.",
+    "continue_with_google": "Continuar con Google"
+  },
+  "summary": {
+    "monthly_budget": "PRESUPUESTO MENSUAL",
+    "spent_percentage": "{{percent}}% GASTADO",
+    "exceeded_by": "Te has pasado por ${{amount}}",
+    "error_loading": "Error al cargar el resumen"
+  },
+  "dashboard": {
+    "total_balance": "Saldo Total",
+    "recent_transactions": "Transacciones Recientes",
+    "no_transactions": "No se encontraron transacciones",
+    "view_all": "VER TODO",
+    "categories_to_spend": "CATEGORÍAS POR GASTAR",
+    "recent_activity": "ACTIVIDAD RECIENTE",
+    "new_expense": "NUEVO GASTO",
+    "no_categories": "No hay categorías configuradas",
+    "get_started": "Empezar",
+    "default_user": "Usuario",
+    "left": "RESTA"
+  },
+  "recommendations": {
+    "title": "Recomendaciones de Presupuesto",
+    "dismiss": "Descartar",
+    "applying": "Aplicando...",
+    "apply_all": "Aplicar todo"
+  },
+  "forms": {
+    "account": {
+      "name_label": "Nombre de la cuenta",
+      "name_placeholder": "Ej: Banco, Efectivo...",
+      "type_label": "Tipo de cuenta",
+      "type_debit": "Débito / Efectivo / Ahorros",
+      "type_credit": "Tarjeta de Crédito",
+      "create": "Crear Cuenta",
+      "creating": "Creando..."
+    },
+    "transaction": {
+      "amount_label": "Monto",
+      "date_label": "Fecha",
+      "account_label": "Cuenta",
+      "account_placeholder": "Seleccionar cuenta",
+      "category_label": "Categoría",
+      "category_placeholder": "Seleccionar categoría",
+      "note_label": "Nota",
+      "note_placeholder": "¿En qué gastaste?",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "type_expense": "Gasto",
+      "type_income": "Ingreso",
+      "save_expense": "Guardar Gasto"
+    }
+  },
+  "month_navigator": {
+    "prev": "Mes anterior",
+    "next": "Mes siguiente"
+  }
+}

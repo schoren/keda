@@ -4,16 +4,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, BarChart3, Users, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const tabs = [
-  { name: "Inicio", href: "/", icon: Home },
-  { name: "Reportes", href: "/reports", icon: BarChart3 },
-  { name: "Familia", href: "/family", icon: Users },
-  { name: "Ajustes", href: "/settings", icon: Settings },
-];
+import { useTranslation } from "@repo/i18n";
 
 export function BottomNav() {
+  const { t } = useTranslation();
   const pathname = usePathname();
+
+  const tabs = [
+    { name: t('nav.overview'), href: "/", icon: Home },
+    { name: t('nav.reports'), href: "/reports", icon: BarChart3 },
+    { name: t('nav.family'), href: "/family", icon: Users },
+    { name: t('nav.settings'), href: "/settings", icon: Settings },
+  ];
 
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-border z-50">

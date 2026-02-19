@@ -11,12 +11,14 @@ import { NoteInput } from "./NoteInput";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "@repo/i18n";
 
 interface ExpenseFormProps {
   onSuccess?: () => void;
 }
 
 export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
+  const { t } = useTranslation();
   const api = useApi();
   const queryClient = useQueryClient();
 
@@ -27,7 +29,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
   const [note, setNote] = useState("");
 
   const createTransaction = useMutation({
-    mutationFn: (data: any) => api.createTransaction(data),
+    mutationFn: (data: any) => api.createTransaction(data), // eslint-disable-line @typescript-eslint/no-explicit-any
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
@@ -55,7 +57,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
       {/* Left Column: Amount & NumPad (Desktop) / Top (Mobile) */}
       <div className="flex-1 flex flex-col gap-6 items-center md:items-start">
         <div className="text-center md:text-left w-full">
-          <label className="text-sm font-medium text-slate-500 uppercase tracking-wider block mb-2">Amount</label>
+          <label className="text-sm font-medium text-slate-500 uppercase tracking-wider block mb-2">{t('forms.transaction.amount_label')}</label>
           <div className="text-5xl font-bold text-green-600 truncate bg-slate-50 p-4 rounded-2xl w-full text-center md:text-left">
             ${amount || "0"}
           </div>
@@ -70,22 +72,22 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
       <div className="flex-1 flex flex-col gap-6 w-full">
         <div className="space-y-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700">Account</label>
+            <label className="text-sm font-medium text-slate-700">{t('forms.transaction.account_label')}</label>
             <AccountSelector value={accountId} onChange={setAccountId} />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700">Category</label>
+            <label className="text-sm font-medium text-slate-700">{t('forms.transaction.category_label')}</label>
             <CategorySelector value={categoryId} onChange={setCategoryId} month={format(date, "yyyy-MM")} />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700">Date</label>
+            <label className="text-sm font-medium text-slate-700">{t('forms.transaction.date_label')}</label>
             <DatePicker value={date} onChange={setDate} />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700">Note</label>
+            <label className="text-sm font-medium text-slate-700">{t('forms.transaction.note_label')}</label>
             <NoteInput value={note} onChange={setNote} categoryId={categoryId} />
           </div>
         </div>
@@ -96,7 +98,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
           className="w-full h-14 text-lg bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-lg shadow-green-600/20"
         >
           {createTransaction.isPending && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-          Save Expense
+          {t('forms.transaction.save_expense')}
         </Button>
       </div>
     </div>

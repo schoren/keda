@@ -23,8 +23,10 @@ describe('DatePicker', () => {
     fireEvent.change(input, { target: { value: '2026-02-20' } });
 
     expect(onChange).toHaveBeenCalled();
-    const callArg = onChange.mock.calls[0][0];
+    const callArg = onChange.mock.calls[0]?.[0];
     expect(callArg).toBeInstanceOf(Date);
-    expect(format(callArg, 'yyyy-MM-dd')).toBe('2026-02-20');
+    if (callArg) {
+      expect(format(callArg, 'yyyy-MM-dd')).toBe('2026-02-20');
+    }
   });
 });

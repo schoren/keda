@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
+    "@repo/i18n": "*",
     "@repo/shared": "*",
     "@repo/ui": "*",
     "@tailwindcss/postcss": "^4.2.0",
@@ -21,6 +22,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "i18next-browser-languagedetector": "^8.0.0",
     "lucide-react": "^0.479.0",
     "next": "16.1.5",
     "radix-ui": "^1.4.3",

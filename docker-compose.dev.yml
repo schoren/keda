@@ -5,6 +5,7 @@ services:
       target: development
     volumes:
       - ./client:/app
+      - /app/node_modules
       - /app/apps/web/.next
     command: [ "npm", "run", "dev" ]
 

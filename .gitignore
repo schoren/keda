@@ -24,8 +24,6 @@ docs/public/assets
 
 client-old
 
-.worktrees/
-
 # React Client
 client/node_modules/
 client/.next/

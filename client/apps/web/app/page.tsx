@@ -4,9 +4,8 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "./providers";
+import { useTranslation } from "@repo/i18n";
 import { Summary } from "@/components/Summary";
-import { TopBar } from "@/components/TopBar";
-import { CategoryGrid } from "@/components/CategoryGrid";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,8 +13,12 @@ import { Plus, Search, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MonthNavigator } from "@/components/MonthNavigator";
 import { RecommendationsBanner } from "@/components/RecommendationsBanner";
+import { DashboardAccountSummary } from "@/components/DashboardAccountSummary";
+import { RecentTransactions } from "@/components/RecentTransactions";
+import { CategoryCard } from "@/components/CategoryCard";
 
 export default function Home() {
+  const { t } = useTranslation();
   const { user, householdId, login, isAuthenticated, isLoading } = useAuth();
 
   const [month, setMonth] = useState(() => new Date().toISOString().slice(0, 7));
@@ -42,14 +45,14 @@ export default function Home() {
       <div className="w-full max-w-sm mx-4 p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-center">
         <div className="mb-6">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-keda-green to-emerald-400 bg-clip-text text-transparent">
-            Keda
+            {t('login.title')}
           </h1>
-          <p className="text-slate-300 mt-2">Finanzas familiares simplificadas</p>
+          <p className="text-slate-300 mt-2">{t('login.subtitle')}</p>
         </div>
 
         <div>
           <p className="text-white/80 text-sm mb-4">
-            Controla tus gastos con transparencia y facilidad.
+            {t('login.description')}
           </p>
           <button
             onClick={() => login()}
@@ -61,7 +64,7 @@ export default function Home() {
               width={20}
               height={20}
             />
-            Continuar con Google
+            {t('login.continue_with_google')}
           </button>
         </div>
       </div>
@@ -78,8 +81,9 @@ function DashboardContent({
   month: string;
   onMonthChange: (month: string) => void;
   householdId: string;
-  user: any;
+  user: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }) {
+  const { t } = useTranslation();
   const api = useApi();
 
   const { data: summary } = useQuery({
@@ -88,93 +92,111 @@ function DashboardContent({
     enabled: !!householdId,
   });
 
+  const { data: accounts } = useQuery({
+    queryKey: ["accounts"],
+    queryFn: () => api.getAccounts(),
+    enabled: !!householdId,
+  });
+
+  const { data: transactions } = useQuery({
+    queryKey: ["transactions", month],
+    queryFn: () => api.getTransactions(month),
+    enabled: !!householdId,
+  });
+
   return (
-    <>
-      {/* Desktop TopBar */}
-      <TopBar summary={summary ?? null} />
-
-      {/* Mobile Header */}
-      <div className="md:hidden px-5 pt-6 pb-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            {user?.picture_url && (
-              <Image
-                src={user.picture_url}
-                alt={user.name}
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
-            )}
-            <div>
-              <p className="text-xs text-muted-foreground">
-                Hola, {user?.name?.split(" ")[0]}
-              </p>
-              <h1 className="text-xl font-bold text-foreground">Dashboard</h1>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="p-2 rounded-lg hover:bg-accent transition-colors">
-              <Search size={20} className="text-muted-foreground" />
-            </button>
-            <button className="p-2 rounded-lg hover:bg-accent transition-colors">
-              <Bell size={20} className="text-muted-foreground" />
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Budget Summary */}
-        <div className="mb-4 flex flex-col items-center gap-4">
-          <MonthNavigator month={month} onMonthChange={onMonthChange} />
-          <Summary month={month} householdId={householdId} />
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="px-5 md:px-8 py-6">
-        {/* Section Header */}
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-foreground">
-            <span className="hidden md:inline">Monthly Budget Categories</span>
-            <span className="md:hidden">Categorías por Gastar</span>
-          </h2>
+    <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
+      {/* Premium Header - Stitch Inspired */}
+      <header className="px-6 pt-10 pb-6 space-y-6">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="hidden md:block">
-              <MonthNavigator month={month} onMonthChange={onMonthChange} />
+            <div className="w-12 h-12 rounded-2xl bg-slate-200 overflow-hidden border-2 border-white shadow-sm">
+              {user?.picture_url ? (
+                <Image src={user.picture_url} alt={user.name} width={48} height={48} />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold">
+                  {user?.name?.[0] || "U"}
+                </div>
+              )}
             </div>
-            {/* Mobile: Month nav usually in header or here too */}
+            <div>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{t('common.hello')}</p>
+              <h1 className="text-lg font-black text-slate-900 leading-none">
+                {user?.name?.split(" ")[0] || t('dashboard.default_user')}
+              </h1>
+            </div>
           </div>
-          {/* Mobile: FAB for new expense */}
-          <Link href="/expenses/new" className="md:hidden">
-            <Button
-              size="sm"
-              className="bg-keda-green hover:bg-keda-green-dark text-white rounded-full w-10 h-10 p-0"
-            >
-              <Plus size={20} />
+
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm text-slate-400">
+              <Search className="w-5 h-5" />
             </Button>
-          </Link>
+            <Button variant="ghost" size="icon" className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm text-slate-400">
+              <Bell className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
 
-        {/* Recommendations Banner */}
-        <RecommendationsBanner />
+        <div className="flex items-center justify-between bg-white/50 backdrop-blur-sm p-4 rounded-3xl border border-slate-100">
+          <MonthNavigator month={month} onMonthChange={onMonthChange} />
+        </div>
+      </header>
 
-        {/* Categories */}
-        {summary?.categories && summary.categories.length > 0 ? (
-          <CategoryGrid categories={summary.categories} />
-        ) : (
-          <div className="text-center py-12 text-muted-foreground">
-            <p className="text-sm">
-              No hay categorías configuradas aún.
-            </p>
+      {/* Main Content Area */}
+      <main className="flex-1 px-6 pb-24 space-y-8 max-w-7xl mx-auto w-full">
+        {/* Top Summary Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Summary month={month} householdId={householdId} />
+          {accounts && <DashboardAccountSummary accounts={accounts} />}
+        </div>
+
+        {/* Categories Section - Maximized View */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('dashboard.categories_to_spend')}</h2>
+            <Link href="/budgets" className="text-[10px] font-black text-emerald-500 hover:underline">{t('dashboard.view_all')}</Link>
+          </div>
+
+          <RecommendationsBanner />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {summary?.categories && summary.categories.length > 0 ? (
+              summary.categories.map((cat) => (
+                <CategoryCard key={cat.id} category={cat} />
+              ))
+            ) : (
+              <div className="col-span-full bg-white rounded-[24px] border border-dashed border-slate-200 p-12 text-center">
+                <p className="text-slate-400 font-bold mb-4">{t('dashboard.no_categories')}</p>
+                <Link href="/budgets">
+                  <Button className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl px-6">
+                    {t('dashboard.get_started')}
+                  </Button>
+                </Link>
+              </div>
+            )}
+
+            {/* Add New Quick Entry */}
             <Link
-              href="/budgets"
-              className="text-sm text-keda-green hover:underline mt-2 inline-block"
+              href="/expenses/new"
+              className="group flex items-center justify-center gap-3 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[24px] p-6 hover:border-emerald-500/50 hover:bg-emerald-50/10 transition-all min-h-[100px]"
             >
-              Configurar presupuestos
+              <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Plus className="w-5 h-5 text-slate-400 group-hover:text-emerald-500" />
+              </div>
+              <span className="text-sm font-black text-slate-400 group-hover:text-emerald-500">{t('dashboard.new_expense')}</span>
             </Link>
           </div>
-        )}
-      </div>
-    </>
+        </section>
+
+        {/* Recent Activity Section */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('dashboard.recent_activity')}</h2>
+            <Link href="/transactions" className="text-[10px] font-black text-emerald-500 hover:underline">{t('dashboard.view_all')}</Link>
+          </div>
+          {transactions && <RecentTransactions transactions={transactions} />}
+        </section>
+      </main>
+    </div>
   );
 }

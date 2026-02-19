@@ -19,7 +19,7 @@ import {
   Plus,
 } from "lucide-react";
 
-const categoryIcons: Record<string, { icon: React.ComponentType<any>; color: string; bg: string }> = {
+const categoryIcons: Record<string, { icon: React.ComponentType<any>; color: string; bg: string }> = { // eslint-disable-line @typescript-eslint/no-explicit-any
   comida: { icon: Utensils, color: "text-orange-600", bg: "bg-orange-100" },
   alimentación: { icon: Utensils, color: "text-orange-600", bg: "bg-orange-100" },
   transporte: { icon: Car, color: "text-blue-600", bg: "bg-blue-100" },

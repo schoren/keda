@@ -2,7 +2,8 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addMonths, subMonths, parse } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
+import { useTranslation } from "@repo/i18n";
 
 interface MonthNavigatorProps {
   readonly month: string; // "YYYY-MM" format
@@ -23,8 +24,11 @@ function isCurrentMonth(month: string): boolean {
 }
 
 export function MonthNavigator({ month, onMonthChange }: MonthNavigatorProps) {
+  const { t, i18n } = useTranslation();
   const date = parseMonth(month);
-  const displayName = format(date, "MMMM yyyy", { locale: es });
+
+  const dateLocale = i18n.language.startsWith('es') ? es : enUS;
+  const displayName = format(date, "MMMM yyyy", { locale: dateLocale });
   const disableNext = isCurrentMonth(month);
 
   const handlePrev = () => {
@@ -41,7 +45,7 @@ export function MonthNavigator({ month, onMonthChange }: MonthNavigatorProps) {
     <div className="flex items-center justify-center gap-1 bg-white/50 dark:bg-white/5 rounded-full px-2 py-1">
       <button
         onClick={handlePrev}
-        aria-label="Mes anterior"
+        aria-label={t('month_navigator.prev')}
         className="p-2 rounded-full hover:bg-accent transition-colors text-muted-foreground"
       >
         <ChevronLeft size={20} />
@@ -52,7 +56,7 @@ export function MonthNavigator({ month, onMonthChange }: MonthNavigatorProps) {
       <button
         onClick={handleNext}
         disabled={disableNext}
-        aria-label="Mes siguiente"
+        aria-label={t('month_navigator.next')}
         className="p-2 rounded-full hover:bg-accent transition-colors text-muted-foreground disabled:opacity-30 disabled:cursor-not-allowed"
       >
         <ChevronRight size={20} />

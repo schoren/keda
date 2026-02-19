@@ -1,11 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { ApiClient, formatMoney } from '../api';
+import { ApiClient, formatMoney } from '../api.js';
+import type { Recommendation } from '../entities.js';
 
 // Mock global fetch
 const mockFetch = vi.fn();
 vi.stubGlobal('fetch', mockFetch);
 
-function mockResponse(data: any, status = 200) {
+function mockResponse(data: unknown, status = 200) {
   return {
     ok: status >= 200 && status < 300,
     status,
@@ -41,7 +42,7 @@ describe('ApiClient', () => {
         expect.objectContaining({ method: 'POST' }),
       );
       const body = JSON.parse(
-        (mockFetch.mock.calls[0]![1] as any).body,
+        (mockFetch.mock.calls[0]![1] as RequestInit).body as string,
       );
       expect(body).toEqual({
         id_token: 'id-tok',
@@ -198,14 +199,14 @@ describe('ApiClient', () => {
 
   describe('recommendations', () => {
     it('getRecommendations calls GET', async () => {
-      mockFetch.mockResolvedValueOnce(mockResponse([{ categoryId: 'c1', action: 'reduce' }]));
+      mockFetch.mockResolvedValueOnce(mockResponse({ suggestions: [{ category_id: 'c1', category: 'Food', action: 'reduce', amount: 50 }] }));
       const result = await api.getRecommendations();
-      expect(result).toEqual([{ categoryId: 'c1', action: 'reduce' }]);
+      expect(result).toEqual([{ category_id: 'c1', category: 'Food', action: 'reduce', amount: 50 }]);
     });
 
     it('applyRecommendations calls POST with recommendations', async () => {
       mockFetch.mockResolvedValueOnce(mock204());
-      const recs = [{ categoryId: 'c1', categoryName: 'Food', action: 'reduce', amount: 50, isSelected: true }];
+      const recs: Recommendation[] = [{ category_id: 'c1', category: 'Food', action: 'reduce', amount: 50 }];
       await api.applyRecommendations(recs);
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:8090/households/household-1/recommendations/apply',
@@ -239,7 +240,7 @@ describe('ApiClient', () => {
     it('createInvitation calls POST with email', async () => {
       mockFetch.mockResolvedValueOnce(mockResponse({ id: 'i1', code: 'abc123' }));
       const result = await api.createInvitation('test@example.com');
-      const body = JSON.parse((mockFetch.mock.calls[0]![1] as any).body);
+      const body = JSON.parse((mockFetch.mock.calls[0]![1] as RequestInit).body as string);
       expect(body).toEqual({ email: 'test@example.com' });
       expect(result.code).toBe('abc123');
     });

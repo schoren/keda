@@ -11,7 +11,7 @@ interface AccountSelectorProps {
   onChange: (value: string) => void;
 }
 
-const iconMap: Record<AccountType | string, any> = {
+const iconMap: Record<AccountType | string, any> = { // eslint-disable-line @typescript-eslint/no-explicit-any
   cash: Wallet,
   card: CreditCard,
   bank: Landmark,

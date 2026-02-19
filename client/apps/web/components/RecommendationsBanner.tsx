@@ -3,11 +3,13 @@
 import { useApi } from "../app/providers";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Recommendation } from "@repo/shared";
-import { Lightbulb, Check, X, ArrowRight } from "lucide-react";
+import { Lightbulb, Check, X } from "lucide-react";
 import { useState } from "react";
 import { formatMoney } from "@repo/shared";
+import { useTranslation } from "@repo/i18n";
 
 export function RecommendationsBanner() {
+  const { t } = useTranslation();
   const api = useApi();
   const queryClient = useQueryClient();
   const [isDismissed, setIsDismissed] = useState(false);
@@ -39,7 +41,7 @@ export function RecommendationsBanner() {
           </div>
           <div>
             <h3 className="font-semibold text-emerald-900 dark:text-emerald-100 mb-1">
-              Recomendaciones de Presupuesto
+              {t('recommendations.title')}
             </h3>
             <div className="space-y-2">
               {recommendations.map((rec, index) => (
@@ -53,7 +55,7 @@ export function RecommendationsBanner() {
         </div>
         <button
           onClick={() => setIsDismissed(true)}
-          aria-label="Descartar"
+          aria-label={t('recommendations.dismiss')}
           className="text-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-300 transition-colors"
         >
           <X size={20} />
@@ -67,11 +69,11 @@ export function RecommendationsBanner() {
           className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50"
         >
           {isPending ? (
-            "Aplicando..."
+            t('recommendations.applying')
           ) : (
             <>
               <Check size={16} />
-              Aplicar todo
+              {t('recommendations.apply_all')}
             </>
           )}
         </button>
