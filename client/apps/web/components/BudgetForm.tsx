@@ -45,12 +45,29 @@ export function BudgetForm({ category, onSuccess, onCancel }: BudgetFormProps) {
   const [rawBudget, setRawBudget] = useState(category?.monthly_budget || 0);
 
   const handleBudgetChange = (val: string) => {
-    // Determine decimal separator for current locale
+    // Determine decimal and thousand separators for current locale
     const decimalSeparator = formatter.formatToParts(1.1).find(p => p.type === 'decimal')?.value || '.';
-    const thousandSeparator = formatter.formatToParts(1000).find(p => p.type === 'group')?.value || ',';
+    let thousandSeparator = formatter.formatToParts(1000).find(p => p.type === 'group')?.value || ',';
+
+    // Fallback/Safety: if they are the same (can happen in some environments/configs), 
+    // prioritize standard behavior or a safe fallback
+    if (decimalSeparator === thousandSeparator) {
+      if (decimalSeparator === ',') {
+        thousandSeparator = '.'; // common in many European countries
+      } else {
+        thousandSeparator = ',';
+      }
+    }
 
     // Remove everything except digits and the decimal separator
-    const cleanValue = val.replace(new RegExp(`[^\\d${decimalSeparator}]`, 'g'), '');
+    // We explicitly escape characters that might have special meaning in regex
+    const escapedDecimal = decimalSeparator.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedThousand = thousandSeparator.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    
+    // Clean value by removing thousand separators specifically, or everything but digits and decimal
+    const cleanValue = val
+      .replace(new RegExp(escapedThousand, 'g'), '')
+      .replace(new RegExp(`[^\\d${escapedDecimal}]`, 'g'), '');
     
     // Split into integer and decimal parts
     const parts = cleanValue.split(decimalSeparator);
@@ -70,11 +87,14 @@ export function BudgetForm({ category, onSuccess, onCancel }: BudgetFormProps) {
     setRawBudget(isNaN(parsed) ? 0 : parsed);
 
     // Format integer part with thousand separators
-    const formattedInteger = integerPart ? parseInt(integerPart, 10).toLocaleString(locale) : '';
+    // We do it manually to ensure it uses the thousandSeparator we detected/decided
+    const formattedInteger = integerPart 
+      ? integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator)
+      : '';
     
     // Construct display value
     let newDisplay = formattedInteger;
-    if (decimalPart) {
+    if (decimalPart !== null) {
       newDisplay += decimalSeparator + decimalPart.slice(0, 2); // Limit to 2 decimals
     }
     
@@ -148,7 +168,7 @@ export function BudgetForm({ category, onSuccess, onCancel }: BudgetFormProps) {
           </label>
           <div className="grid grid-cols-6 gap-2 bg-slate-50 p-3 rounded-[24px] border border-slate-100">
             {AVAILABLE_ICONS.map((iconName) => {
-              const IconComp = (Icons as any)[iconName];
+              const IconComp = Icons[iconName as keyof typeof Icons] as React.ElementType;
               const isSelected = icon === iconName;
               return (
                 <button
@@ -191,7 +211,7 @@ export function BudgetForm({ category, onSuccess, onCancel }: BudgetFormProps) {
 
       {mutation.isError && (
         <p className="text-xs font-bold text-red-500 text-center bg-red-50 p-3 rounded-xl border border-red-100 animate-in fade-in slide-in-from-top-1">
-          Error: {(mutation.error as any).message}
+          Error: {mutation.error instanceof Error ? mutation.error.message : String(mutation.error)}
         </p>
       )}
     </form>

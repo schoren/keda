@@ -1,5 +1,5 @@
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import BudgetsPage from "@/app/budget-management/page";
 import { useApi } from "@/app/providers";
 import { useAuth } from "@/hooks/useAuth";
@@ -28,15 +28,15 @@ const mockCategories = [
 ];
 
 describe("BudgetsPage", () => {
-  let apiMock: any;
+  let apiMock: Record<string, Mock>;
 
   beforeEach(() => {
     vi.clearAllMocks();
     apiMock = {
       getCategories: vi.fn().mockResolvedValue(mockCategories),
     };
-    (useApi as any).mockReturnValue(apiMock);
-    (useAuth as any).mockReturnValue({
+    (useApi as unknown as Mock).mockReturnValue(apiMock);
+    (useAuth as unknown as Mock).mockReturnValue({
       user: { id: "u1", name: "Test User" },
       householdId: "h1",
       isAuthenticated: true,

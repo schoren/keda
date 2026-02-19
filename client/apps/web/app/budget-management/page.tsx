@@ -39,7 +39,7 @@ export default function BudgetsPage() {
       setIsDeleteModalOpen(false);
       setDeleteCategory(undefined);
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error("Delete failed:", error);
       alert(t('common.error') + ": " + error.message);
     }

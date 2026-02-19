@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import { BudgetForm } from "../BudgetForm";
 import { useApi } from "@/app/providers";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -16,7 +16,7 @@ const queryClient = new QueryClient({
 });
 
 describe("BudgetForm", () => {
-  let apiMock: any;
+  let apiMock: Record<string, Mock>;
   const onSuccess = vi.fn();
   const onCancel = vi.fn();
 
@@ -26,7 +26,7 @@ describe("BudgetForm", () => {
       createCategory: vi.fn().mockResolvedValue({ id: "new-cat" }),
       updateCategory: vi.fn().mockResolvedValue({ id: "updated-cat" }),
     };
-    (useApi as any).mockReturnValue(apiMock);
+    (useApi as unknown as Mock).mockReturnValue(apiMock);
   });
 
   it("submits the form with new category data", async () => {
@@ -49,6 +49,32 @@ describe("BudgetForm", () => {
         monthly_budget: 500,
       }));
       expect(onSuccess).toHaveBeenCalled();
+    });
+  });
+
+  it("handles thousand separators in the budget input", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <BudgetForm onSuccess={onSuccess} onCancel={onCancel} />
+      </QueryClientProvider>
+    );
+
+    const budgetInput = screen.getByLabelText(/presupuesto mensual/i);
+    
+    // Type a value that would naturally get thousand separators (e.g., 1000 -> 1.000 in 'es' locale)
+    // The component formats as you type/change
+    fireEvent.change(budgetInput, { target: { value: "1234" } });
+    
+    // In 'es' locale (default in the component if i18n.language is not set or 'es'), 
+    // it should format to "1.234"
+    expect(budgetInput).toHaveValue("1.234");
+
+    fireEvent.submit(screen.getByRole("form", { name: /budget-form/i }));
+
+    await waitFor(() => {
+      expect(apiMock.createCategory).toHaveBeenCalledWith(expect.objectContaining({
+        monthly_budget: 1234,
+      }));
     });
   });
 

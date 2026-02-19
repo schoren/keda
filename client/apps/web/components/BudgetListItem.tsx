@@ -16,7 +16,7 @@ export function BudgetListItem({ category, onEdit, onDelete }: BudgetListItemPro
   const { t } = useTranslation();
 
   // Resolve icon
-  const IconComponent = (category.icon && (Icons as any)[category.icon]) || Tag;
+  const IconComponent = (category.icon && (Icons[category.icon as keyof typeof Icons] as React.ElementType)) || Tag;
 
   return (
     <div className="group relative bg-white p-5 rounded-[24px] border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all overflow-hidden flex flex-col gap-4">
