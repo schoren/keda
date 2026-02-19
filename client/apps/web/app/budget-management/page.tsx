@@ -84,9 +84,6 @@ export default function BudgetsPage() {
         <header className="px-6 pt-10 pb-6 space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
-                {t('nav.budgets')}
-              </p>
               <h1 className="text-2xl font-black text-slate-900 leading-none">
                 {t('nav.budgets')}
               </h1>
