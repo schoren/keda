@@ -45,7 +45,7 @@ export function RecommendationsBanner() {
               {recommendations.map((rec, index) => (
                 <div key={index} className="text-sm text-emerald-800 dark:text-emerald-200/80 flex items-start gap-2">
                   <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                  <span>{rec.action} ({formatMoney(rec.amount)})</span>
+                  <span>{rec.category} ({formatMoney(rec.amount)})</span>
                 </div>
               ))}
             </div>

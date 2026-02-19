@@ -34,6 +34,7 @@ export interface Category {
   created_at: string;
   updated_at: string;
   name: string;
+  icon: string;
   monthly_budget: number;
   is_active: boolean;
   household_id: string;
@@ -50,6 +51,7 @@ export interface Transaction {
   amount: number;
   date: string;
   note: string;
+  type: 'expense' | 'income';
   household_id: string;
 }
 
@@ -66,11 +68,10 @@ export interface Invitation {
 export type AccountType = 'cash' | 'card' | 'bank';
 
 export interface Recommendation {
-  categoryId: string;
-  categoryName: string;
+  category_id: string;
+  category: string;
   action: string;
   amount: number;
-  isSelected: boolean;
 }
 
 export interface MemberInfo {

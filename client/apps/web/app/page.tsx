@@ -12,11 +12,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { Plus, Search, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MonthNavigator } from "@/components/MonthNavigator";
+import { RecommendationsBanner } from "@/components/RecommendationsBanner";
 
 export default function Home() {
   const { user, householdId, login, isAuthenticated, isLoading } = useAuth();
 
-  const currentMonth = new Date().toISOString().slice(0, 7);
+  const [month, setMonth] = useState(() => new Date().toISOString().slice(0, 7));
 
   if (isLoading) {
     return (
@@ -29,7 +31,7 @@ export default function Home() {
   if (isAuthenticated && householdId) {
     return (
       <DashboardLayout>
-        <DashboardContent month={currentMonth} householdId={householdId} user={user} />
+        <DashboardContent month={month} onMonthChange={setMonth} householdId={householdId} user={user} />
       </DashboardLayout>
     );
   }
@@ -69,10 +71,12 @@ export default function Home() {
 
 function DashboardContent({
   month,
+  onMonthChange,
   householdId,
   user,
 }: {
   month: string;
+  onMonthChange: (month: string) => void;
   householdId: string;
   user: any;
 }) {
@@ -120,7 +124,10 @@ function DashboardContent({
         </div>
 
         {/* Mobile Budget Summary */}
-        <Summary month={month} householdId={householdId} />
+        <div className="mb-4 flex flex-col items-center gap-4">
+          <MonthNavigator month={month} onMonthChange={onMonthChange} />
+          <Summary month={month} householdId={householdId} />
+        </div>
       </div>
 
       {/* Main Content */}
@@ -131,6 +138,12 @@ function DashboardContent({
             <span className="hidden md:inline">Monthly Budget Categories</span>
             <span className="md:hidden">Categorías por Gastar</span>
           </h2>
+          <div className="flex items-center gap-4">
+            <div className="hidden md:block">
+              <MonthNavigator month={month} onMonthChange={onMonthChange} />
+            </div>
+            {/* Mobile: Month nav usually in header or here too */}
+          </div>
           {/* Mobile: FAB for new expense */}
           <Link href="/expenses/new" className="md:hidden">
             <Button
@@ -141,6 +154,9 @@ function DashboardContent({
             </Button>
           </Link>
         </div>
+
+        {/* Recommendations Banner */}
+        <RecommendationsBanner />
 
         {/* Categories */}
         {summary?.categories && summary.categories.length > 0 ? (

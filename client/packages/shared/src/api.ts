@@ -129,8 +129,23 @@ export class ApiClient {
   }
 
   // Transactions
-  async getTransactions(month?: string): Promise<Transaction[]> {
-    const path = `${this.householdPath}/transactions${month ? `?month=${month}` : ''}`;
+  async getTransactions(options?: { month?: string; categoryId?: string } | string): Promise<Transaction[]> {
+    let month: string | undefined;
+    let categoryId: string | undefined;
+
+    if (typeof options === 'string') {
+      month = options;
+    } else if (options) {
+      month = options.month;
+      categoryId = options.categoryId;
+    }
+
+    const params = new URLSearchParams();
+    if (month) params.append('month', month);
+    if (categoryId) params.append('category_id', categoryId);
+
+    const queryString = params.toString();
+    const path = `${this.householdPath}/transactions${queryString ? `?${queryString}` : ''}`;
     return this.request<Transaction[]>(path);
   }
 
@@ -161,7 +176,8 @@ export class ApiClient {
 
   // Recommendations
   async getRecommendations(): Promise<Recommendation[]> {
-    return this.request<Recommendation[]>(`${this.householdPath}/recommendations`);
+    const data = await this.request<{ suggestions: Recommendation[] }>(`${this.householdPath}/recommendations`);
+    return data.suggestions;
   }
 
   async applyRecommendations(recommendations: Recommendation[]): Promise<void> {

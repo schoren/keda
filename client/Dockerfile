@@ -1,43 +1,27 @@
 FROM node:20-alpine AS base
 
-# Stage 1: Prune
-FROM base AS builder
-ARG PRUNE_TARGET=web
-RUN apk add --no-cache libc6-compat
-RUN apk update
-# Set working directory
-WORKDIR /app
-RUN npm install -g turbo
-COPY . .
-RUN turbo prune ${PRUNE_TARGET} --docker
-
-# Stage 2: Install dependencies
+# Stage 1: Install dependencies
 FROM base AS installer
-RUN apk add --no-cache libc6-compat
-RUN apk update
+RUN apk add libc6-compat
+RUN npm install -g turbo
 WORKDIR /app
 
-COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
+COPY package.json package-lock.json ./
 RUN npm install
 
-COPY --from=builder /app/out/json/ .
-COPY --from=builder /app/out/package-lock.json ./package-lock.json
-RUN npm install
-
-# Stage 3: Development (with source code and deps)
+# Stage 2: Development (with source code and deps)
 FROM installer AS development
 WORKDIR /app
-RUN npm install -g turbo
 
 CMD ["npm", "run", "dev"]
 
-# Stage 4: Build the project
-FROM development AS builder-web
+# Stage 3: Build the project
+FROM installer AS builder-web
 
-RUN turbo build --filter=web
+RUN turbo build
 
-# Stage 3: Runner
+# Stage 4: Runner
 FROM base AS runner
 WORKDIR /app
 

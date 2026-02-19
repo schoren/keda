@@ -28,7 +28,11 @@ func main() {
 
 	// Configure CORS
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins: []string{
+			"https://app.getkeda.app",
+			"https://app-dev.getkeda.app",
+			"https://localhost:3000",
+		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
