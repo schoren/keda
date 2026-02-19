@@ -8,21 +8,24 @@ import {
   PiggyBank,
   Wallet,
   LogOut,
+  Languages,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-
-const navItems = [
-  { name: "Resumen", href: "/", icon: LayoutDashboard },
-  { name: "Gastos", href: "/transactions", icon: Receipt },
-  { name: "Presupuestos", href: "/budgets", icon: PiggyBank },
-  { name: "Cuentas", href: "/accounts", icon: Wallet },
-];
+import { useTranslation } from "@repo/i18n";
 
 export function Sidebar() {
+  const { t, i18n } = useTranslation();
   const pathname = usePathname();
   const { user, logout } = useAuth();
+
+  const navItems = [
+    { name: t('nav.overview'), href: "/", icon: LayoutDashboard },
+    { name: t('nav.expenses'), href: "/transactions", icon: Receipt },
+    { name: t('nav.budgets'), href: "/budgets", icon: PiggyBank },
+    { name: t('nav.accounts'), href: "/accounts", icon: Wallet },
+  ];
 
   return (
     <aside className="hidden md:flex md:flex-col md:w-60 md:fixed md:inset-y-0 bg-white border-r border-border">
@@ -79,12 +82,39 @@ export function Sidebar() {
             </p>
           </div>
         </div>
+
+        {/* Language Switcher */}
+        <div className="flex items-center gap-1 mb-4 p-1 bg-slate-50 rounded-lg">
+          <button
+            onClick={() => i18n.changeLanguage('en')}
+            className={cn(
+              "flex-1 px-2 py-1.5 text-[10px] font-black rounded-md transition-all uppercase tracking-widest",
+              i18n.language.startsWith('en')
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-400 hover:text-slate-600"
+            )}
+          >
+            EN
+          </button>
+          <button
+            onClick={() => i18n.changeLanguage('es')}
+            className={cn(
+              "flex-1 px-2 py-1.5 text-[10px] font-black rounded-md transition-all uppercase tracking-widest",
+              i18n.language.startsWith('es')
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-400 hover:text-slate-600"
+            )}
+          >
+            ES
+          </button>
+        </div>
+
         <button
           onClick={logout}
           className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors w-full px-1"
         >
           <LogOut size={16} />
-          <span>Cerrar sesión</span>
+          <span>{t('common.logout')}</span>
         </button>
       </div>
     </aside>

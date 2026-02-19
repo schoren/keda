@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useApi } from "@/app/providers";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@repo/i18n";
 
 interface TransactionFormProps {
   onSuccess: () => void;
@@ -12,6 +13,7 @@ interface TransactionFormProps {
 }
 
 export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
+  const { t } = useTranslation();
   const api = useApi();
   const queryClient = useQueryClient();
 
@@ -68,7 +70,7 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
           )}
           onClick={() => setType("expense")}
         >
-          Gasto
+          {t('forms.transaction.type_expense')}
         </button>
         <button
           type="button"
@@ -80,12 +82,12 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
           )}
           onClick={() => setType("income")}
         >
-          Ingreso
+          {t('forms.transaction.type_income')}
         </button>
       </div>
 
       <div>
-        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Monto</label>
+        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('forms.transaction.amount_label')}</label>
         <input
           type="number"
           step="0.01"
@@ -99,7 +101,7 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
       </div>
 
       <div>
-        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Fecha</label>
+        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('forms.transaction.date_label')}</label>
         <input
           type="date"
           value={date}
@@ -110,14 +112,14 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
       </div>
 
       <div>
-        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Cuenta</label>
+        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('forms.transaction.account_label')}</label>
         <select
           value={accountId}
           onChange={(e) => setAccountId(e.target.value)}
           required
           className="w-full h-10 rounded-lg border border-border bg-accent/30 px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         >
-          <option value="">Seleccionar cuenta</option>
+          <option value="">{t('forms.transaction.account_placeholder')}</option>
           {accounts?.map((acc) => (
             <option key={acc.id} value={acc.id}>{acc.name}</option>
           ))}
@@ -125,14 +127,14 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
       </div>
 
       <div>
-        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Categoría</label>
+        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('forms.transaction.category_label')}</label>
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
           required
           className="w-full h-10 rounded-lg border border-border bg-accent/30 px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         >
-          <option value="">Seleccionar categoría</option>
+          <option value="">{t('forms.transaction.category_placeholder')}</option>
           {categories?.filter(c => c.is_active).map((cat) => (
             <option key={cat.id} value={cat.id}>{cat.name}</option>
           ))}
@@ -140,12 +142,12 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
       </div>
 
       <div>
-        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Nota</label>
+        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('forms.transaction.note_label')}</label>
         <input
           type="text"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder="¿En qué gastaste?"
+          placeholder={t('forms.transaction.note_placeholder')}
           className="w-full h-10 rounded-lg border border-border bg-accent/30 px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
@@ -156,14 +158,14 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
           disabled={mutation.isPending}
           className="flex-1 bg-keda-green hover:bg-keda-green-dark text-white"
         >
-          {mutation.isPending ? "Guardando..." : "Guardar"}
+          {mutation.isPending ? t('forms.transaction.saving') : t('forms.transaction.save')}
         </Button>
         <button
           type="button"
           onClick={onCancel}
           className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3"
         >
-          Cancelar
+          {t('common.cancel')}
         </button>
       </div>
 

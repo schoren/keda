@@ -4,6 +4,11 @@ import { createContext, useContext, useMemo, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ApiClient } from "@repo/shared";
+import { initI18n } from "@repo/i18n";
+import LanguageDetector from "i18next-browser-languagedetector";
+
+// Initialize i18n
+initI18n({ detector: LanguageDetector });
 
 const ApiContext = createContext<ApiClient | null>(null);
 

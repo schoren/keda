@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useApi } from "@/app/providers";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@repo/i18n";
 
 interface SummaryProps {
   month: string;
@@ -11,6 +12,7 @@ interface SummaryProps {
 }
 
 export function Summary({ month, householdId }: SummaryProps) {
+  const { t } = useTranslation();
   const api = useApi();
 
   const { data: summary, isLoading, error } = useQuery({
@@ -31,7 +33,7 @@ export function Summary({ month, householdId }: SummaryProps) {
   if (error) {
     return (
       <div className="bg-white rounded-lg border border-border p-5">
-        <p className="text-sm text-destructive">Error al cargar el resumen</p>
+        <p className="text-sm text-destructive">{t('summary.error_loading')}</p>
       </div>
     );
   }
@@ -46,7 +48,7 @@ export function Summary({ month, householdId }: SummaryProps) {
   return (
     <div className="bg-white rounded-[24px] border border-slate-100 p-6 shadow-sm">
       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
-        PRESUPUESTO MENSUAL
+        {t('summary.monthly_budget')}
       </p>
 
       <div className="flex flex-col gap-4">
@@ -66,7 +68,7 @@ export function Summary({ month, householdId }: SummaryProps) {
               ? "bg-red-50 text-red-500"
               : "bg-emerald-50 text-emerald-500"
           )}>
-            {Math.round(percent)}% GASTADO
+            {t('summary.spent_percentage', { percent: Math.round(percent) })}
           </div>
         </div>
 
@@ -83,7 +85,7 @@ export function Summary({ month, householdId }: SummaryProps) {
 
         {remaining < 0 && (
           <p className="text-xs font-bold text-red-500 text-center">
-            Te has pasado por ${Math.abs(remaining).toLocaleString()}
+            {t('summary.exceeded_by', { amount: Math.abs(remaining).toLocaleString() })}
           </p>
         )}
       </div>

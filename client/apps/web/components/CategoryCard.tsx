@@ -2,6 +2,7 @@
 
 import * as Icons from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@repo/i18n";
 
 interface Category {
   id: string;
@@ -17,6 +18,7 @@ interface CategoryCardProps {
 }
 
 export function CategoryCard({ category, className }: CategoryCardProps) {
+  const { t } = useTranslation();
   const remaining = category.budget - category.spent;
   const progress = Math.min((category.spent / category.budget) * 100, 100);
   const isOverBudget = category.spent > category.budget;
@@ -46,7 +48,7 @@ export function CategoryCard({ category, className }: CategoryCardProps) {
             </h4>
             <div className="flex items-center gap-1.5">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
-                RESTA
+                {t('dashboard.left')}
               </span>
               <span className={cn(
                 "text-sm font-bold font-mono",

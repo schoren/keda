@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useApi } from "@/app/providers";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "@repo/i18n";
 
 interface DashboardAccountSummaryProps {
   accounts: Account[];
@@ -13,6 +14,7 @@ interface DashboardAccountSummaryProps {
 }
 
 export function DashboardAccountSummary({ accounts, className }: DashboardAccountSummaryProps) {
+  const { t } = useTranslation();
   const getAccountIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case 'bank':
@@ -30,9 +32,9 @@ export function DashboardAccountSummary({ accounts, className }: DashboardAccoun
   return (
     <div className={cn("bg-white rounded-[24px] border border-slate-100 p-6 shadow-sm", className)}>
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest">TUS CUENTAS</h3>
+        <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('accounts.title')}</h3>
         <span className="text-[10px] font-black text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full uppercase tracking-tighter">
-          {accounts.length} Activas
+          {accounts.length} {t('accounts.active')}
         </span>
       </div>
 
@@ -53,7 +55,7 @@ export function DashboardAccountSummary({ accounts, className }: DashboardAccoun
                   {account.name}
                 </p>
                 <p className="text-[10px] font-bold text-slate-400 capitalize">
-                  {account.type.toLowerCase()}
+                  {t(`accounts.${account.type.toLowerCase() as any}`)}
                 </p>
               </div>
 

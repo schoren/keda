@@ -1,0 +1,103 @@
+{
+  "common": {
+    "logout": "Logout",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "hello": "HELLO,",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "no_description": "No description"
+  },
+  "nav": {
+    "overview": "Overview",
+    "expenses": "Expenses",
+    "budgets": "Budgets",
+    "accounts": "Accounts",
+    "reports": "Reports",
+    "family": "Family",
+    "settings": "Settings"
+  },
+  "accounts": {
+    "title": "YOUR ACCOUNTS",
+    "active": "Active",
+    "bank": "Bank",
+    "cash": "Cash",
+    "card": "Card",
+    "credit": "Credit",
+    "add_account": "Add Account",
+    "balance": "Balance"
+  },
+  "transactions": {
+    "title": "ACTIVITY",
+    "expense_in": "EXPENSE IN",
+    "category_placeholder": "CATEGORY",
+    "no_activity": "No recent activity"
+  },
+  "login": {
+    "title": "Keda",
+    "subtitle": "Simplified family finances",
+    "description": "Control your expenses with transparency and ease.",
+    "continue_with_google": "Continue with Google"
+  },
+  "summary": {
+    "monthly_budget": "MONTHLY BUDGET",
+    "spent_percentage": "{{percent}}% SPENT",
+    "exceeded_by": "You have exceeded by ${{amount}}",
+    "error_loading": "Error loading summary"
+  },
+  "dashboard": {
+    "total_balance": "Total Balance",
+    "recent_transactions": "Recent Transactions",
+    "no_transactions": "No transactions found",
+    "view_all": "VIEW ALL",
+    "categories_to_spend": "CATEGORIES TO SPEND",
+    "recent_activity": "RECENT ACTIVITY",
+    "new_expense": "NEW EXPENSE",
+    "no_categories": "No categories configured",
+    "get_started": "Get started",
+    "default_user": "User",
+    "left": "LEFT"
+  },
+  "recommendations": {
+    "title": "Budget Recommendations",
+    "dismiss": "Dismiss",
+    "applying": "Applying...",
+    "apply_all": "Apply all"
+  },
+  "forms": {
+    "account": {
+      "name_label": "Account Name",
+      "name_placeholder": "e.g. Bank, Cash...",
+      "type_label": "Account Type",
+      "type_debit": "Debit / Cash / Savings",
+      "type_credit": "Credit Card",
+      "create": "Create Account",
+      "creating": "Creating..."
+    },
+    "transaction": {
+      "amount_label": "Amount",
+      "date_label": "Date",
+      "account_label": "Account",
+      "account_placeholder": "Select account",
+      "category_label": "Category",
+      "category_placeholder": "Select category",
+      "note_label": "Note",
+      "note_placeholder": "What did you spend on?",
+      "save": "Save",
+      "saving": "Saving...",
+      "type_expense": "Expense",
+      "type_income": "Income",
+      "save_expense": "Save Expense"
+    }
+  },
+  "month_navigator": {
+    "prev": "Previous month",
+    "next": "Next month"
+  }
+}

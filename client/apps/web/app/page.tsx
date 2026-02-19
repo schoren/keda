@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "./providers";
+import { useTranslation } from "@repo/i18n";
 import { Summary } from "@/components/Summary";
 import { TopBar } from "@/components/TopBar";
 import { CategoryGrid } from "@/components/CategoryGrid";
@@ -19,6 +20,7 @@ import { RecentTransactions } from "@/components/RecentTransactions";
 import { CategoryCard } from "@/components/CategoryCard";
 
 export default function Home() {
+  const { t } = useTranslation();
   const { user, householdId, login, isAuthenticated, isLoading } = useAuth();
 
   const [month, setMonth] = useState(() => new Date().toISOString().slice(0, 7));
@@ -45,14 +47,14 @@ export default function Home() {
       <div className="w-full max-w-sm mx-4 p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-center">
         <div className="mb-6">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-keda-green to-emerald-400 bg-clip-text text-transparent">
-            Keda
+            {t('login.title')}
           </h1>
-          <p className="text-slate-300 mt-2">Finanzas familiares simplificadas</p>
+          <p className="text-slate-300 mt-2">{t('login.subtitle')}</p>
         </div>
 
         <div>
           <p className="text-white/80 text-sm mb-4">
-            Controla tus gastos con transparencia y facilidad.
+            {t('login.description')}
           </p>
           <button
             onClick={() => login()}
@@ -64,7 +66,7 @@ export default function Home() {
               width={20}
               height={20}
             />
-            Continuar con Google
+            {t('login.continue_with_google')}
           </button>
         </div>
       </div>
@@ -83,6 +85,7 @@ function DashboardContent({
   householdId: string;
   user: any;
 }) {
+  const { t } = useTranslation();
   const api = useApi();
 
   const { data: summary } = useQuery({
@@ -119,9 +122,9 @@ function DashboardContent({
               )}
             </div>
             <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">HOLA,</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{t('common.hello')}</p>
               <h1 className="text-lg font-black text-slate-900 leading-none">
-                {user?.name?.split(" ")[0] || "Usuario"}
+                {user?.name?.split(" ")[0] || t('dashboard.default_user')}
               </h1>
             </div>
           </div>
@@ -152,8 +155,8 @@ function DashboardContent({
         {/* Categories Section - Maximized View */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">CATEGORÍAS POR GASTAR</h2>
-            <Link href="/budgets" className="text-[10px] font-black text-emerald-500 hover:underline">VER TODO</Link>
+            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('dashboard.categories_to_spend')}</h2>
+            <Link href="/budgets" className="text-[10px] font-black text-emerald-500 hover:underline">{t('dashboard.view_all')}</Link>
           </div>
 
           <RecommendationsBanner />
@@ -165,10 +168,10 @@ function DashboardContent({
               ))
             ) : (
               <div className="col-span-full bg-white rounded-[24px] border border-dashed border-slate-200 p-12 text-center">
-                <p className="text-slate-400 font-bold mb-4">No hay categorías configuradas</p>
+                <p className="text-slate-400 font-bold mb-4">{t('dashboard.no_categories')}</p>
                 <Link href="/budgets">
                   <Button className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl px-6">
-                    Empezar
+                    {t('dashboard.get_started')}
                   </Button>
                 </Link>
               </div>
@@ -182,7 +185,7 @@ function DashboardContent({
               <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Plus className="w-5 h-5 text-slate-400 group-hover:text-emerald-500" />
               </div>
-              <span className="text-sm font-black text-slate-400 group-hover:text-emerald-500">NUEVO GASTO</span>
+              <span className="text-sm font-black text-slate-400 group-hover:text-emerald-500">{t('dashboard.new_expense')}</span>
             </Link>
           </div>
         </section>
@@ -190,8 +193,8 @@ function DashboardContent({
         {/* Recent Activity Section */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">ACTIVIDAD RECIENTE</h2>
-            <Link href="/transactions" className="text-[10px] font-black text-emerald-500 hover:underline">VER TODO</Link>
+            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('dashboard.recent_activity')}</h2>
+            <Link href="/transactions" className="text-[10px] font-black text-emerald-500 hover:underline">{t('dashboard.view_all')}</Link>
           </div>
           {transactions && <RecentTransactions transactions={transactions} />}
         </section>
