@@ -17,7 +17,10 @@ Provide a dedicated user interface in the web application for managing expense c
 - **Real-time Updates:** The UI should reflect changes immediately after a successful API call.
 
 ## UI/UX Design (Product Guidelines)
-- **Clean & Modern:** Use Shadcn UI components for a consistent, professional look.
+- **Design System:** Adhere strictly to [DESIGN.md](../../DESIGN.md) (Clean & Modern, Slate 50 background).
+- **Zero Friction:** Ensure tapping a category in the list allows for immediate action or quick entry.
+- **Visual Hierarchy:** The "Remaining" amount must be the largest and most prominent visual element on the card.
+- **Styling Details:** Use 24px border radius for cards, Lucide Icons (2px stroke), and monospace fonts for amounts.
 - **Friendly Tone:** Use encouraging labels (e.g., "Set your goal" instead of "Enter budget").
 - **Accessibility:** Ensure all forms are accessible via keyboard and have proper ARIA labels.
 - **Icon Selection:** Provide a grid of common icons (using Lucide-React) for users to choose from.
