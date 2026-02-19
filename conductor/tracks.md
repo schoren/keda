@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: "What's Left" Dashboard Redesign**
+- [x] **Track: "What's Left" Dashboard Redesign**
   *Link: [./tracks/dashboard_redesign_20260219/](./tracks/dashboard_redesign_20260219/)*

@@ -33,14 +33,14 @@
     - [x] Confirm zero-friction tapping targets meet accessibility standards (min 44px)
 - [x] Task: Conductor - User Manual Verification 'Phase 4: State & Polish' (Protocol in workflow.md)
 
-## Phase 5: Mobile Layout Refinements
-- [ ] Task: Implement Mobile Sidebar (Hamburger Menu)
-    - [ ] Update `DashboardLayout.tsx` to include a mobile-friendly drawer or slide-out menu.
-    - [ ] Remove `BottomNav` on mobile to free up vertical space.
-- [ ] Task: Condense Dashboard Header
-    - [ ] Update `app/page.tsx` to use a minimal header on mobile (Hamburger + Month Navigator).
-    - [ ] Remove search, notifications, and profile card from the mobile view.
-- [ ] Task: Create Slim Fixed Bottom Summary
-    - [ ] Implement `MobileSummary.tsx` showing Total vs Spent with a thin Life Bar.
-    - [ ] Fix this summary to the bottom of the viewport on mobile devices.
-- [ ] Task: Conductor - User Manual Verification 'Phase 5: Mobile Layout Refinements' (Protocol in workflow.md)
+## Phase 5: Mobile Layout Refinements [checkpoint: 7b42292]
+- [x] Task: Implement Mobile Sidebar (Hamburger Menu)
+    - [x] Update `DashboardLayout.tsx` to include a mobile-friendly drawer or slide-out menu.
+    - [x] Remove `BottomNav` on mobile to free up vertical space.
+- [x] Task: Condense Dashboard Header
+    - [x] Update `app/page.tsx` to use a minimal header on mobile (Hamburger + Month Navigator).
+    - [x] Remove search, notifications, and profile card from the mobile view.
+- [x] Task: Create Slim Fixed Bottom Summary
+    - [x] Implement `MobileSummary.tsx` showing Total vs Spent with a thin Life Bar.
+    - [x] Fix this summary to the bottom of the viewport on mobile devices.
+- [x] Task: Conductor - User Manual Verification 'Phase 5: Mobile Layout Refinements' (Protocol in workflow.md)
