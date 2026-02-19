@@ -1,7 +1,7 @@
 # Product Definition: Keda
 
 ## Vision
-Keda is a family finance application designed to empower individuals and households to take control of their spending through proactive budget management. Unlike typical trackers that focus on past spending, Keda prioritizes "What's Left" in each category to help users make informed spending decisions in real-time.
+Keda is a family finance application designed to empower individuals and households to take control of their spending through proactive budget management. Built as a client-side Progressive Web App (PWA), Keda prioritizes "What's Left" in each category to help users make informed spending decisions in real-time.
 
 ## Target Audience
 - **Individuals:** People seeking a simple, goal-oriented way to manage personal expenses.

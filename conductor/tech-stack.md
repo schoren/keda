@@ -1,7 +1,7 @@
 # Technology Stack: Keda
 
 ## Core Platforms
-- **Web Frontend:** Next.js (React) with TypeScript.
+- **Web Frontend:** Next.js (React) with TypeScript, configured as a strictly client-side Progressive Web App (PWA).
 - **Mobile Frontend:** React Native (TypeScript) for native Android and iOS experiences.
 - **Backend API:** Go (Gin) providing a high-performance, secure RESTful API.
 
