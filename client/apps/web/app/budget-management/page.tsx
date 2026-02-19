@@ -88,13 +88,6 @@ export default function BudgetsPage() {
                 {t('nav.budgets')}
               </h1>
             </div>
-            <Button 
-              onClick={handleCreate}
-              className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl px-4 h-10 shadow-sm flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">{t('common.add')}</span>
-            </Button>
           </div>
         </header>
 
