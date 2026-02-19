@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { CategoryCard } from "./CategoryCard";
+import { useTranslation } from "@repo/i18n";
 
 interface CategoryGridProps {
   categories: {
@@ -15,6 +16,8 @@ interface CategoryGridProps {
 }
 
 export function CategoryGrid({ categories }: CategoryGridProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {categories.map((cat) => (
@@ -30,7 +33,7 @@ export function CategoryGrid({ categories }: CategoryGridProps) {
           <Plus className="w-5 h-5 text-slate-400 group-hover:text-emerald-500" />
         </div>
         <span className="text-sm font-black text-slate-400 group-hover:text-emerald-500 uppercase tracking-widest">
-          Nueva Categoría
+          {t('dashboard.new_category')}
         </span>
       </Link>
     </div>
