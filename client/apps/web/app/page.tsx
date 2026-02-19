@@ -9,6 +9,7 @@ import { Summary } from "@/components/Summary";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import Image from "next/image";
 import Link from "next/link";
+import { Search, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MonthNavigator } from "@/components/MonthNavigator";
 import { RecommendationsBanner } from "@/components/RecommendationsBanner";
