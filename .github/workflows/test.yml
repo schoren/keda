@@ -23,7 +23,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '25.6.1'
           cache: 'npm'
           cache-dependency-path: ${{ matrix.path }}/package-lock.json
       - name: Cache node_modules
@@ -93,7 +93,7 @@ jobs:
           sarif_file: results.sarif
 
 
-  security-trivy-new-client:
+  security-trivy-client:
     name: Security - Trivy New Client
     runs-on: ubuntu-latest
     permissions:
@@ -175,14 +175,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '25.6.1'
           cache: 'npm'
           cache-dependency-path: client/package-lock.json
       - name: Install dependencies
         working-directory: ./client
         run: npm ci
 
-  lint-new-client:
+  lint-client:
     name: Lint New Client (Turbo)
     needs: [warmup-node-cache]
     runs-on: ubuntu-latest
@@ -192,7 +192,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '25.6.1'
+          cache-dependency-path: client/package-lock.json
       - name: Install dependencies
         working-directory: ./client
         run: npm ci
@@ -200,7 +201,7 @@ jobs:
         working-directory: ./client
         run: npm run lint
 
-  test-new-client:
+  test-client:
     name: Test New Client (Turbo)
     needs: [warmup-node-cache]
     runs-on: ubuntu-latest
@@ -210,7 +211,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '25.6.1'
       - name: Install dependencies
         working-directory: ./client
         run: npm ci
@@ -322,7 +323,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '25.6.1'
           cache: 'npm'
           cache-dependency-path: |
             landing/package-lock.json
@@ -344,10 +345,10 @@ jobs:
     needs: 
       - backend-tests
       - lint-backend
-      - lint-new-client
-      - test-new-client
+      - lint-client
+      - test-client
       - security-gosec
-      - security-trivy-new-client
+      - security-trivy-client
       - security-trivy-server
       - security-mobsf
       - security-landing
