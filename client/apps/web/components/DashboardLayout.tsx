@@ -9,10 +9,10 @@ import { cn } from "@/lib/utils";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  mobileTopBarContent?: React.ReactNode;
+  headerContent?: React.ReactNode;
 }
 
-export function DashboardLayout({ children, mobileTopBarContent }: DashboardLayoutProps) {
+export function DashboardLayout({ children, headerContent }: DashboardLayoutProps) {
   const { isAuthenticated, isLoading } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -29,26 +29,26 @@ export function DashboardLayout({ children, mobileTopBarContent }: DashboardLayo
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Mobile Sidebar Overlay */}
+    <div className="min-h-screen bg-background font-sans">
+      {/* Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar - Desktop fixed, Mobile Drawer */}
+      {/* Sidebar - Drawer for everyone to keep UI clean */}
       <div className={cn(
-        "fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:inset-auto md:block",
+        "fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out bg-white shadow-xl",
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <Sidebar onClose={() => setIsSidebarOpen(false)} />
       </div>
 
-      <main className="md:pl-60 min-h-screen">
-        {/* Mobile top bar with hamburger */}
-        <div className="md:hidden flex items-center h-16 px-4 border-b border-slate-100 bg-white sticky top-0 z-30">
+      <div className="min-h-screen flex flex-col">
+        {/* Unified Top Bar */}
+        <header className="flex items-center h-16 px-4 md:px-6 border-b border-slate-100 bg-white sticky top-0 z-30">
           <Button 
             variant="ghost" 
             size="icon" 
@@ -57,13 +57,19 @@ export function DashboardLayout({ children, mobileTopBarContent }: DashboardLayo
           >
             <Menu className="w-6 h-6" />
           </Button>
-          <div className="flex-1 overflow-hidden">
-            {mobileTopBarContent}
+          
+          <div className="flex-1 flex justify-center overflow-hidden">
+            {headerContent}
           </div>
-        </div>
 
-        {children}
-      </main>
+          {/* Placeholder for symmetry */}
+          <div className="w-10" /> 
+        </header>
+
+        <main className="flex-1 min-w-0">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

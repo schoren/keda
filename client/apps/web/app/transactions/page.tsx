@@ -19,18 +19,18 @@ export default function TransactionsPage() {
 
   return (
     <DashboardLayout>
-      <div className="px-5 md:px-8 py-6">
-        <div className="flex items-center justify-between mb-6">
+      <div className="px-6 py-10 max-w-7xl mx-auto w-full">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-xl font-bold text-foreground">Transacciones</h1>
-            <p className="text-sm text-muted-foreground">Historial de ingresos y gastos</p>
+            <h1 className="text-2xl font-black text-slate-900 leading-none mb-2">Transacciones</h1>
+            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Historial de ingresos y gastos</p>
           </div>
           <Button
             onClick={() => setIsModalOpen(true)}
-            className="bg-keda-green hover:bg-keda-green-dark text-white gap-2"
+            className="bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-xl gap-2 h-11 px-5 shadow-sm"
           >
             <Plus size={18} />
-            Nuevo Gasto
+            <span className="hidden sm:inline">Nuevo Gasto</span>
           </Button>
         </div>
 

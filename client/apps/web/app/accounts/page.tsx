@@ -17,18 +17,18 @@ export default function AccountsPage() {
 
   return (
     <DashboardLayout>
-      <div className="px-5 md:px-8 py-6">
-        <div className="flex items-center justify-between mb-6">
+      <div className="px-6 py-10 max-w-7xl mx-auto w-full">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-xl font-bold text-foreground">Cuentas</h1>
-            <p className="text-sm text-muted-foreground">Gestiona tus cuentas bancarias y efectivo</p>
+            <h1 className="text-2xl font-black text-slate-900 leading-none mb-2">Cuentas</h1>
+            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Gestiona tus cuentas bancarias y efectivo</p>
           </div>
           <Button
             onClick={() => setIsModalOpen(true)}
-            className="bg-keda-green hover:bg-keda-green-dark text-white gap-2"
+            className="bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-xl gap-2 h-11 px-5 shadow-sm"
           >
             <Plus size={18} />
-            Nueva Cuenta
+            <span className="hidden sm:inline">Nueva Cuenta</span>
           </Button>
         </div>
 

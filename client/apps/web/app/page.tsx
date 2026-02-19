@@ -5,20 +5,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { useApi } from "./providers";
 import { useTranslation } from "@repo/i18n";
-import { Summary } from "@/components/Summary";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, Bell } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { MonthNavigator } from "@/components/MonthNavigator";
-import { RecommendationsBanner } from "@/components/RecommendationsBanner";
 import { CategoryGrid } from "@/components/CategoryGrid";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
   const { t } = useTranslation();
-  const { user, householdId, login, isAuthenticated, isLoading } = useAuth();
+  const { householdId, login, isAuthenticated, isLoading } = useAuth();
 
   const [month, setMonth] = useState(() => new Date().toISOString().slice(0, 7));
 
@@ -33,16 +29,16 @@ export default function Home() {
   if (isAuthenticated && householdId) {
     return (
       <DashboardLayout 
-        mobileTopBarContent={
+        headerContent={
           <MonthNavigator month={month} onMonthChange={setMonth} variant="minimal" />
         }
       >
-        <DashboardContent month={month} onMonthChange={setMonth} householdId={householdId} user={user} />
+        <DashboardContent month={month} householdId={householdId} />
       </DashboardLayout>
     );
   }
 
-  // Login page (Unchanged)
+  // Login page
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <div className="w-full max-w-sm mx-4 p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-center">
@@ -77,14 +73,10 @@ export default function Home() {
 
 function DashboardContent({
   month,
-  onMonthChange,
   householdId,
-  user,
 }: {
   month: string;
-  onMonthChange: (month: string) => void;
   householdId: string;
-  user: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }) {
   const { t } = useTranslation();
   const api = useApi();
@@ -97,48 +89,7 @@ function DashboardContent({
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
-      {/* Desktop Header - Visible only on md+ */}
-      <header className="hidden md:block px-6 pt-10 pb-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-slate-200 overflow-hidden border-2 border-white shadow-sm">
-              {user?.picture_url ? (
-                <Image src={user.picture_url} alt={user.name} width={48} height={48} />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold">
-                  {user?.name?.[0] || "U"}
-                </div>
-              )}
-            </div>
-            <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{t('common.hello')}</p>
-              <h1 className="text-lg font-black text-slate-900 leading-none">
-                {user?.name?.split(" ")[0] || t('dashboard.default_user')}
-              </h1>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm text-slate-400">
-              <Search className="w-5 h-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm text-slate-400">
-              <Bell className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between bg-white/50 backdrop-blur-sm p-4 rounded-3xl border border-slate-100">
-          <MonthNavigator month={month} onMonthChange={onMonthChange} />
-        </div>
-      </header>
-
-      <main className="flex-1 px-6 pb-32 pt-6 md:pt-0 space-y-8 max-w-7xl mx-auto w-full">
-        {/* Desktop Summary - Hidden on mobile */}
-        <div className="hidden md:grid grid-cols-1 gap-6">
-          <Summary month={month} householdId={householdId} />
-        </div>
-
+      <main className="flex-1 px-6 pb-32 pt-10 space-y-8 max-w-7xl mx-auto w-full">
         {/* Categories Section - Maximized View */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
@@ -151,13 +102,13 @@ function DashboardContent({
         </section>
       </main>
 
-      {/* Slim Fixed Bottom Summary for Mobile */}
-      <MobileSummary summary={summary} />
+      {/* Slim Fixed Bottom Summary for Everyone */}
+      <SlimSummary summary={summary} />
     </div>
   );
 }
 
-function MobileSummary({ summary }: { summary: any }) {
+function SlimSummary({ summary }: { summary: any }) {
   const { t } = useTranslation();
   if (!summary) return null;
 
@@ -169,7 +120,7 @@ function MobileSummary({ summary }: { summary: any }) {
   const isOver = summary.total_spent > summary.total_budget;
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-t border-slate-100 p-4 pb-safe-area-inset-bottom">
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-t border-slate-100 p-4 pb-safe-area-inset-bottom shadow-lg">
       <div className="max-w-md mx-auto space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-1.5">
@@ -190,7 +141,7 @@ function MobileSummary({ summary }: { summary: any }) {
         <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
           <div 
             className={cn(
-              "h-full transition-all duration-1000 ease-out",
+              "h-full transition-all duration-1000 ease-out rounded-full",
               isOver ? "bg-red-500" : percent > 80 ? "bg-amber-500" : "bg-emerald-500"
             )}
             style={{ width: `${lifePercent}%` }}
