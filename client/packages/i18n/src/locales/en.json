@@ -94,6 +94,20 @@
       "type_expense": "Expense",
       "type_income": "Income",
       "save_expense": "Save Expense"
+    },
+    "budget": {
+      "name_label": "Category Name",
+      "name_placeholder": "e.g. Food, Transport...",
+      "amount_label": "Monthly Budget",
+      "amount_placeholder": "0.00",
+      "icon_label": "Icon",
+      "create": "Create Budget",
+      "creating": "Creating...",
+      "edit": "Edit Budget",
+      "editing": "Saving...",
+      "delete_title": "Delete Budget",
+      "delete_description": "Are you sure you want to delete the category '{{name}}'? This action cannot be undone.",
+      "deleting": "Deleting..."
     }
   },
   "month_navigator": {

@@ -94,6 +94,20 @@
       "type_expense": "Gasto",
       "type_income": "Ingreso",
       "save_expense": "Guardar Gasto"
+    },
+    "budget": {
+      "name_label": "Nombre de la categoría",
+      "name_placeholder": "Ej: Comida, Transporte...",
+      "amount_label": "Presupuesto mensual",
+      "amount_placeholder": "0.00",
+      "icon_label": "Icono",
+      "create": "Crear Presupuesto",
+      "creating": "Creando...",
+      "edit": "Editar Presupuesto",
+      "editing": "Guardando...",
+      "delete_title": "Eliminar Presupuesto",
+      "delete_description": "¿Estás seguro de que quieres eliminar la categoría '{{name}}'? Esta acción no se puede deshacer.",
+      "deleting": "Eliminando..."
     }
   },
   "month_navigator": {

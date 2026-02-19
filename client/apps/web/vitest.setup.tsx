@@ -69,4 +69,5 @@ vi.mock('@repo/i18n', () => ({
       language: 'es',
     },
   }),
+  initI18n: vi.fn(),
 }));

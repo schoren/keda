@@ -19,7 +19,7 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
 
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0] || "");
   const [categoryId, setCategoryId] = useState("");
   const [accountId, setAccountId] = useState("");
   const [type, setType] = useState<"expense" | "income">("expense");
