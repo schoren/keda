@@ -183,7 +183,7 @@ jobs:
         run: npm ci
 
   lint-client:
-    name: Lint New Client (Turbo)
+    name: Lint Client
     needs: [warmup-node-cache]
     runs-on: ubuntu-latest
     steps:
@@ -202,7 +202,7 @@ jobs:
         run: npm run lint
 
   test-client:
-    name: Test New Client (Turbo)
+    name: Test Client
     needs: [warmup-node-cache]
     runs-on: ubuntu-latest
     steps:

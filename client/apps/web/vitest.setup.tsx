@@ -64,5 +64,9 @@ vi.mock('@repo/i18n', () => ({
       }
       return result || key;
     },
+    i18n: {
+      changeLanguage: () => Promise.resolve(),
+      language: 'es',
+    },
   }),
 }));

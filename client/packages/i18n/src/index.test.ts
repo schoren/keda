@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from '@jest/globals';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { initI18n, i18n } from './index.js';
 
 describe('i18n shared package', () => {
