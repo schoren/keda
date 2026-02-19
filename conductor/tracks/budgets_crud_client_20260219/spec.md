@@ -1,7 +1,7 @@
 # Specification: Budget Management CRUD (Client)
 
 ## Objective
-Provide a dedicated user interface in the web application for managing expense categories and their associated monthly budgets. This is a core part of the "What's Left" budgeting philosophy.
+Provide a dedicated user interface in the web application for managing expense categories and their associated monthly budgets. This is a core part of the "What's Left" budgeting philosophy. The application must function as a PWA (Progressive Web App) with strictly client-side rendering (no SSR).
 
 ## User Stories
 - As a user, I want to see a list of all my budget categories and their monthly limits.
@@ -10,7 +10,7 @@ Provide a dedicated user interface in the web application for managing expense c
 - As a user, I want to delete categories I no longer use.
 
 ## Functional Requirements
-- **Budget List:** Display all active categories with their monthly budget amount.
+- **Budget List:** Display all active categories with their monthly budget amount at `/budget-management`.
 - **Create Budget:** Form to input category name, select an icon, and set a monthly budget.
 - **Edit Budget:** Pre-populated form to update category details.
 - **Delete Budget:** Confirmation modal before permanently removing a category.
