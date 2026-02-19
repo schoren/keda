@@ -1,8 +1,0 @@
-{
-  "track_id": "budgets_crud_client_20260219",
-  "type": "feature",
-  "status": "new",
-  "created_at": "2026-02-19T12:00:00Z",
-  "updated_at": "2026-02-19T12:00:00Z",
-  "description": "Implement the client-side CRUD for budgets in the web application."
-}
