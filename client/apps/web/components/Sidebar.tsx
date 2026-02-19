@@ -22,7 +22,7 @@ export function Sidebar() {
   const navItems = [
     { name: t('nav.overview'), href: "/", icon: LayoutDashboard },
     { name: t('nav.expenses'), href: "/transactions", icon: Receipt },
-    { name: t('nav.budgets'), href: "/budgets", icon: PiggyBank },
+    { name: t('nav.budgets'), href: "/budget-management", icon: PiggyBank },
     { name: t('nav.accounts'), href: "/accounts", icon: Wallet },
   ];
 

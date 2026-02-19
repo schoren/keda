@@ -1,12 +1,12 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import BudgetsPage from "../page";
-import { useApi } from "../../providers";
+import BudgetsPage from "@/app/budget-management/page";
+import { useApi } from "@/app/providers";
 import { useAuth } from "@/hooks/useAuth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock the providers and hooks
-vi.mock("../../providers", () => ({
+vi.mock("@/app/providers", () => ({
   useApi: vi.fn(),
 }));
 

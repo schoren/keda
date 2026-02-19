@@ -154,7 +154,7 @@ function DashboardContent({
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('dashboard.categories_to_spend')}</h2>
-            <Link href="/budgets" className="text-[10px] font-black text-emerald-500 hover:underline">{t('dashboard.view_all')}</Link>
+            <Link href="/budget-management" className="text-[10px] font-black text-emerald-500 hover:underline">{t('dashboard.view_all')}</Link>
           </div>
 
           <RecommendationsBanner />
@@ -167,7 +167,7 @@ function DashboardContent({
             ) : (
               <div className="col-span-full bg-white rounded-[24px] border border-dashed border-slate-200 p-12 text-center">
                 <p className="text-slate-400 font-bold mb-4">{t('dashboard.no_categories')}</p>
-                <Link href="/budgets">
+                <Link href="/budget-management">
                   <Button className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl px-6">
                     {t('dashboard.get_started')}
                   </Button>

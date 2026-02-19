@@ -120,7 +120,7 @@ export function CategoryGrid({ categories }: CategoryGridProps) {
         ))}
         {/* Add Category card */}
         <Link
-          href="/budgets"
+          href="/budget-management"
           className="flex flex-col items-center justify-center bg-white rounded-lg border border-dashed border-border p-4 hover:border-keda-green hover:bg-keda-green/5 transition-all min-h-[120px]"
         >
           <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center mb-2">

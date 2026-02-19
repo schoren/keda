@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Implement Budget Management CRUD (Client)**
+- [~] **Track: Implement Budget Management CRUD (Client)**
   *Link: [./tracks/budgets_crud_client_20260219/](./tracks/budgets_crud_client_20260219/)*
