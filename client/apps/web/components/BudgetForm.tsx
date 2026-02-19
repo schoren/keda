@@ -74,7 +74,7 @@ export function BudgetForm({ category, onSuccess, onCancel }: BudgetFormProps) {
     
     // Construct display value
     let newDisplay = formattedInteger;
-    if (decimalPart !== null) {
+    if (decimalPart) {
       newDisplay += decimalSeparator + decimalPart.slice(0, 2); // Limit to 2 decimals
     }
     

@@ -73,7 +73,9 @@ describe("BudgetsPage", () => {
     );
 
     const addButtons = screen.getAllByRole("button", { name: /agregar/i });
-    fireEvent.click(addButtons[0]);
+    if (addButtons[0]) {
+      fireEvent.click(addButtons[0]);
+    }
 
     await waitFor(() => {
       expect(screen.getAllByText("Crear Presupuesto").length).toBeGreaterThan(0);

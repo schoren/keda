@@ -34,3 +34,6 @@
     - [x] Ensure the budgets page looks great on mobile
     - [x] Add loading states and error handling for all API operations
 - [x] Task: Conductor - User Manual Verification 'Phase 4: Delete & Refinement' (Protocol in workflow.md)
+
+## Phase: Review Fixes
+- [~] Task: Apply review suggestions
