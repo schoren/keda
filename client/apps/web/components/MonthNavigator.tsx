@@ -56,40 +56,44 @@ export function MonthNavigator({ month, onMonthChange, variant = "default" }: Mo
 
   if (variant === "minimal") {
     return (
-      <div className="flex items-center gap-1">
-        <button
-          onClick={handlePrev}
-          aria-label={t('month_navigator.prev')}
-          className="p-1 rounded-full hover:bg-slate-100 transition-colors text-slate-400"
-        >
-          <ChevronLeft size={18} />
-        </button>
-        <span className="min-w-[100px] text-center text-[10px] font-black tracking-widest text-slate-900 uppercase">
-          {displayName}
-        </span>
-        <button
-          onClick={handleNext}
-          disabled={disableNext}
-          aria-label={t('month_navigator.next')}
-          className="p-1 rounded-full hover:bg-slate-100 transition-colors text-slate-400 disabled:opacity-20"
-        >
-          <ChevronRight size={18} />
-        </button>
+      <div className="flex items-center justify-between w-full pl-8">
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handlePrev}
+            aria-label={t('month_navigator.prev')}
+            className="p-1 rounded-full hover:bg-slate-100 transition-colors text-slate-400"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <span className="min-w-[100px] text-center text-[10px] font-black tracking-widest text-slate-900 uppercase">
+            {displayName}
+          </span>
+          <button
+            onClick={handleNext}
+            disabled={disableNext}
+            aria-label={t('month_navigator.next')}
+            className="p-1 rounded-full hover:bg-slate-100 transition-colors text-slate-400 disabled:opacity-20"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
 
-        {hasRecommendations && (
-          <Link href="/recommendations" className="ml-1 relative">
-            <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-20" />
-            <div className="p-1 bg-emerald-50 rounded-full text-emerald-500 relative z-10">
-              <Lightbulb size={14} className="fill-emerald-500/20" />
-            </div>
-          </Link>
-        )}
+        <div className="w-10 flex justify-end">
+          {hasRecommendations && (
+            <Link href="/recommendations" className="relative">
+              <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-20" />
+              <div className="p-1 bg-emerald-50 rounded-full text-emerald-500 relative z-10 border border-emerald-100">
+                <Lightbulb size={14} className="fill-emerald-500/20" />
+              </div>
+            </Link>
+          )}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-center gap-1 bg-white/50 dark:bg-white/5 rounded-full px-2 py-1 relative">
+    <div className="flex items-center justify-center gap-1 bg-white/50 dark:bg-white/5 rounded-full px-2 py-1 relative min-w-[300px]">
       <button
         onClick={handlePrev}
         aria-label={t('month_navigator.prev')}
@@ -97,19 +101,9 @@ export function MonthNavigator({ month, onMonthChange, variant = "default" }: Mo
       >
         <ChevronLeft size={20} />
       </button>
-      <div className="flex items-center gap-2">
-        <span className="min-w-[160px] text-center text-sm font-bold tracking-wider text-foreground uppercase">
-          {displayName}
-        </span>
-        {hasRecommendations && (
-          <Link href="/recommendations" className="relative group">
-            <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-25" />
-            <div className="p-1.5 bg-emerald-100 rounded-full text-emerald-600 relative z-10 group-hover:bg-emerald-200 transition-colors">
-              <Lightbulb size={16} className="fill-emerald-600/20" />
-            </div>
-          </Link>
-        )}
-      </div>
+      <span className="min-w-[160px] text-center text-sm font-bold tracking-wider text-foreground uppercase">
+        {displayName}
+      </span>
       <button
         onClick={handleNext}
         disabled={disableNext}
@@ -118,6 +112,17 @@ export function MonthNavigator({ month, onMonthChange, variant = "default" }: Mo
       >
         <ChevronRight size={20} />
       </button>
+
+      <div className="absolute right-3 flex items-center">
+        {hasRecommendations && (
+          <Link href="/recommendations" className="relative group">
+            <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-25" />
+            <div className="p-1.5 bg-emerald-100 rounded-full text-emerald-600 relative z-10 group-hover:bg-emerald-200 transition-colors border border-emerald-200">
+              <Lightbulb size={16} className="fill-emerald-600/20" />
+            </div>
+          </Link>
+        )}
+      </div>
     </div>
   );
 }

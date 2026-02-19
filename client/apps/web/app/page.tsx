@@ -9,7 +9,6 @@ import { Summary } from "@/components/Summary";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MonthNavigator } from "@/components/MonthNavigator";
 import { RecommendationsBanner } from "@/components/RecommendationsBanner";
@@ -34,9 +33,7 @@ export default function Home() {
     return (
       <DashboardLayout 
         mobileTopBarContent={
-          <div className="flex items-center justify-center -ml-10">
-            <MonthNavigator month={month} onMonthChange={setMonth} variant="minimal" />
-          </div>
+          <MonthNavigator month={month} onMonthChange={setMonth} variant="minimal" />
         }
       >
         <DashboardContent month={month} onMonthChange={setMonth} householdId={householdId} user={user} />
@@ -145,7 +142,6 @@ function DashboardContent({
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('dashboard.categories_to_spend')}</h2>
-            <Link href="/budget-management" className="text-[10px] font-black text-emerald-500 hover:underline">{t('dashboard.view_all')}</Link>
           </div>
 
           {summary?.categories && (
