@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 interface DynamicAmountDisplayProps {
   value: string;
@@ -11,7 +11,7 @@ export function DynamicAmountDisplay({ value }: DynamicAmountDisplayProps) {
   const textRef = useRef<HTMLSpanElement>(null);
   const [fontSize, setFontSize] = useState(48);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!containerRef.current || !textRef.current) return;
 
     const containerWidth = containerRef.current.offsetWidth;

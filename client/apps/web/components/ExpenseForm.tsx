@@ -97,9 +97,9 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
         className="flex-1 overflow-y-auto px-4 py-6 md:p-0"
         onScroll={handleScroll}
       >
-        <div className="flex flex-col md:flex-row gap-8 max-w-4xl mx-auto pb-32 md:pb-0">
+        <div className="flex flex-col md:flex-row flex-wrap gap-8 max-w-4xl mx-auto pb-32 md:pb-0">
           {/* Left Column: Amount & Keypad */}
-          <div className="flex-1 flex flex-col gap-6 items-center md:items-start">
+          <div className="flex-1 min-w-[320px] flex flex-col gap-6 items-center md:items-start">
             <div className="text-center md:text-left w-full space-y-4">
               {/* Budget Impact */}
               {categoryId && (
@@ -129,7 +129,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
           </div>
 
           {/* Right Column: Form Details */}
-          <div className="flex-1 flex flex-col gap-6 w-full">
+          <div className="flex-1 min-w-[320px] flex flex-col gap-6 w-full">
             <div className="space-y-4 bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm">
               {!categoryIdFromUrl && (
                 <div className="space-y-2">
