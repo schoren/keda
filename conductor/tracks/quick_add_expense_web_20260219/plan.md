@@ -5,11 +5,11 @@
 - [x] Task: Implement `getCategoryHistory` and `getCategoryBalance` helpers in `client/packages/shared/src/api.ts` for autocomplete and balance tracking.
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Shared Logic' (Protocol in workflow.md)
 
-## Phase 2: Specialized UI Components
-- [ ] Task: Implement `NumericKeypad` with `00`/`000` support and mobile/desktop conditional rendering.
-- [ ] Task: Implement `DynamicAmountDisplay` with auto-scaling font size and thousand separator formatting logic.
-- [ ] Task: Implement `NoteAutocomplete` component using category history data.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Specialized UI Components' (Protocol in workflow.md)
+## Phase 2: Specialized UI Components [checkpoint: 69cd459]
+- [x] Task: Implement `NumericKeypad` with `00`/`000` support and mobile/desktop conditional rendering.
+- [x] Task: Implement `DynamicAmountDisplay` with auto-scaling font size and thousand separator formatting logic.
+- [x] Task: Implement `NoteAutocomplete` component using category history data.
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Specialized UI Components' (Protocol in workflow.md)
 
 ## Phase 3: Screen Integration & UX Refinement
 - [ ] Task: Implement real-time budget impact calculations (Remaining vs Projected).
