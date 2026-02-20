@@ -1,9 +1,9 @@
 # Implementation Plan: Quick-Add Expense Screen
 
-## Phase 1: Shared Logic and Data Types
-- [ ] Task: Define `CreateExpenseRequest` and updated `Expense` types in `client/packages/shared/src/entities.ts`.
-- [ ] Task: Implement `getCategoryHistory` and `getCategoryBalance` helpers in `client/packages/shared/src/api.ts` for autocomplete and balance tracking.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Shared Logic' (Protocol in workflow.md)
+## Phase 1: Shared Logic and Data Types [checkpoint: 62f9bfa]
+- [x] Task: Define `CreateExpenseRequest` and updated `Expense` types in `client/packages/shared/src/entities.ts`.
+- [x] Task: Implement `getCategoryHistory` and `getCategoryBalance` helpers in `client/packages/shared/src/api.ts` for autocomplete and balance tracking.
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Shared Logic' (Protocol in workflow.md)
 
 ## Phase 2: Specialized UI Components
 - [ ] Task: Implement `NumericKeypad` with `00`/`000` support and mobile/desktop conditional rendering.
