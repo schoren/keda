@@ -30,7 +30,6 @@
     "cash": "Cash",
     "card": "Card",
     "credit": "Credit",
-    "other": "Other",
     "add_account": "Add Account",
     "balance": "Balance",
     "edit_account": "Edit Account",
@@ -78,17 +77,16 @@
   "forms": {
     "account": {
       "name_label": "Account Name",
-      "name_placeholder": "e.g. Savings, Other...",
+      "name_placeholder": "e.g. Savings, Payroll...",
       "type_label": "Account Type",
       "type_debit": "Debit / Cash / Savings",
       "type_credit": "Credit Card",
       "brand_label": "Brand",
-      "brand_placeholder": "e.g. Visa, Mastercard...",
+      "brand_placeholder": "Select brand",
       "bank_label": "Bank",
       "bank_placeholder": "e.g. Chase, Santander...",
       "create": "Create Account",
-      "creating": "Creating...",
-      "other": "Other"
+      "creating": "Creating..."
     },
     "transaction": {
       "amount_label": "Amount",

@@ -15,14 +15,12 @@ const iconMap: Record<AccountType, any> = {
   cash: Wallet,
   card: CreditCard,
   bank: Landmark,
-  other: HelpCircle,
 };
 
 const colorMap: Record<AccountType, string> = {
   cash: "bg-emerald-100 text-emerald-600",
   card: "bg-violet-100 text-violet-600",
   bank: "bg-blue-100 text-blue-600",
-  other: "bg-slate-100 text-slate-600",
 };
 
 export function AccountList() {

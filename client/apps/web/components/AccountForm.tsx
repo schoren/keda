@@ -51,7 +51,9 @@ export function AccountForm({ onSuccess, onCancel, account }: AccountFormProps) 
 
   const isCash = type === "cash";
   const isCard = type === "card";
-  const needsName = type === "bank" || type === "other";
+  const needsName = type === "bank";
+
+  const cardBrands = ["Visa", "Mastercard", "Amex", "Discover"];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -69,7 +71,6 @@ export function AccountForm({ onSuccess, onCancel, account }: AccountFormProps) 
           <option value="cash">{t('accounts.cash')}</option>
           <option value="card">{t('accounts.card')}</option>
           <option value="bank">{t('accounts.bank')}</option>
-          <option value="other">{t('forms.account.other')}</option>
         </select>
       </div>
 
@@ -79,13 +80,16 @@ export function AccountForm({ onSuccess, onCancel, account }: AccountFormProps) 
             <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 block">
               {t('forms.account.brand_label')}
             </label>
-            <input
-              type="text"
+            <select
               value={brand}
               onChange={(e) => setBrand(e.target.value)}
-              placeholder={t('forms.account.brand_placeholder')}
               className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-            />
+            >
+              <option value="">{t('forms.account.brand_placeholder')}</option>
+              {cardBrands.map((b) => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 block">

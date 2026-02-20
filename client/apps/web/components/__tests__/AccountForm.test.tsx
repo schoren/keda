@@ -54,7 +54,7 @@ describe('AccountForm', () => {
     await user.selectOptions(select, 'card');
 
     // Should show Brand and Bank labels (Spanish)
-    expect(screen.getByText(/MARCA/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/MARCA/i).length).toBeGreaterThan(1);
     // Use getAllByText because 'Banco' is both an option and a label
     expect(screen.getAllByText(/BANCO/i).length).toBeGreaterThan(1);
   });

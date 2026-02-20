@@ -78,7 +78,7 @@ export interface Invitation {
   status: 'pending' | 'accepted' | 'expired';
 }
 
-export type AccountType = 'cash' | 'card' | 'bank' | 'other';
+export type AccountType = 'cash' | 'card' | 'bank';
 
 export interface Recommendation {
   category_id: string;
