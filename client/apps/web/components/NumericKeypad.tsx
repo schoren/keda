@@ -14,8 +14,7 @@ export function NumericKeypad({ value, onChange }: NumericKeypadProps) {
   const isMobile = useIsMobile();
   const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const measureRef = useRef<HTMLSpanElement>(null);
-  const [fontSize, setFontSize] = useState(80);
+  const [fontSize, setFontSize] = useState(48);
 
   useEffect(() => {
     setMounted(true);
@@ -36,21 +35,23 @@ export function NumericKeypad({ value, onChange }: NumericKeypadProps) {
   const displayValue = formatDisplayValue(value);
 
   useLayoutEffect(() => {
-    if (isMobile || !containerRef.current || !measureRef.current) return;
+    if (isMobile || !containerRef.current) return;
 
-    const containerWidth = containerRef.current.offsetWidth - 100; // Account for padding and $
-    if (containerWidth <= 0) return;
+    // Standard container width or mock fallback
+    const containerWidth = (containerRef.current.clientWidth || 500) - 100;
+    const textLength = (displayValue || "0").length;
+    
+    // More conservative character width factor for font-black
+    const charWidthFactor = 0.8;
+    
+    // Calculate required font size
+    let calculatedSize = Math.floor(containerWidth / (textLength * charWidthFactor));
+    
+    // Clamp between 20px and 48px
+    calculatedSize = Math.min(48, Math.max(20, calculatedSize));
 
-    let currentFontSize = 80;
-    measureRef.current.style.fontSize = `${currentFontSize}px`;
-
-    while (measureRef.current.offsetWidth > containerWidth && currentFontSize > 24) {
-      currentFontSize -= 2;
-      measureRef.current.style.fontSize = `${currentFontSize}px`;
-    }
-
-    setFontSize(currentFontSize);
-  }, [value, isMobile]);
+    setFontSize(calculatedSize);
+  }, [value, isMobile, displayValue]);
 
   if (!mounted) return null;
 
@@ -59,7 +60,7 @@ export function NumericKeypad({ value, onChange }: NumericKeypadProps) {
       <div className="w-full">
         <div 
           ref={containerRef}
-          className="bg-white rounded-[32px] p-12 border border-slate-100 shadow-xl shadow-slate-200/50 focus-within:border-emerald-400 focus-within:ring-8 focus-within:ring-emerald-50 transition-all flex flex-col items-center justify-center min-h-[240px]"
+          className="bg-white rounded-[32px] p-8 md:p-12 border border-slate-100 shadow-xl shadow-slate-200/50 focus-within:border-emerald-400 focus-within:ring-8 focus-within:ring-emerald-50 transition-all flex flex-col items-center justify-center min-h-[200px] md:min-h-[240px]"
         >
           <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">
             Ingresa el monto
@@ -67,20 +68,12 @@ export function NumericKeypad({ value, onChange }: NumericKeypadProps) {
           <div className="relative w-full flex items-center justify-center">
             <span 
               className="text-emerald-300 font-black mr-2 shrink-0 transition-all"
-              style={{ fontSize: `${Math.max(24, fontSize * 0.5)}px` }}
+              style={{ fontSize: `${Math.max(20, fontSize * 0.5)}px` }}
             >$</span>
             
-            {/* Measuring span (hidden) */}
-            <span 
-              ref={measureRef} 
-              className="absolute invisible whitespace-nowrap font-black"
-              aria-hidden="true"
-            >
-              {displayValue || "0"}
-            </span>
-
             <Input
               type="text"
+              data-testid="desktop-amount-input"
               value={displayValue}
               onChange={(e) => {
                 const rawValue = e.target.value.replace(/,/g, "");
