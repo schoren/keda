@@ -64,7 +64,7 @@ export function AccountList() {
             >
               <div className={cn(
                 "w-12 h-12 rounded-[18px] flex items-center justify-center shrink-0 transition-transform group-hover:scale-110",
-                colorMap[account.type] || colorMap.other
+                colorMap[account.type] || "bg-slate-100 text-slate-600"
               )}>
                 <Icon size={24} />
               </div>
