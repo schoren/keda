@@ -45,7 +45,10 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
   // Default to first account
   useEffect(() => {
     if (accounts.length > 0 && !accountId) {
-      setAccountId(accounts[0].id);
+      const firstAccount = accounts[0];
+      if (firstAccount) {
+        setAccountId(firstAccount.id);
+      }
     }
   }, [accounts, accountId]);
 
