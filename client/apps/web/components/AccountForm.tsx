@@ -6,8 +6,6 @@ import { useApi } from "@/app/providers";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@repo/i18n";
 
-import { Account } from "@repo/shared";
-
 import { Account, AccountType } from "@repo/shared";
 import {
   Select,

@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useApi } from "@/app/providers";
-import { Landmark, CreditCard, Wallet, MoreVertical, Edit2, Trash2, HelpCircle } from "lucide-react";
+import { Landmark, CreditCard, Wallet, Edit2, Trash2, HelpCircle, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@repo/i18n";
 import { Account, AccountType } from "@repo/shared";
@@ -11,7 +11,7 @@ import { Modal } from "./Modal";
 import { AccountForm } from "./AccountForm";
 import { Button } from "./ui/button";
 
-const iconMap: Record<AccountType, any> = {
+const iconMap: Record<AccountType, LucideIcon> = {
   cash: Wallet,
   card: CreditCard,
   bank: Landmark,
