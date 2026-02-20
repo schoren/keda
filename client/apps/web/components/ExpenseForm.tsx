@@ -70,7 +70,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
     if (!amount || !accountId || !categoryId) return;
 
     createTransaction.mutate({
-      amount: -Math.abs(parseFloat(amount)),
+      amount: Math.abs(parseFloat(amount)),
       account_id: accountId,
       category_id: categoryId,
       date: date.toISOString(),

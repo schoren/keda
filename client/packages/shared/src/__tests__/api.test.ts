@@ -280,7 +280,7 @@ describe('ApiClient', () => {
     it('createExpense calls POST with type expense', async () => {
       mockFetch.mockResolvedValueOnce(mockResponse({ id: 't1' }));
       await api.createExpense({
-        amount: -50,
+        amount: 50,
         category_id: 'c1',
         account_id: 'a1',
         note: 'test',

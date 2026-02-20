@@ -520,6 +520,7 @@ func (h *Handlers) CreateTransaction(c *gin.Context) {
 	}
 	transaction.HouseholdID = householdID
 	transaction.Date = transaction.Date.UTC()
+	transaction.Amount = math.Abs(transaction.Amount)
 
 	userID, _ := c.Get("user_id")
 	if id, ok := userID.(string); ok {
@@ -567,7 +568,7 @@ func (h *Handlers) UpdateTransaction(c *gin.Context) {
 			AccountID:             updates.AccountID,
 			CategoryID:            updates.CategoryID,
 			UserID:                oldTransaction.UserID,
-			Amount:                updates.Amount,
+			Amount:                math.Abs(updates.Amount),
 			Date:                  updates.Date.UTC(),
 			Description:           updates.Description,
 			HouseholdID:           householdID,
