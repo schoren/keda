@@ -4,30 +4,36 @@
 Implement a mobile-optimized "Quick-Add" expense screen for the Keda Web PWA. This screen is designed for rapid entry of expenses while on the go. To minimize friction, the screen assumes the user is adding an expense to a specific budget category, with the `category_id` provided via the URL.
 
 ## Functional Requirements
-- **Context-Aware Category:** The screen must extract the `category_id` from the URL parameters. The category selection will not be displayed to the user as it is implicitly defined by the context.
-- **Custom Numeric Keypad:** Provide a large, mobile-friendly custom numeric keypad for quick amount entry, avoiding the standard system keyboard for a more "app-like" experience.
-- **Account Selection:** A dropdown or selection list for the user to choose which account (e.g., Checking, Cash, Credit Card) the expense should be deducted from.
-- **Optional Note:** A text field for adding a brief description or note to the expense.
-- **Optional Date:** A date picker defaulting to the current date, allowing the user to backdate expenses if necessary.
-- **Validation:**
-    - Amount must be greater than zero.
-    - An account must be selected.
+- **Context-Aware Category:** The screen must extract the `category_id` from the URL parameters. The category selection will not be displayed to the user.
+- **Platform-Specific Amount Input:**
+    - **Mobile:** A large, custom numeric keypad for quick entry. Keypad must include buttons for `00` and `000`.
+    - **Desktop:** A standard numeric input field.
+- **Real-Time Formatting:** Automatically add thousand separators as the user types (both mobile and desktop).
+- **Dynamic Font Size:** The amount display must always be fully visible; the font size should decrease dynamically if the number exceeds the container width.
+- **Budget Impact Visibility:** Display the category's current remaining balance and the projected balance (remaining - entered amount) in real-time above the amount input.
+- **Account Selection:** Default to the first available account. The form is valid as soon as an amount > 0 is entered.
+- **Notes with Autocomplete:** A text field for adding notes, featuring autocomplete suggestions based on historical expenses in the same category.
+- **Optional Date:** A date picker defaulting to the current date.
 - **Persistence:** Save the expense via the Backend API.
 
 ## UI/UX Requirements
-- **Mobile-First Design:** Optimized for one-handed "thumb" use.
-- **Responsive Layout:** Ensure the keypad and form elements are well-spaced and accessible on various mobile screen sizes.
+- **Mobile UI Layout:**
+    - **Fixed Action:** The "Save" button must be fixed at the bottom of the viewport.
+    - **Scroll Indicators:** Visual indication (e.g., gradient or hint) that more fields (Note, Date, Account) are available by scrolling.
+- **Mobile-First Design:** Optimized for one-handed "thumb" use on mobile devices.
 - **Immediate Feedback:** Clear visual confirmation upon successful submission or error.
 
 ## Acceptance Criteria
 - [ ] Navigating to `/categories/:id/add-expense` loads the screen.
-- [ ] The amount can be entered and edited using the custom keypad.
-- [ ] A list of user accounts is fetched and selectable.
-- [ ] Submitting a valid form sends a POST request to the backend with the correct `category_id`, `amount`, `account_id`, `note`, and `date`.
-- [ ] The user is redirected back to the category detail view or dashboard upon success.
-- [ ] Error messages are displayed if the API request fails or validation fails.
+- [ ] Custom keypad appears on mobile; standard input on desktop.
+- [ ] Keypad includes `00` and `000`.
+- [ ] Thousand separators appear correctly during entry.
+- [ ] Amount font size shrinks to fit the screen width for large numbers.
+- [ ] Remaining and projected balances update as the amount is typed.
+- [ ] Notes field provides autocomplete suggestions from the same category.
+- [ ] Save button is fixed at the bottom on mobile.
+- [ ] Submitting a valid form sends correct data to the backend.
 
 ## Out of Scope
 - Receipt scanning or OCR functionality.
 - Changing the category from within this screen.
-- Implementing recurring expense logic.

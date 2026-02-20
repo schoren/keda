@@ -1,25 +1,18 @@
 # Implementation Plan: Quick-Add Expense Screen
 
 ## Phase 1: Shared Logic and Data Types
-This phase focuses on ensuring the `shared` package has the necessary data structures and API methods to handle expense creation.
-
 - [ ] Task: Define `CreateExpenseRequest` and updated `Expense` types in `client/packages/shared/src/entities.ts`.
-- [ ] Task: Write unit tests for `createExpense` API method in `client/packages/shared/src/__tests__/api.test.ts`.
-- [ ] Task: Implement `createExpense` in `client/packages/shared/src/api.ts`.
+- [ ] Task: Implement `getCategoryHistory` and `getCategoryBalance` helpers in `client/packages/shared/src/api.ts` for autocomplete and balance tracking.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Shared Logic' (Protocol in workflow.md)
 
-## Phase 2: Custom Numeric Keypad Component
-Development of the specialized UI component for rapid amount entry.
+## Phase 2: Specialized UI Components
+- [ ] Task: Implement `NumericKeypad` with `00`/`000` support and mobile/desktop conditional rendering.
+- [ ] Task: Implement `DynamicAmountDisplay` with auto-scaling font size and thousand separator formatting logic.
+- [ ] Task: Implement `NoteAutocomplete` component using category history data.
+- [ ] Task: Conductor - User Manual Verification 'Phase 2: Specialized UI Components' (Protocol in workflow.md)
 
-- [ ] Task: Write unit tests for `NumericKeypad` in `client/apps/web/components/NumericKeypad.test.tsx`.
-- [ ] Task: Implement `NumericKeypad` component in `client/apps/web/components/NumericKeypad.tsx`.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Custom Numeric Keypad' (Protocol in workflow.md)
-
-## Phase 3: Expense Entry Screen & Integration
-Implementation of the main screen and its integration with the backend and shared logic.
-
-- [ ] Task: Scaffold the new route at `client/apps/web/app/categories/[id]/add-expense/page.tsx`.
-- [ ] Task: Write integration tests for the expense submission flow in `client/apps/web/__tests__/add-expense.test.tsx`.
-- [ ] Task: Implement screen UI including amount display, account selector, and optional fields.
-- [ ] Task: Implement submission logic and success/error handling.
+## Phase 3: Screen Integration & UX Refinement
+- [ ] Task: Implement real-time budget impact calculations (Remaining vs Projected).
+- [ ] Task: Implement the mobile layout with fixed "Save" button and scroll indicators.
+- [ ] Task: Integrate components into the main route and implement submission logic.
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Screen Implementation' (Protocol in workflow.md)
