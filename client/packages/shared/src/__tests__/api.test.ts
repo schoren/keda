@@ -253,7 +253,7 @@ describe('ApiClient', () => {
       mockFetch.mockResolvedValueOnce(mockResponse(['Almuerzo', 'Cena']));
       const result = await api.getSuggestedNotes('c1');
       expect(mockFetch).toHaveBeenCalledWith(
-        'http://localhost:8090/households/household-1/transactions/suggestions?category_id=c1',
+        'http://localhost:8090/households/household-1/categories/c1/suggested-notes',
         expect.anything(),
       );
       expect(result).toEqual(['Almuerzo', 'Cena']);
@@ -271,6 +271,57 @@ describe('ApiClient', () => {
         expect.anything(),
       );
       expect(result).toBe('1.2.3');
+    });
+  });
+
+  // ── Category Helpers ─────────────────────────────────────
+
+  describe('category helpers', () => {
+    it('createExpense calls POST with type expense', async () => {
+      mockFetch.mockResolvedValueOnce(mockResponse({ id: 't1' }));
+      await api.createExpense({
+        amount: 50,
+        category_id: 'c1',
+        account_id: 'a1',
+        note: 'test',
+      });
+      expect(mockFetch).toHaveBeenCalledWith(
+        'http://localhost:8090/households/household-1/transactions',
+        expect.objectContaining({
+          method: 'POST',
+          body: expect.stringContaining('"type":"expense"'),
+        }),
+      );
+    });
+
+    it('getCategoryHistory calls getTransactions with category_id', async () => {
+      mockFetch.mockResolvedValueOnce(mockResponse([{ id: 't1', note: 'test' }]));
+      const result = await api.getCategoryHistory('c1');
+      expect(mockFetch).toHaveBeenCalledWith(
+        'http://localhost:8090/households/household-1/transactions?category_id=c1',
+        expect.anything(),
+      );
+      expect(result).toEqual([{ id: 't1', note: 'test' }]);
+    });
+
+    it('getCategoryBalance returns remaining for category in summary', async () => {
+      const summary = {
+        month: '2026-02',
+        categories: [{ id: 'c1', remaining: 100 }, { id: 'c2', remaining: 50 }]
+      };
+      mockFetch.mockResolvedValueOnce(mockResponse(summary));
+      const result = await api.getCategoryBalance('c1', '2026-02');
+      expect(result).toBe(100);
+    });
+
+    it('getCategoryBalance returns 0 if category not found', async () => {
+      const summary = {
+        month: '2026-02',
+        categories: [{ id: 'c2', remaining: 50 }]
+      };
+      mockFetch.mockResolvedValueOnce(mockResponse(summary));
+      const result = await api.getCategoryBalance('c1', '2026-02');
+      expect(result).toBe(0);
     });
   });
 

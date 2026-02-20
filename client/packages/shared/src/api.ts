@@ -1,4 +1,4 @@
-import { Account, Category, Invitation, MemberInfo, Recommendation, Transaction, User } from './entities';
+import { Account, Category, CreateExpenseRequest, Expense, Invitation, MemberInfo, Recommendation, Transaction, User } from './entities';
 
 export interface AuthResponse {
   token: string;
@@ -208,13 +208,31 @@ export class ApiClient {
 
   // Suggested Notes
   async getSuggestedNotes(categoryId: string): Promise<string[]> {
-    return this.request<string[]>(`${this.householdPath}/transactions/suggestions?category_id=${categoryId}`);
+    return this.request<string[]>(`${this.householdPath}/categories/${categoryId}/suggested-notes`);
   }
 
   // Server Version
   async getServerVersion(): Promise<string> {
     const data = await this.request<{ version: string }>('/version');
     return data.version;
+  }
+
+  // Helpers
+  async createExpense(expense: CreateExpenseRequest): Promise<Expense> {
+    return this.request<Expense>(`${this.householdPath}/transactions`, {
+      method: 'POST',
+      body: JSON.stringify({ ...expense, type: 'expense' }),
+    });
+  }
+
+  async getCategoryHistory(categoryId: string): Promise<Transaction[]> {
+    return this.getTransactions({ categoryId });
+  }
+
+  async getCategoryBalance(categoryId: string, month: string): Promise<number> {
+    const summary = await this.getSummary(month);
+    const category = summary.categories.find((c) => c.id === categoryId);
+    return category ? category.remaining : 0;
   }
 }
 

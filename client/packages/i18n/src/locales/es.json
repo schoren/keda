@@ -94,6 +94,7 @@
       "saving": "Guardando...",
       "type_expense": "Gasto",
       "type_income": "Ingreso",
+      "new_expense": "Nuevo Gasto",
       "save_expense": "Guardar Gasto"
     },
     "budget": {

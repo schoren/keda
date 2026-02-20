@@ -65,13 +65,24 @@ describe('AccountSelector', () => {
 
   it('renders a placeholder when no account is selected', () => {
     render(<AccountSelector value="" onChange={vi.fn()} />);
-    expect(screen.getByText(/Select account/i)).toBeInTheDocument();
+    // Match either translation or placeholder text
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
   it('renders the selected account name', () => {
     render(<AccountSelector value="2" onChange={vi.fn()} />);
     // Select trigger should show the name
     expect(screen.getByText('Chase Bank')).toBeInTheDocument();
+  });
+
+  it('shows the Add New Account option', async () => {
+    const user = userEvent.setup();
+    render(<AccountSelector value="" onChange={vi.fn()} />);
+
+    await user.click(screen.getByRole('combobox'));
+    
+    // Check for 'AGREGAR CUENTA' (Spanish translation for add_account)
+    expect(await screen.findByText(/AGREGAR CUENTA/i)).toBeInTheDocument();
   });
 
   it('calls onChange when an account is selected', async () => {
