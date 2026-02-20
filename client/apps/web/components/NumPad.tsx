@@ -21,6 +21,20 @@ export function NumPad({ value, onChange }: NumPadProps) {
       return;
     }
 
+    if (key === "00" || key === "000") {
+      if (value === "" || value === "0") return;
+      if (value.includes(".")) {
+        const parts = value.split(".");
+        if (parts[1].length >= 2) return;
+        if (parts[1].length === 1 && key === "000") {
+          onChange(value + "0"); // Only one zero fits
+          return;
+        }
+      }
+      onChange(value + key);
+      return;
+    }
+
     // Limit to 2 decimal places
     const parts = value.split(".");
     if (parts[1] && parts[1].length >= 2) return;
@@ -36,7 +50,8 @@ export function NumPad({ value, onChange }: NumPadProps) {
     "1", "2", "3",
     "4", "5", "6",
     "7", "8", "9",
-    ".", "0", "backspace",
+    "00", "0", "000",
+    ".", "backspace",
   ];
 
   return (
@@ -51,7 +66,8 @@ export function NumPad({ value, onChange }: NumPadProps) {
             "h-14 rounded-xl text-lg font-medium transition-colors",
             "bg-accent/50 hover:bg-accent active:bg-accent/80",
             "flex items-center justify-center",
-            key === "backspace" && "text-muted-foreground"
+            key === "backspace" && "text-muted-foreground",
+            key === "." && "col-start-1"
           )}
         >
           {key === "backspace" ? <Delete size={22} /> : key}
