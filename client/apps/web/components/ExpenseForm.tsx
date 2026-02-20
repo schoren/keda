@@ -123,7 +123,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
               </div>
             </div>
 
-            <div className="w-full max-w-xs mx-auto md:mx-0">
+            <div className="w-full md:max-w-none max-w-xs mx-auto md:mx-0">
               <NumericKeypad value={amount} onChange={setAmount} />
             </div>
           </div>
