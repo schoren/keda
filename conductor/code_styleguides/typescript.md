@@ -32,6 +32,7 @@ This document summarizes key rules and best practices from the Google TypeScript
 - **Type Inference:** Rely on type inference for simple, obvious types. Be explicit for complex types.
 - **`undefined` and `null`:** Both are supported. Be consistent within your project.
 - **Optional vs. `|undefined`:** Prefer optional parameters and fields (`?`) over adding `|undefined` to the type.
+- **Safe Indexed Access:** Due to `noUncheckedIndexedAccess: true`, always verify that elements accessed by index (e.g., `arr[0]`) exist before use. Use optional chaining (`arr[0]?.id`) or explicit checks.
 - **`Array<T>` Type:** Use `T[]` for simple types. Use `Array<T>` for more complex union types (e.g., `Array<string | number>`).
 - **`{}` Type:** **Do not use `{}`**. Prefer `unknown`, `Record<string, unknown>`, or `object`.
 
