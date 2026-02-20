@@ -9,7 +9,7 @@ Implement a mobile-optimized "Quick-Add" expense screen for the Keda Web PWA. Th
     - **Mobile:** A large, custom numeric keypad for quick entry. Keypad must include buttons for `00` and `000`.
     - **Desktop:** A standard numeric input field.
 - **Real-Time Formatting:** Automatically add thousand separators as the user types (both mobile and desktop).
-- **Dynamic Font Size:** The amount display must always be fully visible; the font size should decrease dynamically if the number exceeds the container width.
+- **Dynamic Font Size:** The amount display must always be fully visible; the font size should decrease dynamically if the number exceeds the container width. The system must comfortably display up to 9 digits (plus separators).
 - **Budget Impact Visibility:** Display the category's current remaining balance and the projected balance (remaining - entered amount) in real-time above the amount input.
 - **Account Selection:** Default to the first available account. The form is valid as soon as an amount > 0 is entered.
 - **Notes with Autocomplete:** A text field for adding notes, featuring autocomplete suggestions based on historical expenses in the same category.
