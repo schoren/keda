@@ -14,8 +14,8 @@
 - [x] Task: Add unit tests for `AccountList` and `AccountForm` in `client/apps/web/components/__tests__/`. 363542e
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Account Management UI' (Protocol in workflow.md)
 
-## Phase 3: UX Polishing and Integration
-- [ ] Task: Ensure the layout is responsive and mobile-friendly.
-- [ ] Task: Add loading states and error handling for all account actions.
-- [ ] Task: Update navigation to include a link to the `/accounts` page.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: UX Polishing' (Protocol in workflow.md)
+## Phase 3: UX Polishing and Integration [checkpoint: 7ce02b4]
+- [x] Task: Ensure the layout is responsive and mobile-friendly. 166b4cb
+- [x] Task: Add loading states and error handling for all account actions. 1073528
+- [x] Task: Update navigation to include a link to the `/accounts` page. 1073528
+- [x] Task: Conductor - User Manual Verification 'Phase 3: UX Polishing' (Protocol in workflow.md)
