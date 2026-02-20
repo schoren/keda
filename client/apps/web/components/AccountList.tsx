@@ -9,12 +9,6 @@ import { Account, AccountType } from "@repo/shared";
 import { useState } from "react";
 import { Modal } from "./Modal";
 import { AccountForm } from "./AccountForm";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "./ui/button";
 
 const iconMap: Record<AccountType, any> = {
@@ -86,31 +80,26 @@ export function AccountList() {
                 </p>
               </div>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full text-slate-400 hover:text-slate-600">
-                    <MoreVertical size={20} />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="rounded-xl border-slate-100">
-                  <DropdownMenuItem 
-                    onClick={() => setEditingAccount(account)}
-                    className="gap-2 font-bold text-slate-600 focus:text-slate-900"
-                    disabled={isCash}
-                  >
-                    <Edit2 size={16} />
-                    {t('common.edit')}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => handleDelete(account.id)}
-                    className="gap-2 font-bold text-red-500 focus:text-red-600 focus:bg-red-50"
-                    disabled={isCash}
-                  >
-                    <Trash2 size={16} />
-                    {t('common.delete')}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="flex items-center gap-1">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setEditingAccount(account)}
+                  className="rounded-full text-slate-400 hover:text-emerald-600"
+                  disabled={isCash}
+                >
+                  <Edit2 size={18} />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => handleDelete(account.id)}
+                  className="rounded-full text-slate-400 hover:text-red-600"
+                  disabled={isCash}
+                >
+                  <Trash2 size={18} />
+                </Button>
+              </div>
             </div>
           );
         })}
