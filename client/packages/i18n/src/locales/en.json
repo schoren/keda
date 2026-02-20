@@ -94,6 +94,7 @@
       "saving": "Saving...",
       "type_expense": "Expense",
       "type_income": "Income",
+      "new_expense": "New Expense",
       "save_expense": "Save Expense"
     },
     "budget": {
