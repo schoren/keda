@@ -9,7 +9,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import { useTranslation } from "@repo/i18n";
+
 export default function AccountsPage() {
+  const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -20,15 +23,15 @@ export default function AccountsPage() {
       <div className="px-6 py-10 max-w-7xl mx-auto w-full">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-black text-slate-900 leading-none mb-2">Cuentas</h1>
-            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Gestiona tus cuentas bancarias y efectivo</p>
+            <h1 className="text-2xl font-black text-slate-900 leading-none mb-2">{t('nav.accounts')}</h1>
+            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('accounts.active')}</p>
           </div>
           <Button
             onClick={() => setIsModalOpen(true)}
             className="bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-xl gap-2 h-11 px-5 shadow-sm"
           >
             <Plus size={18} />
-            <span className="hidden sm:inline">Nueva Cuenta</span>
+            <span className="hidden sm:inline">{t('accounts.add_account')}</span>
           </Button>
         </div>
 
@@ -37,7 +40,7 @@ export default function AccountsPage() {
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          title="Nueva Cuenta"
+          title={t('accounts.add_account')}
         >
           <AccountForm
             onSuccess={() => setIsModalOpen(false)}

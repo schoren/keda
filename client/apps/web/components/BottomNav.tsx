@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BarChart3, Users, Settings } from "lucide-react";
+import { Home, BarChart3, Users, Settings, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@repo/i18n";
 
@@ -12,6 +12,7 @@ export function BottomNav() {
 
   const tabs = [
     { name: t('nav.overview'), href: "/", icon: Home },
+    { name: t('nav.accounts'), href: "/accounts", icon: Wallet },
     { name: t('nav.reports'), href: "/reports", icon: BarChart3 },
     { name: t('nav.family'), href: "/family", icon: Users },
     { name: t('nav.settings'), href: "/settings", icon: Settings },

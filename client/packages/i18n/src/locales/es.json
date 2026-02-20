@@ -31,7 +31,10 @@
     "card": "Tarjeta",
     "credit": "Crédito",
     "add_account": "Agregar Cuenta",
-    "balance": "Saldo"
+    "balance": "Saldo",
+    "edit_account": "Editar Cuenta",
+    "delete_confirm": "¿Estás seguro de que quieres archivar esta cuenta?",
+    "no_accounts": "No tienes cuentas registradas"
   },
   "transactions": {
     "title": "ACTIVIDAD",
@@ -74,10 +77,14 @@
   "forms": {
     "account": {
       "name_label": "Nombre de la cuenta",
-      "name_placeholder": "Ej: Banco, Efectivo...",
+      "name_placeholder": "Ej: Ahorros, Nómina...",
       "type_label": "Tipo de cuenta",
       "type_debit": "Débito / Efectivo / Ahorros",
       "type_credit": "Tarjeta de Crédito",
+      "brand_label": "Marca",
+      "brand_placeholder": "Seleccionar marca",
+      "bank_label": "Banco",
+      "bank_placeholder": "Ej: Chase, Santander...",
       "create": "Crear Cuenta",
       "creating": "Creando..."
     },

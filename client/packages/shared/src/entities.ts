@@ -21,8 +21,9 @@ export interface Account {
   id: string;
   created_at: string;
   updated_at: string;
-  type: string;
-  name: string;
+  deleted_at?: string;
+  type: AccountType;
+  name?: string;
   brand?: string;
   bank?: string;
   display_name: string;
