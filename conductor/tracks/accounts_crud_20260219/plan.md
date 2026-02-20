@@ -6,13 +6,13 @@
 - [x] Task: Add unit tests for the new API methods in `client/packages/shared/src/__tests__/api.test.ts`. (Verified existing)
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Shared Logic' (Protocol in workflow.md)
 
-## Phase 2: Account Management UI
+## Phase 2: Account Management UI [checkpoint: 8d53eee]
 - [x] Task: Create the `/accounts` page component in `client/apps/web/app/accounts/page.tsx`. 166b4cb
 - [x] Task: Implement `AccountList` component with support for displaying the backend-generated `display_name`. 166b4cb
 - [x] Task: Implement `AccountForm` component with dynamic fields based on the selected `type`. 166b4cb
 - [x] Task: Integrate `create`, `update`, and `delete` actions with the UI and handle mandatory `cash` account restrictions. 166b4cb
 - [x] Task: Add unit tests for `AccountList` and `AccountForm` in `client/apps/web/components/__tests__/`. 363542e
-- [~] Task: Conductor - User Manual Verification 'Phase 2: Account Management UI' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Account Management UI' (Protocol in workflow.md)
 
 ## Phase 3: UX Polishing and Integration
 - [ ] Task: Ensure the layout is responsive and mobile-friendly.
