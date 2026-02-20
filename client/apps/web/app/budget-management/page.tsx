@@ -81,17 +81,20 @@ export default function BudgetsPage() {
   return (
     <DashboardLayout>
       <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
-        <header className="px-6 pt-10 pb-6 space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-black text-slate-900 leading-none">
-                {t('nav.budgets')}
-              </h1>
-            </div>
+        <main className="flex-1 px-6 py-10 max-w-7xl mx-auto w-full">
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-2xl font-black text-slate-900 leading-none">
+              {t('nav.budgets')}
+            </h1>
+            <Button 
+              onClick={handleCreate}
+              className="bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-xl h-11 px-5 shadow-sm flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">{t('common.add')}</span>
+            </Button>
           </div>
-        </header>
 
-        <main className="flex-1 px-6 pb-24 max-w-7xl mx-auto w-full">
           {isLoading ? (
             <div className="flex items-center justify-center p-12">
               <div className="w-8 h-8 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />

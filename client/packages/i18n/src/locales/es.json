@@ -62,7 +62,8 @@
     "no_categories": "No hay categorías configuradas",
     "get_started": "Empezar",
     "default_user": "Usuario",
-    "left": "RESTA"
+    "left": "RESTA",
+    "new_category": "Nueva Categoría"
   },
   "recommendations": {
     "title": "Recomendaciones de Presupuesto",

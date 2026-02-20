@@ -44,6 +44,12 @@ export function Summary({ month, householdId }: SummaryProps) {
 
   const remaining = summary.total_budget - summary.total_spent;
 
+  const lifePercent = summary.total_budget > 0
+    ? Math.max(0, Math.min(100, (remaining / summary.total_budget) * 100))
+    : 0;
+
+  const status = percent > 90 ? 'danger' : percent > 70 ? 'warning' : 'success';
+
   return (
     <div className="bg-white rounded-[24px] border border-slate-100 p-6 shadow-sm">
       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
@@ -63,22 +69,24 @@ export function Summary({ month, householdId }: SummaryProps) {
 
           <div className={cn(
             "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider",
-            percent > 90
-              ? "bg-red-50 text-red-500"
-              : "bg-emerald-50 text-emerald-500"
+            status === 'danger' ? "bg-red-50 text-red-500" :
+            status === 'warning' ? "bg-amber-50 text-amber-500" :
+            "bg-emerald-50 text-emerald-500"
           )}>
             {t('summary.spent_percentage', { percent: Math.round(percent) })}
           </div>
         </div>
 
-        {/* Progress Bar - Large focal point */}
+        {/* Progress Bar - Depleting style */}
         <div className="w-full h-3 bg-slate-50 rounded-full overflow-hidden">
           <div
             className={cn(
               "h-full transition-all duration-1000 ease-out",
-              percent > 90 ? "bg-red-500" : "bg-emerald-500"
+              status === 'danger' ? "bg-red-500" :
+              status === 'warning' ? "bg-amber-500" :
+              "bg-emerald-500"
             )}
-            style={{ width: `${percent}%` }}
+            style={{ width: `${lifePercent}%` }}
           />
         </div>
 

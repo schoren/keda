@@ -24,7 +24,11 @@ func main() {
 		log.Fatalf("Could not load config: %v", err)
 	}
 
-	r := gin.Default()
+	r := gin.New()
+	r.Use(gin.LoggerWithConfig(gin.LoggerConfig{
+		SkipPaths: []string{"/health"},
+	}))
+	r.Use(gin.Recovery())
 
 	// Configure CORS
 	r.Use(cors.New(cors.Config{

@@ -62,7 +62,8 @@
     "no_categories": "No categories configured",
     "get_started": "Get started",
     "default_user": "User",
-    "left": "LEFT"
+    "left": "LEFT",
+    "new_category": "New Category"
   },
   "recommendations": {
     "title": "Budget Recommendations",

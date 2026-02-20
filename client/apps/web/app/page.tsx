@@ -8,18 +8,13 @@ import { useTranslation } from "@repo/i18n";
 import { Summary } from "@/components/Summary";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import Image from "next/image";
-import Link from "next/link";
-import { Plus, Search, Bell } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { MonthNavigator } from "@/components/MonthNavigator";
-import { RecommendationsBanner } from "@/components/RecommendationsBanner";
-import { DashboardAccountSummary } from "@/components/DashboardAccountSummary";
-import { RecentTransactions } from "@/components/RecentTransactions";
-import { CategoryCard } from "@/components/CategoryCard";
+import { CategoryGrid } from "@/components/CategoryGrid";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   const { t } = useTranslation();
-  const { user, householdId, login, isAuthenticated, isLoading } = useAuth();
+  const { householdId, login, isAuthenticated, isLoading } = useAuth();
 
   const [month, setMonth] = useState(() => new Date().toISOString().slice(0, 7));
 
@@ -33,8 +28,12 @@ export default function Home() {
 
   if (isAuthenticated && householdId) {
     return (
-      <DashboardLayout>
-        <DashboardContent month={month} onMonthChange={setMonth} householdId={householdId} user={user} />
+      <DashboardLayout 
+        headerContent={
+          <MonthNavigator month={month} onMonthChange={setMonth} variant="minimal" />
+        }
+      >
+        <DashboardContent month={month} householdId={householdId} />
       </DashboardLayout>
     );
   }
@@ -74,14 +73,10 @@ export default function Home() {
 
 function DashboardContent({
   month,
-  onMonthChange,
   householdId,
-  user,
 }: {
   month: string;
-  onMonthChange: (month: string) => void;
   householdId: string;
-  user: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }) {
   const { t } = useTranslation();
   const api = useApi();
@@ -92,111 +87,77 @@ function DashboardContent({
     enabled: !!householdId,
   });
 
-  const { data: accounts } = useQuery({
-    queryKey: ["accounts"],
-    queryFn: () => api.getAccounts(),
-    enabled: !!householdId,
-  });
+  return (
+    <div className="p-6 md:p-10 space-y-8 max-w-7xl mx-auto w-full text-left pb-32">
+      {/* Desktop Summary - Visible ONLY on desktop, at the top */}
+      <div className="hidden md:block">
+        <Summary month={month} householdId={householdId} />
+      </div>
 
-  const { data: transactions } = useQuery({
-    queryKey: ["transactions", month],
-    queryFn: () => api.getTransactions(month),
-    enabled: !!householdId,
-  });
+      {/* Categories Section - Maximized View */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('dashboard.categories_to_spend')}</h2>
+        </div>
+
+        {summary?.categories && (
+          <CategoryGrid categories={summary.categories} />
+        )}
+      </section>
+
+      {/* Slim Fixed Bottom Summary for Mobile ONLY */}
+      <div className="md:hidden">
+        <SlimSummary summary={summary} />
+      </div>
+    </div>
+  );
+}
+
+interface MonthlySummary {
+  total_budget: number;
+  total_spent: number;
+}
+
+function SlimSummary({ summary }: { summary: MonthlySummary | undefined }) {
+  const { t } = useTranslation();
+  if (!summary) return null;
+
+  const percent = summary.total_budget > 0
+    ? Math.min(100, (summary.total_spent / summary.total_budget) * 100)
+    : 0;
+  
+  const lifePercent = 100 - percent;
+  const isOver = summary.total_spent > summary.total_budget;
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F9FAFB]">
-      {/* Premium Header - Stitch Inspired */}
-      <header className="px-6 pt-10 pb-6 space-y-6">
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-t border-slate-100 p-4 pb-safe-area-inset-bottom shadow-lg">
+      <div className="max-w-md mx-auto space-y-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-slate-200 overflow-hidden border-2 border-white shadow-sm">
-              {user?.picture_url ? (
-                <Image src={user.picture_url} alt={user.name} width={48} height={48} />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold">
-                  {user?.name?.[0] || "U"}
-                </div>
-              )}
-            </div>
-            <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{t('common.hello')}</p>
-              <h1 className="text-lg font-black text-slate-900 leading-none">
-                {user?.name?.split(" ")[0] || t('dashboard.default_user')}
-              </h1>
-            </div>
+          <div className="flex items-baseline gap-1.5">
+            <span className={cn(
+              "text-lg font-black font-mono",
+              isOver ? "text-red-500" : "text-slate-900"
+            )}>
+              ${(summary.total_budget - summary.total_spent).toLocaleString()}
+            </span>
+            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
+              {t('dashboard.left')}
+            </span>
           </div>
-
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm text-slate-400">
-              <Search className="w-5 h-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm text-slate-400">
-              <Bell className="w-5 h-5" />
-            </Button>
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+            ${summary.total_spent.toLocaleString()} / ${summary.total_budget.toLocaleString()}
           </div>
         </div>
-
-        <div className="flex items-center justify-between bg-white/50 backdrop-blur-sm p-4 rounded-3xl border border-slate-100">
-          <MonthNavigator month={month} onMonthChange={onMonthChange} />
-        </div>
-      </header>
-
-      {/* Main Content Area */}
-      <main className="flex-1 px-6 pb-24 space-y-8 max-w-7xl mx-auto w-full">
-        {/* Top Summary Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Summary month={month} householdId={householdId} />
-          {accounts && <DashboardAccountSummary accounts={accounts} />}
-        </div>
-
-        {/* Categories Section - Maximized View */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('dashboard.categories_to_spend')}</h2>
-            <Link href="/budget-management" className="text-[10px] font-black text-emerald-500 hover:underline">{t('dashboard.view_all')}</Link>
-          </div>
-
-          <RecommendationsBanner />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {summary?.categories && summary.categories.length > 0 ? (
-              summary.categories.map((cat) => (
-                <CategoryCard key={cat.id} category={cat} />
-              ))
-            ) : (
-              <div className="col-span-full bg-white rounded-[24px] border border-dashed border-slate-200 p-12 text-center">
-                <p className="text-slate-400 font-bold mb-4">{t('dashboard.no_categories')}</p>
-                <Link href="/budget-management">
-                  <Button className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl px-6">
-                    {t('dashboard.get_started')}
-                  </Button>
-                </Link>
-              </div>
+        <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div 
+            className={cn(
+              "h-full transition-all duration-1000 ease-out rounded-full",
+              isOver ? "bg-red-500" : percent > 80 ? "bg-amber-500" : "bg-emerald-500"
             )}
-
-            {/* Add New Quick Entry */}
-            <Link
-              href="/expenses/new"
-              className="group flex items-center justify-center gap-3 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[24px] p-6 hover:border-emerald-500/50 hover:bg-emerald-50/10 transition-all min-h-[100px]"
-            >
-              <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Plus className="w-5 h-5 text-slate-400 group-hover:text-emerald-500" />
-              </div>
-              <span className="text-sm font-black text-slate-400 group-hover:text-emerald-500">{t('dashboard.new_expense')}</span>
-            </Link>
-          </div>
-        </section>
-
-        {/* Recent Activity Section */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('dashboard.recent_activity')}</h2>
-            <Link href="/transactions" className="text-[10px] font-black text-emerald-500 hover:underline">{t('dashboard.view_all')}</Link>
-          </div>
-          {transactions && <RecentTransactions transactions={transactions} />}
-        </section>
-      </main>
+            style={{ width: `${lifePercent}%` }}
+          />
+        </div>
+      </div>
     </div>
   );
 }
