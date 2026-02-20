@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: new expense screen**
+- [x] **Track: new expense screen**
 *Link: [./tracks/quick_add_expense_web_20260219/](./tracks/quick_add_expense_web_20260219/)*
