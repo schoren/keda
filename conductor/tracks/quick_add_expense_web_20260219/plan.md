@@ -12,7 +12,10 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Specialized UI Components' (Protocol in workflow.md)
 
 ## Phase 3: Screen Integration & UX Refinement
-- [ ] Task: Implement real-time budget impact calculations (Remaining vs Projected).
-- [ ] Task: Implement the mobile layout with fixed "Save" button and scroll indicators.
-- [ ] Task: Integrate components into the main route and implement submission logic.
+- [x] Task: Implement real-time budget impact calculations (Remaining vs Projected).
+- [x] Task: Implement the mobile layout with fixed "Save" button and scroll indicators.
+- [x] Task: Integrate components into the main route and implement submission logic.
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Screen Implementation' (Protocol in workflow.md)
+
+## Phase: Review Fixes
+- [x] Task: Apply review suggestions
