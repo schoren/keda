@@ -50,7 +50,7 @@ export function NumericKeypad({ value, onChange }: NumericKeypadProps) {
                   onChange(rawValue);
                 }
               }}
-              className="text-7xl md:text-8xl text-center h-auto py-2 font-black bg-transparent border-none shadow-none focus-visible:ring-0 placeholder:text-slate-100 text-emerald-600 w-full"
+              className="text-6xl md:text-7xl text-center h-auto py-2 font-black bg-transparent border-none shadow-none focus-visible:ring-0 placeholder:text-slate-100 text-emerald-600 w-full"
               placeholder="0"
               autoFocus
             />
