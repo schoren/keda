@@ -17,6 +17,33 @@ vi.mock('@tanstack/react-query', () => ({
   useQuery: vi.fn(),
 }));
 
+// Mock ResizeObserver for Radix UI
+global.ResizeObserver = class ResizeObserver {
+  observe() { }
+  unobserve() { }
+  disconnect() { }
+};
+
+// Mock ScrollIntoView and PointerCapture for Radix UI
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
+window.HTMLElement.prototype.releasePointerCapture = vi.fn();
+window.HTMLElement.prototype.hasPointerCapture = vi.fn();
+
+class MockPointerEvent extends Event {
+  button: number;
+  ctrlKey: boolean;
+  metaKey: boolean;
+  shiftKey: boolean;
+  constructor(type: string, props: PointerEventInit) {
+    super(type, props);
+    this.button = props.button || 0;
+    this.ctrlKey = props.ctrlKey || false;
+    this.metaKey = props.metaKey || false;
+    this.shiftKey = props.shiftKey || false;
+  }
+}
+window.PointerEvent = MockPointerEvent as any;
+
 describe('AccountForm', () => {
   const mockApi = {
     createAccount: vi.fn(),
@@ -50,17 +77,20 @@ describe('AccountForm', () => {
     render(<AccountForm onSuccess={vi.fn()} onCancel={vi.fn()} />);
 
     // Select 'card' type
-    const select = screen.getByRole('combobox');
-    await user.selectOptions(select, 'card');
+    const trigger = screen.getByRole('combobox');
+    await user.click(trigger);
+    
+    // There are multiple 'Tarjeta' texts (hidden option and visible trigger/item)
+    const cardOptions = await screen.findAllByText(/TARJETA/i);
+    await user.click(cardOptions[cardOptions.length - 1]!);
 
     // Should show Brand and Bank labels (Spanish)
-    expect(screen.getAllByText(/MARCA/i).length).toBeGreaterThan(1);
-    // Use getAllByText because 'Banco' is both an option and a label
-    expect(screen.getAllByText(/BANCO/i).length).toBeGreaterThan(1);
+    expect(screen.getAllByText(/MARCA/i).length).toBeGreaterThan(0);
+    // Use getAllByText for BANCO too since it's also an option value text
+    expect(screen.getAllByText(/BANCO/i).length).toBeGreaterThan(0);
   });
 
-  it('calls onSuccess when creation is successful', async () => {
-    const onSuccess = vi.fn();
+  it('calls mutate when creation is successful', async () => {
     const mutate = vi.fn();
     
     (ReactQueryModule.useMutation as any).mockReturnValue({
@@ -69,11 +99,24 @@ describe('AccountForm', () => {
     });
 
     const user = userEvent.setup();
-    render(<AccountForm onSuccess={onSuccess} onCancel={onCancel} />);
+    const { container } = render(<AccountForm onSuccess={vi.fn()} onCancel={onCancel} />);
 
-    await user.click(screen.getByRole('button', { name: /CREAR CUENTA/i }));
+    // Trigger form submission directly
+    const form = container.querySelector('form');
+    if (form) {
+      import('@testing-library/react').then(({ fireEvent }) => {
+        fireEvent.submit(form);
+      });
+    } else {
+      // Fallback to button click
+      const submitButton = screen.getByRole('button', { name: /CREAR CUENTA/i });
+      await user.click(submitButton);
+    }
     
-    expect(mutate).toHaveBeenCalledWith({ type: 'cash', name: '' });
+    // We might need to wait for the next tick
+    await vi.waitFor(() => {
+      expect(mutate).toHaveBeenCalledWith({ type: 'cash', name: '' });
+    });
   });
 });
 

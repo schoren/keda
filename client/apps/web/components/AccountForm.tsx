@@ -9,6 +9,13 @@ import { useTranslation } from "@repo/i18n";
 import { Account } from "@repo/shared";
 
 import { Account, AccountType } from "@repo/shared";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface AccountFormProps {
   onSuccess: (account: Account) => void;
@@ -61,17 +68,20 @@ export function AccountForm({ onSuccess, onCancel, account }: AccountFormProps) 
         <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 block">
           {t('forms.account.type_label')}
         </label>
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value as AccountType)}
-          required
+        <Select 
+          value={type} 
+          onValueChange={(val) => setType(val as AccountType)}
           disabled={isCash && !!account}
-          className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all disabled:opacity-50"
         >
-          <option value="cash">{t('accounts.cash')}</option>
-          <option value="card">{t('accounts.card')}</option>
-          <option value="bank">{t('accounts.bank')}</option>
-        </select>
+          <SelectTrigger className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
+            <SelectValue placeholder={t('forms.account.type_label')} />
+          </SelectTrigger>
+          <SelectContent position="popper" className="rounded-xl border-slate-100">
+            <SelectItem value="cash">{t('accounts.cash')}</SelectItem>
+            <SelectItem value="card">{t('accounts.card')}</SelectItem>
+            <SelectItem value="bank">{t('accounts.bank')}</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {isCard && (
@@ -80,16 +90,16 @@ export function AccountForm({ onSuccess, onCancel, account }: AccountFormProps) 
             <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 block">
               {t('forms.account.brand_label')}
             </label>
-            <select
-              value={brand}
-              onChange={(e) => setBrand(e.target.value)}
-              className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-            >
-              <option value="">{t('forms.account.brand_placeholder')}</option>
-              {cardBrands.map((b) => (
-                <option key={b} value={b}>{b}</option>
-              ))}
-            </select>
+            <Select value={brand} onValueChange={setBrand}>
+              <SelectTrigger className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
+                <SelectValue placeholder={t('forms.account.brand_placeholder')} />
+              </SelectTrigger>
+              <SelectContent position="popper" className="rounded-xl border-slate-100">
+                {cardBrands.map((b) => (
+                  <SelectItem key={b} value={b}>{b}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 block">
