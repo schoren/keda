@@ -1,10 +1,10 @@
 # Implementation Plan: Accounts CRUD
 
-## Phase 1: Shared Logic and API Client
-- [ ] Task: Update `Account` entity and define `AccountType` in `client/packages/shared/src/entities.ts`.
-- [ ] Task: Implement `getAccounts`, `createAccount`, `updateAccount`, and `deleteAccount` in `client/packages/shared/src/api.ts`.
-- [ ] Task: Add unit tests for the new API methods in `client/packages/shared/src/__tests__/api.test.ts`.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Shared Logic' (Protocol in workflow.md)
+## Phase 1: Shared Logic and API Client [checkpoint: fa1d545]
+- [x] Task: Update `Account` entity and define `AccountType` in `client/packages/shared/src/entities.ts`. 0897a0f
+- [x] Task: Implement `getAccounts`, `createAccount`, `updateAccount`, and `deleteAccount` in `client/packages/shared/src/api.ts`. (Verified existing)
+- [x] Task: Add unit tests for the new API methods in `client/packages/shared/src/__tests__/api.test.ts`. (Verified existing)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Shared Logic' (Protocol in workflow.md)
 
 ## Phase 2: Account Management UI
 - [ ] Task: Create the `/accounts` page component in `client/apps/web/app/accounts/page.tsx`.
