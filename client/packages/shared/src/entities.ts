@@ -55,6 +55,18 @@ export interface Transaction {
   household_id: string;
 }
 
+export interface Expense extends Transaction {
+  type: 'expense';
+}
+
+export interface CreateExpenseRequest {
+  amount: number;
+  category_id: string;
+  account_id: string;
+  note?: string;
+  date?: string;
+}
+
 export interface Invitation {
   id: string;
   created_at: string;
