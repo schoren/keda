@@ -16,6 +16,8 @@ import { useTranslation } from "@repo/i18n";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
+import { Transaction } from "@repo/shared";
+
 interface ExpenseFormProps {
   onSuccess?: () => void;
 }
@@ -58,7 +60,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
   const projected = remaining - (parseFloat(amount) || 0);
 
   const createTransaction = useMutation({
-    mutationFn: (data: any) => api.createTransaction(data), // eslint-disable-line @typescript-eslint/no-explicit-any
+    mutationFn: (data: Partial<Transaction>) => api.createTransaction(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["summary"] });

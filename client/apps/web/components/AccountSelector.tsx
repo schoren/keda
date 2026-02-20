@@ -15,7 +15,7 @@ interface AccountSelectorProps {
   onChange: (value: string) => void;
 }
 
-const iconMap: Record<AccountType | string, any> = { // eslint-disable-line @typescript-eslint/no-explicit-any
+const iconMap: Record<AccountType | string, React.ComponentType<{ className?: string; size?: number }>> = {
   cash: Wallet,
   card: CreditCard,
   bank: Landmark,

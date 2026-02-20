@@ -22,7 +22,7 @@ export function AccountForm({ onSuccess, onCancel }: AccountFormProps) {
   const [type, setType] = useState<"cash" | "card" | "bank">("cash");
 
   const mutation = useMutation({
-    mutationFn: (data: any) => api.createAccount(data), // eslint-disable-line @typescript-eslint/no-explicit-any
+    mutationFn: (data: Partial<Account>) => api.createAccount(data),
     onSuccess: (newAccount) => {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
       onSuccess(newAccount);
@@ -57,7 +57,7 @@ export function AccountForm({ onSuccess, onCancel }: AccountFormProps) {
         </label>
         <select
           value={type}
-          onChange={(e) => setType(e.target.value as any)} // eslint-disable-line @typescript-eslint/no-explicit-any
+          onChange={(e) => setType(e.target.value as "cash" | "card" | "bank")}
           required
           className="w-full h-10 rounded-lg border border-border bg-accent/30 px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         >
@@ -85,7 +85,7 @@ export function AccountForm({ onSuccess, onCancel }: AccountFormProps) {
       </div>
 
       {mutation.isError && (
-        <p className="text-sm text-destructive">Error: {(mutation.error as any).message}</p> // eslint-disable-line @typescript-eslint/no-explicit-any
+        <p className="text-sm text-destructive">Error: {(mutation.error as Error).message}</p>
       )}
     </form>
   );
