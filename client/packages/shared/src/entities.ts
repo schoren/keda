@@ -21,8 +21,9 @@ export interface Account {
   id: string;
   created_at: string;
   updated_at: string;
-  type: string;
-  name: string;
+  deleted_at?: string;
+  type: AccountType;
+  name?: string;
   brand?: string;
   bank?: string;
   display_name: string;
@@ -77,7 +78,7 @@ export interface Invitation {
   status: 'pending' | 'accepted' | 'expired';
 }
 
-export type AccountType = 'cash' | 'card' | 'bank';
+export type AccountType = 'cash' | 'card' | 'bank' | 'other';
 
 export interface Recommendation {
   category_id: string;
