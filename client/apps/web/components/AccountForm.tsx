@@ -6,8 +6,10 @@ import { useApi } from "@/app/providers";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@repo/i18n";
 
+import { Account } from "@repo/shared";
+
 interface AccountFormProps {
-  onSuccess: () => void;
+  onSuccess: (account: Account) => void;
   onCancel: () => void;
 }
 
@@ -17,13 +19,13 @@ export function AccountForm({ onSuccess, onCancel }: AccountFormProps) {
   const queryClient = useQueryClient();
 
   const [name, setName] = useState("");
-  const [type, setType] = useState<"debit" | "credit">("debit");
+  const [type, setType] = useState<"cash" | "card" | "bank">("cash");
 
   const mutation = useMutation({
     mutationFn: (data: any) => api.createAccount(data), // eslint-disable-line @typescript-eslint/no-explicit-any
-    onSuccess: () => {
+    onSuccess: (newAccount) => {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
-      onSuccess();
+      onSuccess(newAccount);
     },
   });
 
@@ -59,8 +61,9 @@ export function AccountForm({ onSuccess, onCancel }: AccountFormProps) {
           required
           className="w-full h-10 rounded-lg border border-border bg-accent/30 px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         >
-          <option value="debit">{t('forms.account.type_debit')}</option>
-          <option value="credit">{t('forms.account.type_credit')}</option>
+          <option value="cash">{t('accounts.cash')}</option>
+          <option value="card">{t('accounts.card')}</option>
+          <option value="bank">{t('accounts.bank')}</option>
         </select>
       </div>
 
