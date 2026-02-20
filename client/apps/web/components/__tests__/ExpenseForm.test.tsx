@@ -110,7 +110,7 @@ describe('ExpenseForm', () => {
     await user.click(submitBtn);
 
     expect(mockApi.createTransaction).toHaveBeenCalledWith(expect.objectContaining({
-      amount: 50,
+      amount: -50,
       account_id: 'a1',
       category_id: 'c1',
       note: 'Lunch',

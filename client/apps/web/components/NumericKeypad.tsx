@@ -21,15 +21,31 @@ export function NumericKeypad({ value, onChange }: NumericKeypadProps) {
   if (!mounted) return null;
 
   if (!isMobile) {
+    const formatDisplayValue = (val: string) => {
+      if (val === "" || val === "0") return "";
+      const [integerPart, decimalPart] = val.split(".");
+      const formattedInteger = new Intl.NumberFormat("en-US").format(parseInt(integerPart || "0", 10));
+      if (val.includes(".")) {
+        return `${formattedInteger}.${decimalPart || ""}`;
+      }
+      return formattedInteger;
+    };
+
     return (
-      <Input
-        type="number"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="text-2xl text-center h-16 font-bold"
-        placeholder="0"
-        step="0.01"
-      />
+      <div className="w-full flex flex-col items-center">
+        <Input
+          type="text"
+          value={formatDisplayValue(value)}
+          onChange={(e) => {
+            const rawValue = e.target.value.replace(/,/g, "");
+            if (rawValue === "" || /^(\d*\.?\d{0,2})$/.test(rawValue)) {
+              onChange(rawValue);
+            }
+          }}
+          className="text-5xl text-center h-24 font-black bg-transparent border-none shadow-none focus-visible:ring-0 placeholder:text-slate-200"
+          placeholder="0"
+        />
+      </div>
     );
   }
 

@@ -208,7 +208,7 @@ export class ApiClient {
 
   // Suggested Notes
   async getSuggestedNotes(categoryId: string): Promise<string[]> {
-    return this.request<string[]>(`${this.householdPath}/transactions/suggestions?category_id=${categoryId}`);
+    return this.request<string[]>(`${this.householdPath}/categories/${categoryId}/suggested-notes`);
   }
 
   // Server Version

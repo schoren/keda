@@ -70,10 +70,10 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
     if (!amount || !accountId || !categoryId) return;
 
     createTransaction.mutate({
-      amount: parseFloat(amount),
+      amount: -Math.abs(parseFloat(amount)),
       account_id: accountId,
       category_id: categoryId,
-      date: format(date, "yyyy-MM-dd"), // Assuming API expects YYYY-MM-DD string
+      date: date.toISOString(),
       note,
       type: "expense",
     });
@@ -118,7 +118,9 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
                 </div>
               )}
 
-              <DynamicAmountDisplay value={amount} />
+              <div className="md:hidden">
+                <DynamicAmountDisplay value={amount} />
+              </div>
             </div>
 
             <div className="w-full max-w-xs mx-auto md:mx-0">
@@ -168,7 +170,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
       </div>
 
       {/* Mobile Fixed Bottom Area */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent pointer-events-none">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-slate-50/90 backdrop-blur-sm border-t border-slate-100 pointer-events-none">
         <div className="max-w-md mx-auto relative pointer-events-auto">
           {showScrollIndicator && (
             <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce text-slate-400">
@@ -180,7 +182,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
           <Button
             onClick={handleSubmit}
             disabled={!isFormValid || createTransaction.isPending}
-            className="w-full h-16 text-lg font-black uppercase tracking-widest bg-emerald-600 hover:bg-emerald-700 text-white rounded-[24px] shadow-xl shadow-emerald-600/30"
+            className="w-full h-16 text-lg font-black uppercase tracking-widest bg-emerald-600 hover:bg-emerald-700 text-white rounded-[24px] shadow-xl shadow-emerald-600/30 disabled:opacity-100 disabled:bg-emerald-600/50"
           >
             {createTransaction.isPending ? <Loader2 className="h-6 w-6 animate-spin" /> : t('forms.transaction.save_expense')}
           </Button>

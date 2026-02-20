@@ -253,7 +253,7 @@ describe('ApiClient', () => {
       mockFetch.mockResolvedValueOnce(mockResponse(['Almuerzo', 'Cena']));
       const result = await api.getSuggestedNotes('c1');
       expect(mockFetch).toHaveBeenCalledWith(
-        'http://localhost:8090/households/household-1/transactions/suggestions?category_id=c1',
+        'http://localhost:8090/households/household-1/categories/c1/suggested-notes',
         expect.anything(),
       );
       expect(result).toEqual(['Almuerzo', 'Cena']);
