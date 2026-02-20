@@ -25,8 +25,9 @@ export function NumPad({ value, onChange }: NumPadProps) {
       if (value === "" || value === "0") return;
       if (value.includes(".")) {
         const parts = value.split(".");
-        if (parts[1].length >= 2) return;
-        if (parts[1].length === 1 && key === "000") {
+        const decimalPart = parts[1];
+        if (decimalPart && decimalPart.length >= 2) return;
+        if (decimalPart && decimalPart.length === 1 && key === "000") {
           onChange(value + "0"); // Only one zero fits
           return;
         }
