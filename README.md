@@ -1,4 +1,5 @@
 # Keda
+[![es](https://img.shields.io/badge/lang-es-yellow.svg)](README.es.md)
 
 A simple application for family finances, allowing expense tracking by categories and collaboration between household members.
 
